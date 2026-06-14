@@ -1,0 +1,197 @@
+# GENERATED FILE - DO NOT EDIT
+# Generated from definitions/registry.yaml
+
+types:
+  ads.channel.config:
+    '000':
+      used_by:
+      - ads111x.based.component.gt:000
+  channel.config:
+    '000':
+      used_by:
+      - gw108.gpio.sensor.component.gt:002
+      - hubitat.component.gt:000
+      - hubitat.poller.component.gt:000
+      - pico.btu.meter.component.gt:001
+      - pico.flow.module.component.gt:001
+      - pico.tank.module.component.gt:012
+      - sim.pico.tank.module.component.gt:001
+      - sim.sensor.component.gt:000
+      - web.server.component.gt:002
+  dfr.config:
+    '000':
+      used_by:
+      - dfr.component.gt:000
+  egauge.register.config:
+    '000':
+      used_by:
+      - electric.meter.channel.config:000
+  electric.meter.channel.config:
+    '000':
+      used_by:
+      - electric.meter.component.gt:002
+  hubitat.gt:
+    '000':
+      used_by:
+      - hubitat.component.gt:000
+  hubitat.poller.gt:
+    '000':
+      used_by:
+      - hubitat.poller.component.gt:000
+  i2c.thermistor.channel.config:
+    '001':
+      used_by:
+      - i2c.thermistor.reader.component.gt:002
+  maker.api.attribute.gt:
+    '000':
+      used_by:
+      - hubitat.poller.gt:000
+  relay.actor.config:
+    '003':
+      used_by:
+      - gw108.vdc.relay.component.gt:002
+      - i2c.multichannel.dt.relay.component.gt:005
+      - sim.relay.component.gt:000
+enums:
+  change.relay.state:
+    '000':
+      used_by:
+      - relay.actor.config:003
+  gpio.sense.mode:
+    '000':
+      used_by:
+      - gw108.gpio.sensor.component.gt:002
+  gpm.from.hz.method:
+    '000':
+      used_by:
+      - pico.btu.meter.component.gt:001
+      - pico.flow.module.component.gt:001
+  gw1.actor.class:
+    '012':
+      used_by:
+      - spaceheat.node.gt:302
+  hz.calc.method:
+    '001':
+      used_by:
+      - pico.btu.meter.component.gt:001
+      - pico.flow.module.component.gt:001
+  i2c.adc.channel:
+    '000':
+      used_by:
+      - i2c.thermistor.channel.config:001
+  relay.closed.or.open:
+    '000':
+      used_by:
+      - relay.actor.config:003
+  relay.wiring.config:
+    '000':
+      used_by:
+      - relay.actor.config:003
+  spaceheat.telemetry.name:
+    '007':
+      used_by:
+      - maker.api.attribute.gt:000
+  spaceheat.unit:
+    '001':
+      used_by:
+      - ads.channel.config:000
+      - channel.config:000
+      - dfr.config:000
+      - electric.meter.channel.config:000
+      - i2c.thermistor.channel.config:001
+      - maker.api.attribute.gt:000
+      - relay.actor.config:003
+  temp.calc.method:
+    '000':
+      used_by:
+      - i2c.thermistor.reader.component.gt:002
+      - pico.btu.meter.component.gt:001
+      - pico.tank.module.component.gt:012
+      - sim.pico.tank.module.component.gt:001
+  thermistor.data.method:
+    '000':
+      used_by:
+      - ads.channel.config:000
+formats:
+  handle.name:
+    used_by:
+    - spaceheat.node.gt:302
+  left.right.dot:
+    used_by:
+    - relay.actor.config:003
+  non.empty.string:
+    used_by:
+    - relay.actor.config:003
+  pascal.case:
+    used_by:
+    - ads.channel.config:000
+    - ads111x.based.component.gt:000
+    - dfr.component.gt:000
+    - electric.meter.component.gt:002
+    - gw108.gpio.sensor.component.gt:002
+    - gw108.vdc.relay.component.gt:002
+    - hubitat.component.gt:000
+    - hubitat.poller.component.gt:000
+    - i2c.multichannel.dt.relay.component.gt:005
+    - i2c.thermistor.reader.component.gt:002
+    - pico.btu.meter.component.gt:001
+    - pico.flow.module.component.gt:001
+    - pico.tank.module.component.gt:012
+    - sim.pico.tank.module.component.gt:001
+    - sim.relay.component.gt:000
+    - sim.sensor.component.gt:000
+    - web.server.component.gt:002
+  positive.float:
+    used_by:
+    - i2c.thermistor.reader.component.gt:002
+    - pico.btu.meter.component.gt:001
+  positive.int:
+    used_by:
+    - ads.channel.config:000
+    - channel.config:000
+    - dfr.component.gt:000
+    - dfr.config:000
+    - electric.meter.channel.config:000
+    - electric.meter.component.gt:002
+    - gw108.gpio.sensor.component.gt:002
+    - gw108.vdc.relay.component.gt:002
+    - hubitat.poller.gt:000
+    - i2c.thermistor.channel.config:001
+    - pico.tank.module.component.gt:012
+    - relay.actor.config:003
+    - sim.pico.tank.module.component.gt:001
+    - spaceheat.node.gt:302
+  spaceheat.name:
+    used_by:
+    - ads.channel.config:000
+    - channel.config:000
+    - dfr.config:000
+    - electric.meter.channel.config:000
+    - i2c.multichannel.dt.relay.component.gt:005
+    - i2c.thermistor.channel.config:001
+    - i2c.thermistor.reader.component.gt:002
+    - maker.api.attribute.gt:000
+    - pico.btu.meter.component.gt:001
+    - pico.flow.module.component.gt:001
+    - relay.actor.config:003
+    - spaceheat.node.gt:302
+  uuid4.str:
+    used_by:
+    - ads111x.based.component.gt:000
+    - dfr.component.gt:000
+    - electric.meter.component.gt:002
+    - gw108.gpio.sensor.component.gt:002
+    - gw108.vdc.relay.component.gt:002
+    - hubitat.component.gt:000
+    - hubitat.poller.component.gt:000
+    - hubitat.poller.gt:000
+    - i2c.multichannel.dt.relay.component.gt:005
+    - i2c.thermistor.reader.component.gt:002
+    - pico.btu.meter.component.gt:001
+    - pico.flow.module.component.gt:001
+    - pico.tank.module.component.gt:012
+    - sim.pico.tank.module.component.gt:001
+    - sim.relay.component.gt:000
+    - sim.sensor.component.gt:000
+    - spaceheat.node.gt:302
+    - web.server.component.gt:002

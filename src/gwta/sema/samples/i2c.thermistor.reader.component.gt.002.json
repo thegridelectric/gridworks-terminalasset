@@ -1,0 +1,25 @@
+{
+  "TypeName": "i2c.thermistor.reader.component.gt",
+  "Version": "002",
+  "ComponentId": "8879f861-add7-4b45-a200-1c2e29c49fdf",
+  "DeviceType": "GridworksScadaGw108",
+  "ConfigList": [
+    {
+      "TypeName": "i2c.thermistor.channel.config",
+      "Version": "001",
+      "ChannelName": "scada",
+      "CapturePeriodS": 1,
+      "AsyncCapture": false,
+      "Exponent": 0,
+      "Unit": "Unknown",
+      "AdcChannel": "P0",
+      "SendToDerived": false,
+      "ThermistorBeta": 1
+    }
+  ],
+  "Bus": "scada",
+  "AdcAddress": 0,
+  "AdcReferenceVolts": 1.0,
+  "SeriesResistanceKOhms": 1.0,
+  "TempCalcMethod": "SimpleBeta"
+}

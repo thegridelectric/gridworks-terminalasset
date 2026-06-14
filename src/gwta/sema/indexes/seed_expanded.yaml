@@ -1,0 +1,159 @@
+metadata:
+  generated_from: indexes/public_registry.yaml
+  generated_at: '2026-06-14T22:24:48Z'
+  note: Transitive closure of initial_targets
+initial_targets:
+- ads111x.based.component.gt:000
+- dfr.component.gt:000
+- electric.meter.component.gt:002
+- gw108.gpio.sensor.component.gt:002
+- gw108.vdc.relay.component.gt:002
+- hubitat.component.gt:000
+- hubitat.poller.component.gt:000
+- i2c.multichannel.dt.relay.component.gt:005
+- i2c.thermistor.reader.component.gt:002
+- pico.btu.meter.component.gt:001
+- pico.flow.module.component.gt:001
+- pico.tank.module.component.gt:012
+- sim.pico.tank.module.component.gt:001
+- sim.relay.component.gt:000
+- sim.sensor.component.gt:000
+- spaceheat.node.gt:302
+- web.server.component.gt:002
+worklist:
+  formats:
+    handle.name:
+      path: definitions/formats/handle.name.yaml
+    left.right.dot:
+      path: definitions/formats/left.right.dot.yaml
+    non.empty.string:
+      path: definitions/formats/non.empty.string.yaml
+    pascal.case:
+      path: definitions/formats/pascal.case.yaml
+    positive.float:
+      path: definitions/formats/positive.float.yaml
+    positive.int:
+      path: definitions/formats/positive.int.yaml
+    spaceheat.name:
+      path: definitions/formats/spaceheat.name.yaml
+    uuid4.str:
+      path: definitions/formats/uuid4.str.yaml
+  enums:
+    change.relay.state:
+      '000':
+        path: definitions/enums/change.relay.state/000.yaml
+    gpio.sense.mode:
+      '000':
+        path: definitions/enums/gpio.sense.mode/000.yaml
+    gpm.from.hz.method:
+      '000':
+        path: definitions/enums/gpm.from.hz.method/000.yaml
+    gw1.actor.class:
+      '012':
+        path: definitions/enums/gw1.actor.class/012.yaml
+    hz.calc.method:
+      '001':
+        path: definitions/enums/hz.calc.method/001.yaml
+    i2c.adc.channel:
+      '000':
+        path: definitions/enums/i2c.adc.channel/000.yaml
+    relay.closed.or.open:
+      '000':
+        path: definitions/enums/relay.closed.or.open/000.yaml
+    relay.wiring.config:
+      '000':
+        path: definitions/enums/relay.wiring.config/000.yaml
+    spaceheat.telemetry.name:
+      '007':
+        path: definitions/enums/spaceheat.telemetry.name/007.yaml
+    spaceheat.unit:
+      '001':
+        path: definitions/enums/spaceheat.unit/001.yaml
+    temp.calc.method:
+      '000':
+        path: definitions/enums/temp.calc.method/000.yaml
+    thermistor.data.method:
+      '000':
+        path: definitions/enums/thermistor.data.method/000.yaml
+  types:
+    ads.channel.config:
+      '000':
+        path: definitions/types/ads.channel.config/000.yaml
+    ads111x.based.component.gt:
+      '000':
+        path: definitions/types/ads111x.based.component.gt/000.yaml
+    channel.config:
+      '000':
+        path: definitions/types/channel.config/000.yaml
+    dfr.component.gt:
+      '000':
+        path: definitions/types/dfr.component.gt/000.yaml
+    dfr.config:
+      '000':
+        path: definitions/types/dfr.config/000.yaml
+    egauge.register.config:
+      '000':
+        path: definitions/types/egauge.register.config/000.yaml
+    electric.meter.channel.config:
+      '000':
+        path: definitions/types/electric.meter.channel.config/000.yaml
+    electric.meter.component.gt:
+      '002':
+        path: definitions/types/electric.meter.component.gt/002.yaml
+    gw108.gpio.sensor.component.gt:
+      '002':
+        path: definitions/types/gw108.gpio.sensor.component.gt/002.yaml
+    gw108.vdc.relay.component.gt:
+      '002':
+        path: definitions/types/gw108.vdc.relay.component.gt/002.yaml
+    hubitat.component.gt:
+      '000':
+        path: definitions/types/hubitat.component.gt/000.yaml
+    hubitat.gt:
+      '000':
+        path: definitions/types/hubitat.gt/000.yaml
+    hubitat.poller.component.gt:
+      '000':
+        path: definitions/types/hubitat.poller.component.gt/000.yaml
+    hubitat.poller.gt:
+      '000':
+        path: definitions/types/hubitat.poller.gt/000.yaml
+    i2c.multichannel.dt.relay.component.gt:
+      '005':
+        path: definitions/types/i2c.multichannel.dt.relay.component.gt/005.yaml
+    i2c.thermistor.channel.config:
+      '001':
+        path: definitions/types/i2c.thermistor.channel.config/001.yaml
+    i2c.thermistor.reader.component.gt:
+      '002':
+        path: definitions/types/i2c.thermistor.reader.component.gt/002.yaml
+    maker.api.attribute.gt:
+      '000':
+        path: definitions/types/maker.api.attribute.gt/000.yaml
+    pico.btu.meter.component.gt:
+      '001':
+        path: definitions/types/pico.btu.meter.component.gt/001.yaml
+    pico.flow.module.component.gt:
+      '001':
+        path: definitions/types/pico.flow.module.component.gt/001.yaml
+    pico.tank.module.component.gt:
+      '012':
+        path: definitions/types/pico.tank.module.component.gt/012.yaml
+    relay.actor.config:
+      '003':
+        path: definitions/types/relay.actor.config/003.yaml
+    sim.pico.tank.module.component.gt:
+      '001':
+        path: definitions/types/sim.pico.tank.module.component.gt/001.yaml
+    sim.relay.component.gt:
+      '000':
+        path: definitions/types/sim.relay.component.gt/000.yaml
+    sim.sensor.component.gt:
+      '000':
+        path: definitions/types/sim.sensor.component.gt/000.yaml
+    spaceheat.node.gt:
+      '302':
+        path: definitions/types/spaceheat.node.gt/302.yaml
+    web.server.component.gt:
+      '002':
+        path: definitions/types/web.server.component.gt/002.yaml

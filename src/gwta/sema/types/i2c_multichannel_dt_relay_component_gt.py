@@ -1,0 +1,46 @@
+from typing import Literal
+from pydantic import ConfigDict, StrictInt, model_validator
+from gwta.sema.base import SemaType
+from gwta.sema.property_format import PascalCase
+from gwta.sema.property_format import SpaceheatName
+from gwta.sema.property_format import UUID4Str
+from gwta.sema.types.relay_actor_config import RelayActorConfig
+
+
+class I2cMultichannelDtRelayComponentGt(SemaType):
+    """Sema: https://schemas.electricity.works/types/i2c.multichannel.dt.relay.component.gt/005"""
+
+    component_id: UUID4Str
+    device_type: PascalCase
+    config_list: list[RelayActorConfig]
+    display_name: str | None = None
+    hw_uid: str | None = None
+    i2c_bus: SpaceheatName
+    i2c_address_list: list[StrictInt]
+    type_name: Literal["i2c.multichannel.dt.relay.component.gt"] = (
+        "i2c.multichannel.dt.relay.component.gt"
+    )
+    version: Literal["005"] = "005"
+
+    model_config = ConfigDict(**(SemaType.model_config | {"extra": "allow"}))
+
+    @model_validator(mode="after")
+    def check_axiom_1(self) -> "I2cMultichannelDtRelayComponentGt":
+        """
+        Axiom 1: ActorAndRelayIndexUniqueness
+        ConfigList SHALL NOT contain duplicate ActorName values or duplicate RelayIdx
+        values.
+        """
+        actor_names = [c.actor_name for c in self.config_list]
+        relay_idxs = [c.relay_idx for c in self.config_list]
+        if len(actor_names) != len(set(actor_names)):
+            raise ValueError(
+                "Axiom 1 (ActorAndRelayIndexUniqueness): ConfigList SHALL NOT "
+                "contain duplicate ActorName values."
+            )
+        if len(relay_idxs) != len(set(relay_idxs)):
+            raise ValueError(
+                "Axiom 1 (ActorAndRelayIndexUniqueness): ConfigList SHALL NOT "
+                "contain duplicate RelayIdx values."
+            )
+        return self
