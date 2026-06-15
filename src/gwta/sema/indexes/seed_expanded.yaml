@@ -1,6 +1,6 @@
 metadata:
   generated_from: indexes/public_registry.yaml
-  generated_at: '2026-06-14T22:24:48Z'
+  generated_at: '2026-06-15T01:28:05Z'
   note: Transitive closure of initial_targets
 initial_targets:
 - ads111x.based.component.gt:000
