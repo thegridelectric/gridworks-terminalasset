@@ -7,6 +7,7 @@ from gwta.sema.enums.gw1_actor_class import Gw1ActorClass
 from gwta.sema.enums.gw1_emission_method import Gw1EmissionMethod
 from gwta.sema.enums.gw1_quantity import Gw1Quantity
 from gwta.sema.enums.gw1_unit import Gw1Unit
+from gwta.sema.enums.gw_house0_primary_flow_source import GwHouse0PrimaryFlowSource
 from gwta.sema.enums.hz_calc_method import HzCalcMethod
 from gwta.sema.enums.i2c_adc_channel import I2cAdcChannel
 from gwta.sema.enums.relay_closed_or_open import RelayClosedOrOpen
@@ -26,6 +27,7 @@ __all__ = [
     "Gw1EmissionMethod",
     "Gw1Quantity",
     "Gw1Unit",
+    "GwHouse0PrimaryFlowSource",
     "HzCalcMethod",
     "I2cAdcChannel",
     "RelayClosedOrOpen",

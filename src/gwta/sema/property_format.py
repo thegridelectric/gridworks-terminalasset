@@ -3,7 +3,7 @@ import uuid
 from datetime import UTC, datetime
 from typing import Annotated
 
-from pydantic import BeforeValidator, Field, StrictFloat
+from pydantic import BeforeValidator, Field, StrictFloat, StrictInt
 
 
 # --- patterns ---
@@ -54,6 +54,14 @@ def is_mac_address(v: str) -> str:
             f"<{v}>: Fails mac.address format (six lowercase hex octet pairs, colon-separated)."
         )
 
+    return v
+
+
+def is_non_negative_int(v: int) -> int:
+    if not isinstance(v, int):
+        raise TypeError("Not an int!")
+    if v < 0:
+        raise ValueError(f"{v} must be non-negative")
     return v
 
 
@@ -141,6 +149,11 @@ MacAddress = Annotated[
 NonEmptyString = Annotated[
     str,
     Field(min_length=1),
+]
+
+NonNegativeInt = Annotated[
+    StrictInt,
+    Field(ge=0),
 ]
 
 PascalCase = Annotated[

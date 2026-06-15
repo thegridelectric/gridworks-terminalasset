@@ -1,0 +1,25 @@
+{
+  "TypeName": "gw.house0.hydronic",
+  "Version": "000",
+  "Zones": [
+    {
+      "TypeName": "gw1.hvac.zone",
+      "Version": "000",
+      "Name": "down",
+      "Critical": true,
+      "KwhPerDegF": 1.0
+    },
+    {
+      "TypeName": "gw1.hvac.zone",
+      "Version": "000",
+      "Name": "up",
+      "Critical": true,
+      "KwhPerDegF": 0.0
+    }
+  ],
+  "TotalStoreTanks": 3,
+  "UseSiegLoop": false,
+  "SiegLoopPlumbed": true,
+  "PrimaryFlowSource": "Measured",
+  "Strategy": "House0"
+}

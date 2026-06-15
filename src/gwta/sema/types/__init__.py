@@ -13,8 +13,10 @@ from gwta.sema.types.electric_meter_device_type_gt import ElectricMeterDeviceTyp
 from gwta.sema.types.g_node_gt import GNodeGt
 from gwta.sema.types.gw108_gpio_sensor_component_gt import Gw108GpioSensorComponentGt
 from gwta.sema.types.gw108_vdc_relay_component_gt import Gw108VdcRelayComponentGt
+from gwta.sema.types.gw1_hvac_zone import Gw1HvacZone
 from gwta.sema.types.gw1_scada_device_type_gt import Gw1ScadaDeviceTypeGt
 from gwta.sema.types.gw1_unit_quantity_projection import Gw1UnitQuantityProjection
+from gwta.sema.types.gw_house0_hydronic import GwHouse0Hydronic
 from gwta.sema.types.house0_layout import House0Layout
 from gwta.sema.types.hubitat_component_gt import HubitatComponentGt
 from gwta.sema.types.hubitat_gt import HubitatGt
@@ -61,8 +63,10 @@ __all__ = [
     "GNodeGt",
     "Gw108GpioSensorComponentGt",
     "Gw108VdcRelayComponentGt",
+    "Gw1HvacZone",
     "Gw1ScadaDeviceTypeGt",
     "Gw1UnitQuantityProjection",
+    "GwHouse0Hydronic",
     "House0Layout",
     "HubitatComponentGt",
     "HubitatGt",

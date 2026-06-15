@@ -1,6 +1,6 @@
 metadata:
   generated_from: indexes/public_registry.yaml
-  generated_at: '2026-06-15T03:52:34Z'
+  generated_at: '2026-06-15T19:13:04Z'
   note: Transitive closure of initial_targets
 initial_targets:
 - gw.nolan.layout:000
@@ -34,6 +34,8 @@ worklist:
       path: definitions/formats/mac.address.yaml
     non.empty.string:
       path: definitions/formats/non.empty.string.yaml
+    non.negative.int:
+      path: definitions/formats/non.negative.int.yaml
     pascal.case:
       path: definitions/formats/pascal.case.yaml
     positive.float:
@@ -62,6 +64,9 @@ worklist:
     gpm.from.hz.method:
       '000':
         path: definitions/enums/gpm.from.hz.method/000.yaml
+    gw.house0.primary.flow.source:
+      '000':
+        path: definitions/enums/gw.house0.primary.flow.source/000.yaml
     gw1.actor.class:
       '012':
         path: definitions/enums/gw1.actor.class/012.yaml
@@ -142,12 +147,18 @@ worklist:
     g.node.gt:
       '004':
         path: definitions/types/g.node.gt/004.yaml
+    gw.house0.hydronic:
+      '000':
+        path: definitions/types/gw.house0.hydronic/000.yaml
     gw.house0.layout:
       '000':
         path: definitions/types/gw.house0.layout/000.yaml
     gw.nolan.layout:
       '000':
         path: definitions/types/gw.nolan.layout/000.yaml
+    gw1.hvac.zone:
+      '000':
+        path: definitions/types/gw1.hvac.zone/000.yaml
     gw1.scada.device.type.gt:
       '000':
         path: definitions/types/gw1.scada.device.type.gt/000.yaml
