@@ -5,6 +5,9 @@ enums:
   gpio.sense.mode: gpio.sense.mode
   gpm.from.hz.method: gpm.from.hz.method
   gw1.actor.class: gw1.actor.class
+  gw1.emission.method: gw1.emission.method
+  gw1.quantity: gw1.quantity
+  gw1.unit: gw1.unit
   hz.calc.method: hz.calc.method
   i2c.adc.channel: i2c.adc.channel
   relay.closed.or.open: relay.closed.or.open
@@ -16,13 +19,22 @@ enums:
 types:
   ads.channel.config: ads.channel.config
   ads111x.based.component.gt: ads111x.based.component.gt
+  ads111x.based.device.type.gt: ads111x.based.device.type.gt
   channel.config: channel.config
+  data.channel.gt: data.channel.gt
+  derived.channel.gt: derived.channel.gt
   dfr.component.gt: dfr.component.gt
   dfr.config: dfr.config
   egauge.register.config: egauge.register.config
   electric.meter.channel.config: electric.meter.channel.config
   electric.meter.component.gt: electric.meter.component.gt
+  electric.meter.device.type.gt: electric.meter.device.type.gt
   g.node.gt: g.node.gt
+  gw.house0.layout: house0.layout
+  gw.nolan.layout: nolan.layout
+  gw1.scada.device.type.gt: gw1.scada.device.type.gt
+  gw1.simple.sim.layout: simple.sim.layout
+  gw1.unit.quantity.projection: gw1.unit.quantity.projection
   gw108.gpio.sensor.component.gt: gw108.gpio.sensor.component.gt
   gw108.vdc.relay.component.gt: gw108.vdc.relay.component.gt
   hubitat.component.gt: hubitat.component.gt
@@ -41,4 +53,5 @@ types:
   sim.relay.component.gt: sim.relay.component.gt
   sim.sensor.component.gt: sim.sensor.component.gt
   spaceheat.node.gt: spaceheat.node.gt
+  spaceheat.telemetry.quantity.projection: spaceheat.telemetry.quantity.projection
   web.server.component.gt: web.server.component.gt

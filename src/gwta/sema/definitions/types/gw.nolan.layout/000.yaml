@@ -1,0 +1,113 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://schemas.electricity.works/types/gw.nolan.layout/000"
+
+title: "gw.nolan.layout"
+type: object
+description: >
+  A complete, self-contained configuration and topology snapshot for a Nolan
+  hydronic space heating system. The layout binds together identity (GNodes),
+  operational topology (ShNodes), telemetry (DataChannels and DerivedChannels),
+  hardware components, and actor configurations into a single semantically
+  consistent structure.
+
+  This type is intended to be a deployable artifact. All referenced entities
+  required for SCADA operation and coordination SHALL be present within the
+  layout, enabling validation and execution without external registry access.
+
+properties:
+
+  GNodes:
+    type: array
+    items:
+      $ref: "https://schemas.electricity.works/types/g.node.gt/004"
+    description: >
+      List of Grid Node identity objects included in this layout snapshot.
+      Each element is a fully specified g.node.gt instance; the set of
+      GNodeClass values that must be present is constrained by
+      NolanGNodeSet (axiom 1).
+
+  ShNodes:
+    type: array
+    items:
+      $ref: "https://schemas.electricity.works/types/spaceheat.node.gt/302"
+    description: >
+      List of Spaceheat nodes representing operational roles in the system.
+      Keys are SpaceheatName identifiers. Each node corresponds to a functional
+      role within the hydronic system.
+
+  DataChannels:
+    type: array
+    items:
+      $ref: "https://schemas.electricity.works/types/data.channel.gt/002"
+    description: >
+      List of raw telemetry channels produced by the SCADA system.
+      
+  DerivedChannels:
+    type: array
+    items:
+      $ref: "https://schemas.electricity.works/types/derived.channel.gt/002"
+    description: >
+      List of computed telemetry channels derived from other sources,
+      including raw data channels.
+
+  Components:
+    type: array
+    description: >
+      List of hardware components present in the system.
+    items:
+      oneOf:
+        - $ref: "https://schemas.electricity.works/types/electric.meter.component.gt/002"
+        - $ref: "https://schemas.electricity.works/types/gw108.gpio.sensor.component.gt/002"
+        - $ref: "https://schemas.electricity.works/types/gw108.vdc.relay.component.gt/002"
+        - $ref: "https://schemas.electricity.works/types/i2c.multichannel.dt.relay.component.gt/005"
+        - $ref: "https://schemas.electricity.works/types/i2c.thermistor.reader.component.gt/002"
+        - $ref: "https://schemas.electricity.works/types/pico.btu.meter.component.gt/001"
+        - $ref: "https://schemas.electricity.works/types/pico.tank.module.component.gt/012"
+        - $ref: "https://schemas.electricity.works/types/sim.pico.tank.module.component.gt/001"
+        - $ref: "https://schemas.electricity.works/types/web.server.component.gt/002"
+
+  DeviceTypes:
+    type: array
+    description: >
+      The specialized per-family device-type records (`<family>.device.type.gt`) for the
+      device categories present in `Components` that carry category-level data. A component
+      joins its record by the shared `DeviceType` value (see the device-type membership
+      axiom). Replaces the former make/model-as-CAC list.
+    items:
+      oneOf:
+        - $ref: "https://schemas.electricity.works/types/electric.meter.device.type.gt/000"
+        - $ref: "https://schemas.electricity.works/types/ads111x.based.device.type.gt/000"
+        - $ref: "https://schemas.electricity.works/types/gw1.scada.device.type.gt/000"
+
+  Hydronic:
+    type: object
+    description: >
+      Hydronic system configuration parameters used to determine required
+      SpaceHeat nodes, including store tank indexing and other topology-driving
+      values.
+    additionalProperties: true
+
+  TypeName:
+    const: "gw.nolan.layout"
+
+  Version:
+    const: "000"
+
+required:
+  - GNodes
+  - DeviceTypes
+  - Components
+  - ShNodes
+  - DataChannels
+  - DerivedChannels
+  - Hydronic
+  - TypeName
+  - Version
+
+additionalProperties: false
+
+x-gridworks:
+  owner: "gridworks-energy"
+
+  extended_description: >
+    TODO: add Nolan specific information (e.g. radiant floor heating, Gw108).

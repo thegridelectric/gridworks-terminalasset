@@ -19,11 +19,26 @@ types:
     versioning_strategy: literal
     versions:
       '000': definitions/types/ads111x.based.component.gt/000.yaml
+  ads111x.based.device.type.gt:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/ads111x.based.device.type.gt/000.yaml
   channel.config:
     latest_version: '000'
     versioning_strategy: literal
     versions:
       '000': definitions/types/channel.config/000.yaml
+  data.channel.gt:
+    latest_version: '002'
+    versioning_strategy: literal
+    versions:
+      '002': definitions/types/data.channel.gt/002.yaml
+  derived.channel.gt:
+    latest_version: '002'
+    versioning_strategy: literal
+    versions:
+      '002': definitions/types/derived.channel.gt/002.yaml
   dfr.component.gt:
     latest_version: '000'
     versioning_strategy: literal
@@ -49,11 +64,41 @@ types:
     versioning_strategy: literal
     versions:
       '002': definitions/types/electric.meter.component.gt/002.yaml
+  electric.meter.device.type.gt:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/electric.meter.device.type.gt/000.yaml
   g.node.gt:
     latest_version: '004'
     versioning_strategy: literal
     versions:
       '004': definitions/types/g.node.gt/004.yaml
+  gw.house0.layout:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/gw.house0.layout/000.yaml
+  gw.nolan.layout:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/gw.nolan.layout/000.yaml
+  gw1.scada.device.type.gt:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/gw1.scada.device.type.gt/000.yaml
+  gw1.simple.sim.layout:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/gw1.simple.sim.layout/000.yaml
+  gw1.unit.quantity.projection:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/gw1.unit.quantity.projection/000.yaml
   gw108.gpio.sensor.component.gt:
     latest_version: '002'
     versioning_strategy: literal
@@ -144,6 +189,11 @@ types:
     versioning_strategy: literal
     versions:
       '302': definitions/types/spaceheat.node.gt/302.yaml
+  spaceheat.telemetry.quantity.projection:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/spaceheat.telemetry.quantity.projection/000.yaml
   web.server.component.gt:
     latest_version: '002'
     versioning_strategy: literal
@@ -178,6 +228,23 @@ enums:
     latest_version: '012'
     versions:
       '012': definitions/enums/gw1.actor.class/012.yaml
+  gw1.emission.method:
+    enum_type: versioned
+    latest_version: '000'
+    versions:
+      '000': definitions/enums/gw1.emission.method/000.yaml
+  gw1.quantity:
+    enum_type: versioned
+    latest_version: '001'
+    versions:
+      '001': definitions/enums/gw1.quantity/001.yaml
+      '000': definitions/enums/gw1.quantity/000.yaml
+  gw1.unit:
+    enum_type: versioned
+    latest_version: '001'
+    versions:
+      '001': definitions/enums/gw1.unit/001.yaml
+      '000': definitions/enums/gw1.unit/000.yaml
   hz.calc.method:
     enum_type: versioned
     latest_version: '001'
@@ -217,9 +284,11 @@ enums:
 formats:
   handle.name: definitions/formats/handle.name.yaml
   left.right.dot: definitions/formats/left.right.dot.yaml
+  mac.address: definitions/formats/mac.address.yaml
   non.empty.string: definitions/formats/non.empty.string.yaml
   pascal.case: definitions/formats/pascal.case.yaml
   positive.float: definitions/formats/positive.float.yaml
   positive.int: definitions/formats/positive.int.yaml
   spaceheat.name: definitions/formats/spaceheat.name.yaml
+  utc.seconds: definitions/formats/utc.seconds.yaml
   uuid4.str: definitions/formats/uuid4.str.yaml

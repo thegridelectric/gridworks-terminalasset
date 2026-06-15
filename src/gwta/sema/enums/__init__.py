@@ -4,6 +4,9 @@ from gwta.sema.enums.g_node_status import GNodeStatus
 from gwta.sema.enums.gpio_sense_mode import GpioSenseMode
 from gwta.sema.enums.gpm_from_hz_method import GpmFromHzMethod
 from gwta.sema.enums.gw1_actor_class import Gw1ActorClass
+from gwta.sema.enums.gw1_emission_method import Gw1EmissionMethod
+from gwta.sema.enums.gw1_quantity import Gw1Quantity
+from gwta.sema.enums.gw1_unit import Gw1Unit
 from gwta.sema.enums.hz_calc_method import HzCalcMethod
 from gwta.sema.enums.i2c_adc_channel import I2cAdcChannel
 from gwta.sema.enums.relay_closed_or_open import RelayClosedOrOpen
@@ -20,6 +23,9 @@ __all__ = [
     "GpioSenseMode",
     "GpmFromHzMethod",
     "Gw1ActorClass",
+    "Gw1EmissionMethod",
+    "Gw1Quantity",
+    "Gw1Unit",
     "HzCalcMethod",
     "I2cAdcChannel",
     "RelayClosedOrOpen",

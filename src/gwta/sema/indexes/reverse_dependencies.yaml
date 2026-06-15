@@ -6,6 +6,15 @@ types:
     '000':
       used_by:
       - ads111x.based.component.gt:000
+  ads111x.based.component.gt:
+    '000':
+      used_by:
+      - gw.house0.layout:000
+  ads111x.based.device.type.gt:
+    '000':
+      used_by:
+      - gw.house0.layout:000
+      - gw.nolan.layout:000
   channel.config:
     '000':
       used_by:
@@ -18,6 +27,20 @@ types:
       - sim.pico.tank.module.component.gt:001
       - sim.sensor.component.gt:000
       - web.server.component.gt:002
+  data.channel.gt:
+    '002':
+      used_by:
+      - gw.house0.layout:000
+      - gw.nolan.layout:000
+  derived.channel.gt:
+    '002':
+      used_by:
+      - gw.house0.layout:000
+      - gw.nolan.layout:000
+  dfr.component.gt:
+    '000':
+      used_by:
+      - gw.house0.layout:000
   dfr.config:
     '000':
       used_by:
@@ -30,28 +53,109 @@ types:
     '000':
       used_by:
       - electric.meter.component.gt:002
+  electric.meter.component.gt:
+    '002':
+      used_by:
+      - gw.house0.layout:000
+      - gw.nolan.layout:000
+  electric.meter.device.type.gt:
+    '000':
+      used_by:
+      - gw.house0.layout:000
+      - gw.nolan.layout:000
+  g.node.gt:
+    '004':
+      used_by:
+      - gw.house0.layout:000
+      - gw.nolan.layout:000
+  gw1.scada.device.type.gt:
+    '000':
+      used_by:
+      - gw.house0.layout:000
+      - gw.nolan.layout:000
+  gw1.unit.quantity.projection:
+    '000':
+      used_by:
+      - derived.channel.gt:002
+  gw108.gpio.sensor.component.gt:
+    '002':
+      used_by:
+      - gw.nolan.layout:000
+  gw108.vdc.relay.component.gt:
+    '002':
+      used_by:
+      - gw.nolan.layout:000
+  hubitat.component.gt:
+    '000':
+      used_by:
+      - gw.house0.layout:000
   hubitat.gt:
     '000':
       used_by:
       - hubitat.component.gt:000
+  hubitat.poller.component.gt:
+    '000':
+      used_by:
+      - gw.house0.layout:000
   hubitat.poller.gt:
     '000':
       used_by:
       - hubitat.poller.component.gt:000
+  i2c.multichannel.dt.relay.component.gt:
+    '005':
+      used_by:
+      - gw.house0.layout:000
+      - gw.nolan.layout:000
   i2c.thermistor.channel.config:
     '001':
       used_by:
       - i2c.thermistor.reader.component.gt:002
+  i2c.thermistor.reader.component.gt:
+    '002':
+      used_by:
+      - gw.nolan.layout:000
   maker.api.attribute.gt:
     '000':
       used_by:
       - hubitat.poller.gt:000
+  pico.btu.meter.component.gt:
+    '001':
+      used_by:
+      - gw.nolan.layout:000
+  pico.flow.module.component.gt:
+    '001':
+      used_by:
+      - gw.house0.layout:000
+  pico.tank.module.component.gt:
+    '012':
+      used_by:
+      - gw.house0.layout:000
+      - gw.nolan.layout:000
   relay.actor.config:
     '003':
       used_by:
       - gw108.vdc.relay.component.gt:002
       - i2c.multichannel.dt.relay.component.gt:005
       - sim.relay.component.gt:000
+  sim.pico.tank.module.component.gt:
+    '001':
+      used_by:
+      - gw.house0.layout:000
+      - gw.nolan.layout:000
+  spaceheat.node.gt:
+    '302':
+      used_by:
+      - gw.house0.layout:000
+      - gw.nolan.layout:000
+  spaceheat.telemetry.quantity.projection:
+    '000':
+      used_by:
+      - data.channel.gt:002
+  web.server.component.gt:
+    '002':
+      used_by:
+      - gw.house0.layout:000
+      - gw.nolan.layout:000
 enums:
   base.g.node.class:
     '000':
@@ -78,6 +182,26 @@ enums:
     '012':
       used_by:
       - spaceheat.node.gt:302
+  gw1.emission.method:
+    '000':
+      used_by:
+      - derived.channel.gt:002
+  gw1.quantity:
+    '000':
+      used_by:
+      - data.channel.gt:002
+      - derived.channel.gt:002
+      - spaceheat.telemetry.quantity.projection:000
+    '001':
+      used_by:
+      - gw1.unit.quantity.projection:000
+  gw1.unit:
+    '000':
+      used_by:
+      - derived.channel.gt:002
+    '001':
+      used_by:
+      - gw1.unit.quantity.projection:000
   hz.calc.method:
     '001':
       used_by:
@@ -98,7 +222,11 @@ enums:
   spaceheat.telemetry.name:
     '007':
       used_by:
+      - ads111x.based.device.type.gt:000
+      - data.channel.gt:002
+      - electric.meter.device.type.gt:000
       - maker.api.attribute.gt:000
+      - spaceheat.telemetry.quantity.projection:000
   spaceheat.unit:
     '001':
       used_by:
@@ -126,8 +254,13 @@ formats:
     - spaceheat.node.gt:302
   left.right.dot:
     used_by:
+    - data.channel.gt:002
+    - derived.channel.gt:002
     - g.node.gt:004
     - relay.actor.config:003
+  mac.address:
+    used_by:
+    - hubitat.gt:000
   non.empty.string:
     used_by:
     - relay.actor.config:003
@@ -135,8 +268,11 @@ formats:
     used_by:
     - ads.channel.config:000
     - ads111x.based.component.gt:000
+    - ads111x.based.device.type.gt:000
     - dfr.component.gt:000
     - electric.meter.component.gt:002
+    - electric.meter.device.type.gt:000
+    - gw1.scada.device.type.gt:000
     - gw108.gpio.sensor.component.gt:002
     - gw108.vdc.relay.component.gt:002
     - hubitat.component.gt:000
@@ -157,11 +293,15 @@ formats:
   positive.int:
     used_by:
     - ads.channel.config:000
+    - ads111x.based.device.type.gt:000
     - channel.config:000
+    - derived.channel.gt:002
     - dfr.component.gt:000
     - dfr.config:000
     - electric.meter.channel.config:000
     - electric.meter.component.gt:002
+    - electric.meter.device.type.gt:000
+    - gw1.scada.device.type.gt:000
     - gw108.gpio.sensor.component.gt:002
     - gw108.vdc.relay.component.gt:002
     - hubitat.poller.gt:000
@@ -174,6 +314,8 @@ formats:
     used_by:
     - ads.channel.config:000
     - channel.config:000
+    - data.channel.gt:002
+    - derived.channel.gt:002
     - dfr.config:000
     - electric.meter.channel.config:000
     - i2c.multichannel.dt.relay.component.gt:005
@@ -184,9 +326,14 @@ formats:
     - pico.flow.module.component.gt:001
     - relay.actor.config:003
     - spaceheat.node.gt:302
+  utc.seconds:
+    used_by:
+    - data.channel.gt:002
   uuid4.str:
     used_by:
     - ads111x.based.component.gt:000
+    - data.channel.gt:002
+    - derived.channel.gt:002
     - dfr.component.gt:000
     - electric.meter.component.gt:002
     - g.node.gt:004

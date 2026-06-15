@@ -17,12 +17,39 @@ types:
       "000":
         summary: "Initial Sema version (flattened from the scada Ads111xBasedComponentGt runtime)."
 
+  ads111x.based.device.type.gt:
+    latest_version: "000"
+    versioning_strategy: "literal"
+    versions:
+      "000":
+        summary: "Initial draft (specialized device-type record; per-family successor to the field ads111x.based.cac.gt, keyed by DeviceType)."
+
   channel.config:
     latest_version: "000"
     versioning_strategy: "literal"
     versions:
       "000":
         summary: "Initial Sema version"
+
+  data.channel.gt:
+    latest_version: "002"
+    versioning_strategy: "literal"
+    versions:
+      "002":
+        summary: >
+          - Quantity: add
+          - TelemetryName: spaceheat.telemetry.name:006 -> 007
+          - TelemetryQuantityConsistency axiom: add
+
+  derived.channel.gt:
+    latest_version: "002"
+    versioning_strategy: "literal"
+    versions:
+      "002":
+        summary: >
+          - OutputUnit: required
+          - OutputQuantity: add
+          - OutputUnitQuantityConsistency axiom: add
 
   dfr.component.gt:
     latest_version: "000"
@@ -59,12 +86,54 @@ types:
       "002":
         summary: "- ComponentAttributeClassId (cac UUID) -> DeviceType (gw1.device.type value, pascal.case). Context-dependent: the device type lived on the referenced cac, not the component."
 
+  electric.meter.device.type.gt:
+    latest_version: "000"
+    versioning_strategy: "literal"
+    versions:
+      "000":
+        summary: "Initial draft (specialized device-type record; replaces electric.meter.cac.gt category data, keyed by DeviceType)."
+
   g.node.gt:
     latest_version: "004"
     versioning_strategy: "literal"
     versions:
       "004":
         summary: "Baseline runtime version (no prior version tracked)."
+
+  gw.house0.layout:
+    latest_version: "000"
+    versioning_strategy: "literal"
+    versions:
+      "000":
+        summary: "House0-fleet layout shape laid out (mirrors gw.nolan.layout, new DeviceType model, House0 component set: eGauge / ADS111x TSnap / Krida / DFRobot / pico flow / tank + sim-tank / Hubitat + poller / web-server). Optional-first — only TypeName + Version required while collections + axioms are built up bit by bit."
+
+  gw.nolan.layout:
+    latest_version: "000"
+    versioning_strategy: "literal"
+    versions:
+      "000":
+        summary: "Un-drafted for hardware-layout-pass-one (full layouts now, axioms later). Axioms stashed to stash_axioms.md and stripped from 000.yaml; Components are the cac-free DeviceType versions; DeviceTypes holds the specialized <family>.device.type.gt records (electric.meter / ads111x.based / gw1.scada), now non-draft; the gw108.gpio.relay placeholder was dropped (the real relay is gw108.vdc.relay)."
+
+  gw1.scada.device.type.gt:
+    latest_version: "000"
+    versioning_strategy: "literal"
+    versions:
+      "000":
+        summary: "Initial draft minimal stub (full NativeGpio/I2c*/Dac board descriptor deferred to gw108 codification / spruce-untangle)."
+
+  gw1.simple.sim.layout:
+    latest_version: "000"
+    versioning_strategy: "literal"
+    versions:
+      "000":
+        summary: "Minimal baseline stub (TypeName + Version only) to seed the layout round-trip loop; built up bit by bit toward the simulated plant's needs."
+
+  gw1.unit.quantity.projection:
+    latest_version: "000"
+    versioning_strategy: "literal"
+    versions:
+      "000":
+        summary: "Initial Sema version"
 
   gw108.gpio.sensor.component.gt:
     latest_version: "002"
@@ -92,7 +161,7 @@ types:
     versioning_strategy: "literal"
     versions:
       "000":
-        summary: "Initial Sema version (flattened from the scada HubitatGt runtime; derived URL helpers excluded from the contract)."
+        summary: "Flattened from the scada HubitatGt runtime; derived URL helpers excluded. MacAddress moved type:string -> $ref formats/mac.address (lowercase-hex constraint; edited in place, not yet web-published)."
 
   hubitat.poller.component.gt:
     latest_version: "000"
@@ -196,6 +265,13 @@ types:
       "302":
         summary: "- ActorClass: gw1.actor.class:011 -> 012"
 
+  spaceheat.telemetry.quantity.projection:
+    latest_version: "000"
+    versioning_strategy: "literal"
+    versions:
+      "000":
+        summary: "Initial Sema version"
+
   web.server.component.gt:
     latest_version: "002"
     versioning_strategy: "literal"
@@ -242,6 +318,31 @@ enums:
         added_values:
           - "SimSensorActor"
           - "SimRelayActor"
+
+  gw1.emission.method:
+    enum_type: "versioned"
+    note: "This enum is versioned; new versions are additive only."
+    versions:
+      "000": {}
+
+  gw1.quantity:
+    enum_type: "versioned"
+    note: "This enum is versioned; new versions are additive only."
+    versions:
+      "001":
+        added_values:
+          - "Time"
+      "000": {}
+
+  gw1.unit:
+    enum_type: "versioned"
+    note: "This enum is versioned; new versions are additive only."
+    versions:
+      "001":
+        added_values:
+          - "Seconds"
+          - "SecondsX10"
+      "000": {}
 
   hz.calc.method:
     enum_type: "versioned"
