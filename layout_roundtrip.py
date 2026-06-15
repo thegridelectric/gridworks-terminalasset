@@ -26,17 +26,22 @@ SCADA_RETURN = SCADA / "gw_spaceheat" / "layout_roundtrip_return.py"
 
 
 def main() -> int:
-    type_name = sys.argv[1] if len(sys.argv) > 1 else "gw.house0.layout"
+    arg = sys.argv[1] if len(sys.argv) > 1 else "gw.house0.layout"
     SHARED.mkdir(parents=True, exist_ok=True)
     outbound_path = SHARED / "outbound.json"
     returned_path = SHARED / "returned.json"
 
-    # SEND: build a minimal instance and canonicalize it through the gwta snapshot.
-    cls = default_codec.registry.get(type_name)
-    if cls is None:
-        print(f"gwta snapshot has no type {type_name!r}")
-        return 2
-    instance = {"TypeName": type_name, "Version": cls.version_value()}
+    # SEND: a full layout from a JSON file, or a minimal instance by type name.
+    if arg.endswith(".json"):
+        instance = json.loads(Path(arg).read_text())
+        type_name = instance["TypeName"]
+    else:
+        type_name = arg
+        cls = default_codec.registry.get(type_name)
+        if cls is None:
+            print(f"gwta snapshot has no type {type_name!r}")
+            return 2
+        instance = {"TypeName": type_name, "Version": cls.version_value()}
     outbound = default_codec.from_dict(instance).to_dict()
     outbound_path.write_text(json.dumps(outbound, indent=2))
     print(f"gwta: sent {type_name} -> {outbound_path}")
