@@ -49,6 +49,11 @@ types:
     versioning_strategy: literal
     versions:
       '002': definitions/types/electric.meter.component.gt/002.yaml
+  g.node.gt:
+    latest_version: '004'
+    versioning_strategy: literal
+    versions:
+      '004': definitions/types/g.node.gt/004.yaml
   gw108.gpio.sensor.component.gt:
     latest_version: '002'
     versioning_strategy: literal
@@ -145,9 +150,19 @@ types:
     versions:
       '002': definitions/types/web.server.component.gt/002.yaml
 enums:
+  base.g.node.class:
+    enum_type: versioned
+    latest_version: '000'
+    versions:
+      '000': definitions/enums/base.g.node.class/000.yaml
   change.relay.state:
     enum_type: literal
     schema: definitions/enums/change.relay.state/000.yaml
+  g.node.status:
+    enum_type: versioned
+    latest_version: '000'
+    versions:
+      '000': definitions/enums/g.node.status/000.yaml
   gpio.sense.mode:
     enum_type: versioned
     latest_version: '000'

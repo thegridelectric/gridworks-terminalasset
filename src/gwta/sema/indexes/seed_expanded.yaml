@@ -1,11 +1,12 @@
 metadata:
   generated_from: indexes/public_registry.yaml
-  generated_at: '2026-06-15T01:28:05Z'
+  generated_at: '2026-06-15T01:57:03Z'
   note: Transitive closure of initial_targets
 initial_targets:
 - ads111x.based.component.gt:000
 - dfr.component.gt:000
 - electric.meter.component.gt:002
+- g.node.gt:004
 - gw108.gpio.sensor.component.gt:002
 - gw108.vdc.relay.component.gt:002
 - hubitat.component.gt:000
@@ -39,9 +40,15 @@ worklist:
     uuid4.str:
       path: definitions/formats/uuid4.str.yaml
   enums:
+    base.g.node.class:
+      '000':
+        path: definitions/enums/base.g.node.class/000.yaml
     change.relay.state:
       '000':
         path: definitions/enums/change.relay.state/000.yaml
+    g.node.status:
+      '000':
+        path: definitions/enums/g.node.status/000.yaml
     gpio.sense.mode:
       '000':
         path: definitions/enums/gpio.sense.mode/000.yaml
@@ -100,6 +107,9 @@ worklist:
     electric.meter.component.gt:
       '002':
         path: definitions/types/electric.meter.component.gt/002.yaml
+    g.node.gt:
+      '004':
+        path: definitions/types/g.node.gt/004.yaml
     gw108.gpio.sensor.component.gt:
       '002':
         path: definitions/types/gw108.gpio.sensor.component.gt/002.yaml

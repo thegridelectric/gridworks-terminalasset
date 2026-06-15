@@ -1,4 +1,6 @@
+from gwta.sema.enums.base_g_node_class import BaseGNodeClass
 from gwta.sema.enums.change_relay_state import ChangeRelayState
+from gwta.sema.enums.g_node_status import GNodeStatus
 from gwta.sema.enums.gpio_sense_mode import GpioSenseMode
 from gwta.sema.enums.gpm_from_hz_method import GpmFromHzMethod
 from gwta.sema.enums.gw1_actor_class import Gw1ActorClass
@@ -12,7 +14,9 @@ from gwta.sema.enums.temp_calc_method import TempCalcMethod
 from gwta.sema.enums.thermistor_data_method import ThermistorDataMethod
 
 __all__ = [
+    "BaseGNodeClass",
     "ChangeRelayState",
+    "GNodeStatus",
     "GpioSenseMode",
     "GpmFromHzMethod",
     "Gw1ActorClass",

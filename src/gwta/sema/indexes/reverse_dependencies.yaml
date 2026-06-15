@@ -53,10 +53,18 @@ types:
       - i2c.multichannel.dt.relay.component.gt:005
       - sim.relay.component.gt:000
 enums:
+  base.g.node.class:
+    '000':
+      used_by:
+      - g.node.gt:004
   change.relay.state:
     '000':
       used_by:
       - relay.actor.config:003
+  g.node.status:
+    '000':
+      used_by:
+      - g.node.gt:004
   gpio.sense.mode:
     '000':
       used_by:
@@ -118,6 +126,7 @@ formats:
     - spaceheat.node.gt:302
   left.right.dot:
     used_by:
+    - g.node.gt:004
     - relay.actor.config:003
   non.empty.string:
     used_by:
@@ -180,6 +189,7 @@ formats:
     - ads111x.based.component.gt:000
     - dfr.component.gt:000
     - electric.meter.component.gt:002
+    - g.node.gt:004
     - gw108.gpio.sensor.component.gt:002
     - gw108.vdc.relay.component.gt:002
     - hubitat.component.gt:000

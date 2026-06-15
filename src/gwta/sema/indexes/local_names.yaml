@@ -1,5 +1,7 @@
 enums:
+  base.g.node.class: base.g.node.class
   change.relay.state: change.relay.state
+  g.node.status: g.node.status
   gpio.sense.mode: gpio.sense.mode
   gpm.from.hz.method: gpm.from.hz.method
   gw1.actor.class: gw1.actor.class
@@ -20,6 +22,7 @@ types:
   egauge.register.config: egauge.register.config
   electric.meter.channel.config: electric.meter.channel.config
   electric.meter.component.gt: electric.meter.component.gt
+  g.node.gt: g.node.gt
   gw108.gpio.sensor.component.gt: gw108.gpio.sensor.component.gt
   gw108.vdc.relay.component.gt: gw108.vdc.relay.component.gt
   hubitat.component.gt: hubitat.component.gt

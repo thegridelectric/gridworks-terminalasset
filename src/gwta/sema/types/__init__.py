@@ -6,6 +6,7 @@ from gwta.sema.types.dfr_config import DfrConfig
 from gwta.sema.types.egauge_register_config import EgaugeRegisterConfig
 from gwta.sema.types.electric_meter_channel_config import ElectricMeterChannelConfig
 from gwta.sema.types.electric_meter_component_gt import ElectricMeterComponentGt
+from gwta.sema.types.g_node_gt import GNodeGt
 from gwta.sema.types.gw108_gpio_sensor_component_gt import Gw108GpioSensorComponentGt
 from gwta.sema.types.gw108_vdc_relay_component_gt import Gw108VdcRelayComponentGt
 from gwta.sema.types.hubitat_component_gt import HubitatComponentGt
@@ -41,6 +42,7 @@ __all__ = [
     "EgaugeRegisterConfig",
     "ElectricMeterChannelConfig",
     "ElectricMeterComponentGt",
+    "GNodeGt",
     "Gw108GpioSensorComponentGt",
     "Gw108VdcRelayComponentGt",
     "HubitatComponentGt",
