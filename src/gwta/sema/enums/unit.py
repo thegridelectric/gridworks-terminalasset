@@ -3,7 +3,7 @@ from enum import auto
 from gwta.sema.enums.gw_str_enum import SemaEnum
 
 
-class Gw1Unit(SemaEnum):
+class Unit(SemaEnum):
     """Sema: https://schemas.electricity.works/enums/gw1.unit/001"""
 
     Unknown = auto()
@@ -18,7 +18,7 @@ class Gw1Unit(SemaEnum):
     Milliseconds = auto()
 
     @classmethod
-    def default(cls) -> "Gw1Unit":
+    def default(cls) -> "Unit":
         return cls.Unknown
 
     @classmethod

@@ -3,7 +3,7 @@ from enum import auto
 from gwta.sema.enums.gw_str_enum import SemaEnum
 
 
-class Gw1EmissionMethod(SemaEnum):
+class EmissionMethod(SemaEnum):
     """Sema: https://schemas.electricity.works/enums/gw1.emission.method/000"""
 
     OnTrigger = auto()
@@ -11,7 +11,7 @@ class Gw1EmissionMethod(SemaEnum):
     AsyncAndPeriodic = auto()
 
     @classmethod
-    def default(cls) -> "Gw1EmissionMethod":
+    def default(cls) -> "EmissionMethod":
         return cls.OnTrigger
 
     @classmethod

@@ -2,7 +2,7 @@ from typing import Literal
 from pydantic import ValidationError, model_validator
 from gwta.sema.base import SemaType
 from gwta.sema.enums import SpaceheatTelemetryName
-from gwta.sema.enums.old_versions.gw1_quantity_000 import Gw1Quantity000
+from gwta.sema.enums.old_versions.quantity_000 import Quantity000
 from gwta.sema.property_format import LeftRightDot
 from gwta.sema.property_format import SpaceheatName
 from gwta.sema.property_format import UTCSeconds
@@ -20,7 +20,7 @@ class DataChannelGt(SemaType):
     about_node_name: SpaceheatName
     captured_by_node_name: SpaceheatName
     telemetry_name: SpaceheatTelemetryName
-    quantity: Gw1Quantity000
+    quantity: Quantity000
     terminal_asset_alias: LeftRightDot
     in_power_metering: bool | None = None
     start_s: UTCSeconds | None = None

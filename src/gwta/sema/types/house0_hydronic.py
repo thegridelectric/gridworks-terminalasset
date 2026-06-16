@@ -1,19 +1,19 @@
 from typing import Literal, Self
 from pydantic import model_validator
 from gwta.sema.base import SemaType
-from gwta.sema.enums import GwHouse0PrimaryFlowSource
+from gwta.sema.enums import House0PrimaryFlowSource
 from gwta.sema.property_format import NonNegativeInt
-from gwta.sema.types.gw1_hvac_zone import Gw1HvacZone
+from gwta.sema.types.hvac_zone import HvacZone
 
 
-class GwHouse0Hydronic(SemaType):
+class House0Hydronic(SemaType):
     """Sema: https://schemas.electricity.works/types/gw.house0.hydronic/000"""
 
-    zones: list[Gw1HvacZone]
+    zones: list[HvacZone]
     total_store_tanks: NonNegativeInt
     use_sieg_loop: bool
     sieg_loop_plumbed: bool
-    primary_flow_source: GwHouse0PrimaryFlowSource
+    primary_flow_source: House0PrimaryFlowSource
     strategy: str
     type_name: Literal["gw.house0.hydronic"] = "gw.house0.hydronic"
     version: Literal["000"] = "000"

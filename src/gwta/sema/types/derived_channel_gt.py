@@ -1,15 +1,14 @@
 from typing import Any, Literal
 from pydantic import model_validator
 from gwta.sema.base import SemaType
-from gwta.sema.enums import Gw1EmissionMethod
-from gwta.sema.enums import Gw1Unit
-from gwta.sema.enums.old_versions.gw1_quantity_000 import Gw1Quantity000
-from gwta.sema.enums.old_versions.gw1_unit_000 import Gw1Unit000
+from gwta.sema.enums import EmissionMethod
+from gwta.sema.enums import Quantity
+from gwta.sema.enums import Unit
 from gwta.sema.property_format import LeftRightDot
 from gwta.sema.property_format import PositiveInt
 from gwta.sema.property_format import SpaceheatName
 from gwta.sema.property_format import UUID4Str
-from gwta.sema.types.gw1_unit_quantity_projection import Gw1UnitQuantityProjection
+from gwta.sema.types.unit_quantity_projection import UnitQuantityProjection
 
 
 class DerivedChannelGt(SemaType):
@@ -20,9 +19,9 @@ class DerivedChannelGt(SemaType):
     created_by_node_name: SpaceheatName
     strategy: SpaceheatName
     input_channel_names: list[SpaceheatName]
-    output_unit: Gw1Unit000
-    output_quantity: Gw1Quantity000
-    emission_method: Gw1EmissionMethod
+    output_unit: Unit
+    output_quantity: Quantity
+    emission_method: EmissionMethod
     async_emit_delta: PositiveInt | None = None
     emit_period_s: PositiveInt | None = None
     parameters: dict[str, Any] | None = None
@@ -42,17 +41,17 @@ class DerivedChannelGt(SemaType):
           Periodic → EmitPeriodS present, AsyncEmitDelta absent
           AsyncAndPeriodic → both EmitPeriodS and AsyncEmitDelta present
         """
-        if self.emission_method == Gw1EmissionMethod.OnTrigger:
+        if self.emission_method == EmissionMethod.OnTrigger:
             if self.emit_period_s is not None or self.async_emit_delta is not None:
                 raise ValueError(
                     "Axiom 1 failed: OnTrigger must not include emit_period_s or async_emit_delta."
                 )
-        elif self.emission_method == Gw1EmissionMethod.Periodic:
+        elif self.emission_method == EmissionMethod.Periodic:
             if self.emit_period_s is None or self.async_emit_delta is not None:
                 raise ValueError(
                     "Axiom 1 failed: Periodic requires emit_period_s and forbids async_emit_delta."
                 )
-        elif self.emission_method == Gw1EmissionMethod.AsyncAndPeriodic:
+        elif self.emission_method == EmissionMethod.AsyncAndPeriodic:
             if self.emit_period_s is None or self.async_emit_delta is None:
                 raise ValueError(
                     "Axiom 1 failed: AsyncAndPeriodic requires both emit_period_s and async_emit_delta."
@@ -66,7 +65,7 @@ class DerivedChannelGt(SemaType):
         OutputQuantity SHALL equal the Quantity defined by the canonical
         gw1.unit.quantity.projection:000 instance for the specified OutputUnit.
         """
-        expected = Gw1UnitQuantityProjection.project(Gw1Unit(self.output_unit.value))
+        expected = UnitQuantityProjection.project(Unit(self.output_unit.value))
         if self.output_quantity != expected:
             raise ValueError(
                 "Axiom 2 failed: output_quantity must match the canonical quantity "

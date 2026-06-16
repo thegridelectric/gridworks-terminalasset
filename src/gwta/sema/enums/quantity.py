@@ -3,8 +3,8 @@ from enum import auto
 from gwta.sema.enums.gw_str_enum import SemaEnum
 
 
-class Gw1Quantity000(SemaEnum):
-    """Sema: https://schemas.electricity.works/enums/gw1.quantity/000"""
+class Quantity(SemaEnum):
+    """Sema: https://schemas.electricity.works/enums/gw1.quantity/001"""
 
     Unknown = auto()
     Unitless = auto()
@@ -17,9 +17,10 @@ class Gw1Quantity000(SemaEnum):
     Current = auto()
     Percent = auto()
     Frequency = auto()
+    Time = auto()
 
     @classmethod
-    def default(cls) -> "Gw1Quantity000":
+    def default(cls) -> "Quantity":
         return cls.Unknown
 
     @classmethod
@@ -32,4 +33,4 @@ class Gw1Quantity000(SemaEnum):
 
     @classmethod
     def enum_version(cls) -> str:
-        return "000"
+        return "001"

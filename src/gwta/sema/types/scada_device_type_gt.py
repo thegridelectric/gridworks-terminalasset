@@ -4,7 +4,7 @@ from gwta.sema.property_format import PascalCase
 from gwta.sema.property_format import PositiveInt
 
 
-class Gw1ScadaDeviceTypeGt(SemaType):
+class ScadaDeviceTypeGt(SemaType):
     """Sema: https://schemas.electricity.works/types/gw1.scada.device.type.gt/000"""
 
     device_type: PascalCase

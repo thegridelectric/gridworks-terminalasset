@@ -61,9 +61,7 @@ types:
     '002':
       enums:
       - gw1.emission.method:000
-      - gw1.quantity:000
       - gw1.quantity:001
-      - gw1.unit:000
       - gw1.unit:001
       formats:
       - left.right.dot
@@ -164,7 +162,6 @@ types:
       - gw1.emission.method:000
       - gw1.quantity:000
       - gw1.quantity:001
-      - gw1.unit:000
       - gw1.unit:001
       - hz.calc.method:001
       - relay.closed.or.open:000
@@ -230,7 +227,6 @@ types:
       - gw1.emission.method:000
       - gw1.quantity:000
       - gw1.quantity:001
-      - gw1.unit:000
       - gw1.unit:001
       - hz.calc.method:001
       - i2c.adc.channel:000

@@ -259,7 +259,6 @@ enums:
     latest_version: '001'
     versions:
       '001': definitions/enums/gw1.unit/001.yaml
-      '000': definitions/enums/gw1.unit/000.yaml
   hz.calc.method:
     enum_type: versioned
     latest_version: '001'

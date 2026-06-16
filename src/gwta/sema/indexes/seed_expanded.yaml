@@ -1,6 +1,6 @@
 metadata:
   generated_from: indexes/public_registry.yaml
-  generated_at: '2026-06-15T19:13:04Z'
+  generated_at: '2026-06-16T03:02:57Z'
   note: Transitive closure of initial_targets
 initial_targets:
 - gw.nolan.layout:000
@@ -79,8 +79,6 @@ worklist:
       '001':
         path: definitions/enums/gw1.quantity/001.yaml
     gw1.unit:
-      '000':
-        path: definitions/enums/gw1.unit/000.yaml
       '001':
         path: definitions/enums/gw1.unit/001.yaml
     hz.calc.method:

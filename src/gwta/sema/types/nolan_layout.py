@@ -8,7 +8,6 @@ from gwta.sema.types.electric_meter_device_type_gt import ElectricMeterDeviceTyp
 from gwta.sema.types.g_node_gt import GNodeGt
 from gwta.sema.types.gw108_gpio_sensor_component_gt import Gw108GpioSensorComponentGt
 from gwta.sema.types.gw108_vdc_relay_component_gt import Gw108VdcRelayComponentGt
-from gwta.sema.types.gw1_scada_device_type_gt import Gw1ScadaDeviceTypeGt
 from gwta.sema.types.i2c_multichannel_dt_relay_component_gt import (
     I2cMultichannelDtRelayComponentGt,
 )
@@ -17,6 +16,7 @@ from gwta.sema.types.i2c_thermistor_reader_component_gt import (
 )
 from gwta.sema.types.pico_btu_meter_component_gt import PicoBtuMeterComponentGt
 from gwta.sema.types.pico_tank_module_component_gt import PicoTankModuleComponentGt
+from gwta.sema.types.scada_device_type_gt import ScadaDeviceTypeGt
 from gwta.sema.types.sim_pico_tank_module_component_gt import (
     SimPicoTankModuleComponentGt,
 )
@@ -43,7 +43,7 @@ class NolanLayout(SemaType):
         | WebServerComponentGt
     ]
     device_types: list[
-        ElectricMeterDeviceTypeGt | Ads111xBasedDeviceTypeGt | Gw1ScadaDeviceTypeGt
+        ElectricMeterDeviceTypeGt | Ads111xBasedDeviceTypeGt | ScadaDeviceTypeGt
     ]
     hydronic: dict[str, Any]
     type_name: Literal["gw.nolan.layout"] = "gw.nolan.layout"

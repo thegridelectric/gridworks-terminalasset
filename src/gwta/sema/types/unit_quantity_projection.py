@@ -1,41 +1,41 @@
 from typing import Literal
 from pydantic import model_validator
 from gwta.sema.base import SemaType
-from gwta.sema.enums import Gw1Quantity
-from gwta.sema.enums import Gw1Unit
+from gwta.sema.enums import Quantity
+from gwta.sema.enums import Unit
 
 
 _PROJECTION = {
-    Gw1Unit.Unknown: Gw1Quantity.Unknown,
-    Gw1Unit.Unitless: Gw1Quantity.Unitless,
-    Gw1Unit.FahrenheitX100: Gw1Quantity.Temperature,
-    Gw1Unit.Watts: Gw1Quantity.Power,
-    Gw1Unit.WattHours: Gw1Quantity.Energy,
-    Gw1Unit.Gallons: Gw1Quantity.Volume,
-    Gw1Unit.GpmX100: Gw1Quantity.FlowRate,
-    Gw1Unit.Seconds: Gw1Quantity.Time,
-    Gw1Unit.SecondsX10: Gw1Quantity.Time,
-    Gw1Unit.Milliseconds: Gw1Quantity.Time,
+    Unit.Unknown: Quantity.Unknown,
+    Unit.Unitless: Quantity.Unitless,
+    Unit.FahrenheitX100: Quantity.Temperature,
+    Unit.Watts: Quantity.Power,
+    Unit.WattHours: Quantity.Energy,
+    Unit.Gallons: Quantity.Volume,
+    Unit.GpmX100: Quantity.FlowRate,
+    Unit.Seconds: Quantity.Time,
+    Unit.SecondsX10: Quantity.Time,
+    Unit.Milliseconds: Quantity.Time,
 }
 
 
-class Gw1UnitQuantityProjection(SemaType):
+class UnitQuantityProjection(SemaType):
     """Sema: https://schemas.electricity.works/types/gw1.unit.quantity.projection/000"""
 
-    unit: Gw1Unit
-    quantity: Gw1Quantity
+    unit: Unit
+    quantity: Quantity
     type_name: Literal["gw1.unit.quantity.projection"] = "gw1.unit.quantity.projection"
     version: Literal["000"] = "000"
 
     @classmethod
-    def project(cls, unit: Gw1Unit) -> Gw1Quantity:
+    def project(cls, unit: Unit) -> Quantity:
         expected = _PROJECTION.get(unit)
         if expected is None:
             raise ValueError(f"No projection defined for unit {unit!r}.")
         return expected
 
     @model_validator(mode="after")
-    def check_axiom_1(self) -> "Gw1UnitQuantityProjection":
+    def check_axiom_1(self) -> "UnitQuantityProjection":
         """
         Axiom 1: EnumeratedProjectionMapping
         Every (Unit, Quantity) pair SHALL match the mapping declared in

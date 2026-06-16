@@ -4,7 +4,7 @@ from gwta.sema.base import SemaType
 from gwta.sema.property_format import SpaceheatName
 
 
-class Gw1HvacZone(SemaType):
+class HvacZone(SemaType):
     """Sema: https://schemas.electricity.works/types/gw1.hvac.zone/000"""
 
     name: SpaceheatName

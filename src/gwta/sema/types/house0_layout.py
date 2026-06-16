@@ -9,8 +9,7 @@ from gwta.sema.types.dfr_component_gt import DfrComponentGt
 from gwta.sema.types.electric_meter_component_gt import ElectricMeterComponentGt
 from gwta.sema.types.electric_meter_device_type_gt import ElectricMeterDeviceTypeGt
 from gwta.sema.types.g_node_gt import GNodeGt
-from gwta.sema.types.gw1_scada_device_type_gt import Gw1ScadaDeviceTypeGt
-from gwta.sema.types.gw_house0_hydronic import GwHouse0Hydronic
+from gwta.sema.types.house0_hydronic import House0Hydronic
 from gwta.sema.types.hubitat_component_gt import HubitatComponentGt
 from gwta.sema.types.hubitat_poller_component_gt import HubitatPollerComponentGt
 from gwta.sema.types.i2c_multichannel_dt_relay_component_gt import (
@@ -19,6 +18,7 @@ from gwta.sema.types.i2c_multichannel_dt_relay_component_gt import (
 from gwta.sema.types.pico_btu_meter_component_gt import PicoBtuMeterComponentGt
 from gwta.sema.types.pico_flow_module_component_gt import PicoFlowModuleComponentGt
 from gwta.sema.types.pico_tank_module_component_gt import PicoTankModuleComponentGt
+from gwta.sema.types.scada_device_type_gt import ScadaDeviceTypeGt
 from gwta.sema.types.sim_pico_tank_module_component_gt import (
     SimPicoTankModuleComponentGt,
 )
@@ -50,12 +50,10 @@ class House0Layout(SemaType):
         | None
     ) = None
     device_types: (
-        list[
-            ElectricMeterDeviceTypeGt | Ads111xBasedDeviceTypeGt | Gw1ScadaDeviceTypeGt
-        ]
+        list[ElectricMeterDeviceTypeGt | Ads111xBasedDeviceTypeGt | ScadaDeviceTypeGt]
         | None
     ) = None
-    hydronic: GwHouse0Hydronic | None = None
+    hydronic: House0Hydronic | None = None
     type_name: Literal["gw.house0.layout"] = "gw.house0.layout"
     version: Literal["000"] = "000"
 

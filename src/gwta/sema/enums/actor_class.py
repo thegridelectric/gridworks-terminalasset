@@ -3,7 +3,7 @@ from enum import auto
 from gwta.sema.enums.gw_str_enum import SemaEnum
 
 
-class Gw1ActorClass(SemaEnum):
+class ActorClass(SemaEnum):
     """Sema: https://schemas.electricity.works/enums/gw1.actor.class/012"""
 
     NoActor = auto()
@@ -34,7 +34,7 @@ class Gw1ActorClass(SemaEnum):
     SimRelayActor = auto()
 
     @classmethod
-    def default(cls) -> "Gw1ActorClass":
+    def default(cls) -> "ActorClass":
         return cls.NoActor
 
     @classmethod
