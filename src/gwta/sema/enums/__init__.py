@@ -11,8 +11,8 @@ from gwta.sema.enums.i2c_adc_channel import I2cAdcChannel
 from gwta.sema.enums.quantity import Quantity
 from gwta.sema.enums.relay_closed_or_open import RelayClosedOrOpen
 from gwta.sema.enums.relay_wiring_config import RelayWiringConfig
-from gwta.sema.enums.spaceheat_telemetry_name import SpaceheatTelemetryName
 from gwta.sema.enums.spaceheat_unit import SpaceheatUnit
+from gwta.sema.enums.telemetry_name import TelemetryName
 from gwta.sema.enums.temp_calc_method import TempCalcMethod
 from gwta.sema.enums.thermistor_data_method import ThermistorDataMethod
 from gwta.sema.enums.unit import Unit
@@ -31,8 +31,8 @@ __all__ = [
     "Quantity",
     "RelayClosedOrOpen",
     "RelayWiringConfig",
-    "SpaceheatTelemetryName",
     "SpaceheatUnit",
+    "TelemetryName",
     "TempCalcMethod",
     "ThermistorDataMethod",
     "Unit",

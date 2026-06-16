@@ -1,7 +1,7 @@
 from typing import Literal
 from pydantic import ValidationError, model_validator
 from gwta.sema.base import SemaType
-from gwta.sema.enums import SpaceheatTelemetryName
+from gwta.sema.enums import TelemetryName
 from gwta.sema.enums.old_versions.quantity_000 import Quantity000
 from gwta.sema.property_format import LeftRightDot
 from gwta.sema.property_format import SpaceheatName
@@ -19,7 +19,7 @@ class DataChannelGt(SemaType):
     display_name: str
     about_node_name: SpaceheatName
     captured_by_node_name: SpaceheatName
-    telemetry_name: SpaceheatTelemetryName
+    telemetry_name: TelemetryName
     quantity: Quantity000
     terminal_asset_alias: LeftRightDot
     in_power_metering: bool | None = None
@@ -34,10 +34,7 @@ class DataChannelGt(SemaType):
         Axiom 1: PowerMeteringConstraint
         If InPowerMetering is true, TelemetryName SHALL equal PowerW.
         """
-        if (
-            self.in_power_metering
-            and self.telemetry_name != SpaceheatTelemetryName.PowerW
-        ):
+        if self.in_power_metering and self.telemetry_name != TelemetryName.PowerW:
             raise ValueError(
                 "Axiom 1 failed: telemetry_name must be PowerW when in_power_metering is true."
             )

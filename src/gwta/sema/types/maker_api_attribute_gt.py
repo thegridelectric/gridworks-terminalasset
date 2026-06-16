@@ -1,8 +1,8 @@
 from typing import Literal
 from pydantic import StrictInt
 from gwta.sema.base import SemaType
-from gwta.sema.enums import SpaceheatTelemetryName
 from gwta.sema.enums import SpaceheatUnit
+from gwta.sema.enums import TelemetryName
 from gwta.sema.property_format import SpaceheatName
 
 
@@ -12,7 +12,7 @@ class MakerApiAttributeGt(SemaType):
     attribute_name: str
     channel_name: SpaceheatName
     node_name: SpaceheatName
-    telemetry_name: SpaceheatTelemetryName
+    telemetry_name: TelemetryName
     unit: SpaceheatUnit
     exponent: StrictInt
     interpret_as_number: bool

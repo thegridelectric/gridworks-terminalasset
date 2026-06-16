@@ -3,7 +3,7 @@ from enum import auto
 from gwta.sema.enums.gw_str_enum import SemaEnum
 
 
-class SpaceheatTelemetryName(SemaEnum):
+class TelemetryName(SemaEnum):
     """Sema: https://schemas.electricity.works/enums/spaceheat.telemetry.name/007"""
 
     Unknown = auto()
@@ -31,7 +31,7 @@ class SpaceheatTelemetryName(SemaEnum):
     BinaryState = auto()
 
     @classmethod
-    def default(cls) -> "SpaceheatTelemetryName":
+    def default(cls) -> "TelemetryName":
         return cls.Unknown
 
     @classmethod

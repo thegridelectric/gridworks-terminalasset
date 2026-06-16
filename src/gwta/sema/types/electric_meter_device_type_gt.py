@@ -1,7 +1,7 @@
 from typing import Literal
 from pydantic import StrictInt
 from gwta.sema.base import SemaType
-from gwta.sema.enums import SpaceheatTelemetryName
+from gwta.sema.enums import TelemetryName
 from gwta.sema.property_format import PascalCase
 from gwta.sema.property_format import PositiveInt
 
@@ -12,7 +12,7 @@ class ElectricMeterDeviceTypeGt(SemaType):
     device_type: PascalCase
     display_name: str | None = None
     min_poll_period_ms: PositiveInt | None = None
-    telemetry_name_list: list[SpaceheatTelemetryName]
+    telemetry_name_list: list[TelemetryName]
     default_baud: StrictInt | None = None
     type_name: Literal["electric.meter.device.type.gt"] = (
         "electric.meter.device.type.gt"

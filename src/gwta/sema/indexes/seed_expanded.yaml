@@ -1,6 +1,6 @@
 metadata:
   generated_from: indexes/public_registry.yaml
-  generated_at: '2026-06-16T03:02:57Z'
+  generated_at: '2026-06-16T03:13:37Z'
   note: Transitive closure of initial_targets
 initial_targets:
 - gw.nolan.layout:000

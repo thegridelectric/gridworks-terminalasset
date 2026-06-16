@@ -19,8 +19,9 @@
 # `gw108`, not `gw1`/`gw`). The dotted TypeName wire identity is unchanged.
 local_names:
   strip_prefixes: [gw1, gw]
-  # overrides:            # add a `sema.name: local.name` here only on a collision
-  #   gw1.something: something.else
+  overrides:
+    # spaceheat.unit deliberately stays SpaceheatUnit; only telemetry.name is shortened.
+    spaceheat.telemetry.name: telemetry.name   # -> TelemetryName
 
 initial_targets:
   types:
