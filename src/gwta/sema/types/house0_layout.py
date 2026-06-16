@@ -29,31 +29,27 @@ from gwta.sema.types.web_server_component_gt import WebServerComponentGt
 class House0Layout(SemaType):
     """Sema: https://schemas.electricity.works/types/gw.house0.layout/000"""
 
-    g_nodes: list[GNodeGt] | None = None
-    sh_nodes: list[SpaceheatNodeGt] | None = None
-    data_channels: list[DataChannelGt] | None = None
-    derived_channels: list[DerivedChannelGt] | None = None
-    components: (
-        list[
-            ElectricMeterComponentGt
-            | Ads111xBasedComponentGt
-            | I2cMultichannelDtRelayComponentGt
-            | DfrComponentGt
-            | PicoBtuMeterComponentGt
-            | PicoFlowModuleComponentGt
-            | PicoTankModuleComponentGt
-            | SimPicoTankModuleComponentGt
-            | HubitatComponentGt
-            | HubitatPollerComponentGt
-            | WebServerComponentGt
-        ]
-        | None
-    ) = None
-    device_types: (
-        list[ElectricMeterDeviceTypeGt | Ads111xBasedDeviceTypeGt | ScadaDeviceTypeGt]
-        | None
-    ) = None
-    hydronic: House0Hydronic | None = None
+    g_nodes: list[GNodeGt]
+    sh_nodes: list[SpaceheatNodeGt]
+    data_channels: list[DataChannelGt]
+    derived_channels: list[DerivedChannelGt]
+    components: list[
+        ElectricMeterComponentGt
+        | Ads111xBasedComponentGt
+        | I2cMultichannelDtRelayComponentGt
+        | DfrComponentGt
+        | PicoBtuMeterComponentGt
+        | PicoFlowModuleComponentGt
+        | PicoTankModuleComponentGt
+        | SimPicoTankModuleComponentGt
+        | HubitatComponentGt
+        | HubitatPollerComponentGt
+        | WebServerComponentGt
+    ]
+    device_types: list[
+        ElectricMeterDeviceTypeGt | Ads111xBasedDeviceTypeGt | ScadaDeviceTypeGt
+    ]
+    hydronic: House0Hydronic
     type_name: Literal["gw.house0.layout"] = "gw.house0.layout"
     version: Literal["000"] = "000"
 
