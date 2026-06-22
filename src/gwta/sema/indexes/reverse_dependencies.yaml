@@ -72,6 +72,10 @@ types:
     '000':
       used_by:
       - gw.house0.layout:000
+  gw.native.gpio.pin:
+    '000':
+      used_by:
+      - gw1.scada.device.type.gt:000
   gw1.hvac.zone:
     '000':
       used_by:
@@ -109,15 +113,46 @@ types:
     '000':
       used_by:
       - hubitat.poller.component.gt:000
+  i2c.adc.config:
+    '000':
+      used_by:
+      - gw1.scada.device.type.gt:000
+  i2c.bit.address:
+    '000':
+      used_by:
+      - i2c.read.bit:000
+      - i2c.relay.config:000
+      - i2c.write.bit:000
+  i2c.bus:
+    '000':
+      used_by:
+      - gw1.scada.device.type.gt:000
+  i2c.dac.config:
+    '000':
+      used_by:
+      - gw1.scada.device.type.gt:000
   i2c.multichannel.dt.relay.component.gt:
     '005':
       used_by:
       - gw.house0.layout:000
       - gw.nolan.layout:000
+  i2c.reg.address:
+    '000':
+      used_by:
+      - i2c.read.reg:000
+      - i2c.write.reg:000
+  i2c.relay.config:
+    '000':
+      used_by:
+      - gw1.scada.device.type.gt:000
   i2c.thermistor.channel.config:
     '001':
       used_by:
       - i2c.thermistor.reader.component.gt:002
+  i2c.thermistor.interface.config:
+    '000':
+      used_by:
+      - gw1.scada.device.type.gt:000
   i2c.thermistor.reader.component.gt:
     '002':
       used_by:
@@ -222,6 +257,19 @@ enums:
     '000':
       used_by:
       - i2c.thermistor.channel.config:001
+  i2c.adc.type:
+    '000':
+      used_by:
+      - i2c.adc.config:000
+      - i2c.thermistor.interface.config:000
+  i2c.dac.type:
+    '000':
+      used_by:
+      - i2c.dac.config:000
+  i2c.operation:
+    '000':
+      used_by:
+      - i2c.result:000
   relay.closed.or.open:
     '000':
       used_by:
@@ -229,6 +277,7 @@ enums:
   relay.wiring.config:
     '000':
       used_by:
+      - i2c.relay.config:000
       - relay.actor.config:003
   spaceheat.telemetry.name:
     '007':
@@ -236,6 +285,7 @@ enums:
       - ads111x.based.device.type.gt:000
       - data.channel.gt:002
       - electric.meter.device.type.gt:000
+      - gw1.scada.device.type.gt:000
       - maker.api.attribute.gt:000
       - spaceheat.telemetry.quantity.projection:000
   spaceheat.unit:
@@ -278,6 +328,16 @@ formats:
   non.negative.int:
     used_by:
     - gw.house0.hydronic:000
+    - gw.native.gpio.pin:000
+    - i2c.adc.config:000
+    - i2c.bit.address:000
+    - i2c.bus:000
+    - i2c.dac.config:000
+    - i2c.reg.address:000
+    - i2c.result:000
+    - i2c.thermistor.interface.config:000
+    - i2c.write.bit:000
+    - i2c.write.reg:000
   pascal.case:
     used_by:
     - ads.channel.config:000
@@ -286,12 +346,18 @@ formats:
     - dfr.component.gt:000
     - electric.meter.component.gt:002
     - electric.meter.device.type.gt:000
+    - gw.native.gpio.pin:000
     - gw1.scada.device.type.gt:000
     - gw108.gpio.sensor.component.gt:002
     - gw108.vdc.relay.component.gt:002
     - hubitat.component.gt:000
     - hubitat.poller.component.gt:000
+    - i2c.adc.config:000
+    - i2c.bus:000
+    - i2c.dac.config:000
     - i2c.multichannel.dt.relay.component.gt:005
+    - i2c.relay.config:000
+    - i2c.thermistor.interface.config:000
     - i2c.thermistor.reader.component.gt:002
     - pico.btu.meter.component.gt:001
     - pico.flow.module.component.gt:001
@@ -302,6 +368,7 @@ formats:
     - web.server.component.gt:002
   positive.float:
     used_by:
+    - i2c.thermistor.interface.config:000
     - i2c.thermistor.reader.component.gt:002
     - pico.btu.meter.component.gt:001
   positive.int:
@@ -319,7 +386,11 @@ formats:
     - gw108.gpio.sensor.component.gt:002
     - gw108.vdc.relay.component.gt:002
     - hubitat.poller.gt:000
+    - i2c.adc.config:000
+    - i2c.dac.config:000
+    - i2c.read.reg:000
     - i2c.thermistor.channel.config:001
+    - i2c.write.reg:000
     - pico.tank.module.component.gt:012
     - relay.actor.config:003
     - sim.pico.tank.module.component.gt:001
@@ -334,13 +405,21 @@ formats:
     - electric.meter.channel.config:000
     - gw1.hvac.zone:000
     - i2c.multichannel.dt.relay.component.gt:005
+    - i2c.read.bit:000
+    - i2c.read.reg:000
+    - i2c.result:000
     - i2c.thermistor.channel.config:001
     - i2c.thermistor.reader.component.gt:002
+    - i2c.write.bit:000
+    - i2c.write.reg:000
     - maker.api.attribute.gt:000
     - pico.btu.meter.component.gt:001
     - pico.flow.module.component.gt:001
     - relay.actor.config:003
     - spaceheat.node.gt:302
+  utc.milliseconds:
+    used_by:
+    - i2c.result:000
   utc.seconds:
     used_by:
     - data.channel.gt:002
@@ -358,7 +437,12 @@ formats:
     - hubitat.poller.component.gt:000
     - hubitat.poller.gt:000
     - i2c.multichannel.dt.relay.component.gt:005
+    - i2c.read.bit:000
+    - i2c.read.reg:000
+    - i2c.result:000
     - i2c.thermistor.reader.component.gt:002
+    - i2c.write.bit:000
+    - i2c.write.reg:000
     - pico.btu.meter.component.gt:001
     - pico.flow.module.component.gt:001
     - pico.tank.module.component.gt:012

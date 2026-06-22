@@ -1,6 +1,6 @@
 metadata:
   generated_from: indexes/public_registry.yaml
-  generated_at: '2026-06-16T17:58:29Z'
+  generated_at: '2026-06-22T18:09:57Z'
   note: Transitive closure of initial_targets
 initial_targets:
 - gw.nolan.layout:000
@@ -24,6 +24,18 @@ initial_targets:
 - sim.sensor.component.gt:000
 - spaceheat.node.gt:302
 - web.server.component.gt:002
+- gw1.scada.device.type.gt:000
+- i2c.bit.address:000
+- i2c.reg.address:000
+- i2c.bus:000
+- i2c.adc.config:000
+- i2c.dac.config:000
+- i2c.relay.config:000
+- i2c.read.bit:000
+- i2c.write.bit:000
+- i2c.read.reg:000
+- i2c.write.reg:000
+- i2c.result:000
 worklist:
   formats:
     handle.name:
@@ -44,6 +56,8 @@ worklist:
       path: definitions/formats/positive.int.yaml
     spaceheat.name:
       path: definitions/formats/spaceheat.name.yaml
+    utc.milliseconds:
+      path: definitions/formats/utc.milliseconds.yaml
     utc.seconds:
       path: definitions/formats/utc.seconds.yaml
     uuid4.str:
@@ -87,6 +101,15 @@ worklist:
     i2c.adc.channel:
       '000':
         path: definitions/enums/i2c.adc.channel/000.yaml
+    i2c.adc.type:
+      '000':
+        path: definitions/enums/i2c.adc.type/000.yaml
+    i2c.dac.type:
+      '000':
+        path: definitions/enums/i2c.dac.type/000.yaml
+    i2c.operation:
+      '000':
+        path: definitions/enums/i2c.operation/000.yaml
     relay.closed.or.open:
       '000':
         path: definitions/enums/relay.closed.or.open/000.yaml
@@ -151,6 +174,9 @@ worklist:
     gw.house0.layout:
       '000':
         path: definitions/types/gw.house0.layout/000.yaml
+    gw.native.gpio.pin:
+      '000':
+        path: definitions/types/gw.native.gpio.pin/000.yaml
     gw.nolan.layout:
       '000':
         path: definitions/types/gw.nolan.layout/000.yaml
@@ -184,15 +210,51 @@ worklist:
     hubitat.poller.gt:
       '000':
         path: definitions/types/hubitat.poller.gt/000.yaml
+    i2c.adc.config:
+      '000':
+        path: definitions/types/i2c.adc.config/000.yaml
+    i2c.bit.address:
+      '000':
+        path: definitions/types/i2c.bit.address/000.yaml
+    i2c.bus:
+      '000':
+        path: definitions/types/i2c.bus/000.yaml
+    i2c.dac.config:
+      '000':
+        path: definitions/types/i2c.dac.config/000.yaml
     i2c.multichannel.dt.relay.component.gt:
       '005':
         path: definitions/types/i2c.multichannel.dt.relay.component.gt/005.yaml
+    i2c.read.bit:
+      '000':
+        path: definitions/types/i2c.read.bit/000.yaml
+    i2c.read.reg:
+      '000':
+        path: definitions/types/i2c.read.reg/000.yaml
+    i2c.reg.address:
+      '000':
+        path: definitions/types/i2c.reg.address/000.yaml
+    i2c.relay.config:
+      '000':
+        path: definitions/types/i2c.relay.config/000.yaml
+    i2c.result:
+      '000':
+        path: definitions/types/i2c.result/000.yaml
     i2c.thermistor.channel.config:
       '001':
         path: definitions/types/i2c.thermistor.channel.config/001.yaml
+    i2c.thermistor.interface.config:
+      '000':
+        path: definitions/types/i2c.thermistor.interface.config/000.yaml
     i2c.thermistor.reader.component.gt:
       '002':
         path: definitions/types/i2c.thermistor.reader.component.gt/002.yaml
+    i2c.write.bit:
+      '000':
+        path: definitions/types/i2c.write.bit/000.yaml
+    i2c.write.reg:
+      '000':
+        path: definitions/types/i2c.write.reg/000.yaml
     maker.api.attribute.gt:
       '000':
         path: definitions/types/maker.api.attribute.gt/000.yaml

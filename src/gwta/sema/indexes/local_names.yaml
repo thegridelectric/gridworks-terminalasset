@@ -11,6 +11,9 @@ enums:
   gw1.unit: unit
   hz.calc.method: hz.calc.method
   i2c.adc.channel: i2c.adc.channel
+  i2c.adc.type: i2c.adc.type
+  i2c.dac.type: i2c.dac.type
+  i2c.operation: i2c.operation
   relay.closed.or.open: relay.closed.or.open
   relay.wiring.config: relay.wiring.config
   spaceheat.telemetry.name: telemetry.name
@@ -33,6 +36,7 @@ types:
   g.node.gt: g.node.gt
   gw.house0.hydronic: house0.hydronic
   gw.house0.layout: house0.layout
+  gw.native.gpio.pin: native.gpio.pin
   gw.nolan.layout: nolan.layout
   gw1.hvac.zone: hvac.zone
   gw1.scada.device.type.gt: scada.device.type.gt
@@ -44,9 +48,21 @@ types:
   hubitat.gt: hubitat.gt
   hubitat.poller.component.gt: hubitat.poller.component.gt
   hubitat.poller.gt: hubitat.poller.gt
+  i2c.adc.config: i2c.adc.config
+  i2c.bit.address: i2c.bit.address
+  i2c.bus: i2c.bus
+  i2c.dac.config: i2c.dac.config
   i2c.multichannel.dt.relay.component.gt: i2c.multichannel.dt.relay.component.gt
+  i2c.read.bit: i2c.read.bit
+  i2c.read.reg: i2c.read.reg
+  i2c.reg.address: i2c.reg.address
+  i2c.relay.config: i2c.relay.config
+  i2c.result: i2c.result
   i2c.thermistor.channel.config: i2c.thermistor.channel.config
+  i2c.thermistor.interface.config: i2c.thermistor.interface.config
   i2c.thermistor.reader.component.gt: i2c.thermistor.reader.component.gt
+  i2c.write.bit: i2c.write.bit
+  i2c.write.reg: i2c.write.reg
   maker.api.attribute.gt: maker.api.attribute.gt
   pico.btu.meter.component.gt: pico.btu.meter.component.gt
   pico.flow.module.component.gt: pico.flow.module.component.gt

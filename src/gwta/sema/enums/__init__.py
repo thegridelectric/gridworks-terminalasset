@@ -8,6 +8,9 @@ from gwta.sema.enums.gpm_from_hz_method import GpmFromHzMethod
 from gwta.sema.enums.house0_primary_flow_source import House0PrimaryFlowSource
 from gwta.sema.enums.hz_calc_method import HzCalcMethod
 from gwta.sema.enums.i2c_adc_channel import I2cAdcChannel
+from gwta.sema.enums.i2c_adc_type import I2cAdcType
+from gwta.sema.enums.i2c_dac_type import I2cDacType
+from gwta.sema.enums.i2c_operation import I2cOperation
 from gwta.sema.enums.quantity import Quantity
 from gwta.sema.enums.relay_closed_or_open import RelayClosedOrOpen
 from gwta.sema.enums.relay_wiring_config import RelayWiringConfig
@@ -28,6 +31,9 @@ __all__ = [
     "House0PrimaryFlowSource",
     "HzCalcMethod",
     "I2cAdcChannel",
+    "I2cAdcType",
+    "I2cDacType",
+    "I2cOperation",
     "Quantity",
     "RelayClosedOrOpen",
     "RelayWiringConfig",
