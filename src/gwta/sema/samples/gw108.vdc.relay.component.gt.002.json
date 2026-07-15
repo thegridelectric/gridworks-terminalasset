@@ -6,12 +6,8 @@
   "ConfigList": [
     {
       "TypeName": "relay.actor.config",
-      "Version": "003",
+      "Version": "004",
       "ChannelName": "scada",
-      "CapturePeriodS": 1,
-      "AsyncCapture": false,
-      "Exponent": 0,
-      "Unit": "Unknown",
       "RelayIdx": 1,
       "ActorName": "scada",
       "WiringConfig": "NormallyClosed",

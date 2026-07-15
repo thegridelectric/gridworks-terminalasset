@@ -1,0 +1,9 @@
+{
+  "TypeName": "i2c.adc.capability",
+  "Version": "000",
+  "Name": "CtAdc",
+  "I2cBus": "DefaultBus",
+  "I2cAddress": 72,
+  "AdcType": "Ads1115",
+  "Channels": 4
+}

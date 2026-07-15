@@ -1,7 +1,6 @@
 from gwta.sema.types.ads111x_based_component_gt import Ads111xBasedComponentGt
 from gwta.sema.types.ads111x_based_device_type_gt import Ads111xBasedDeviceTypeGt
 from gwta.sema.types.ads_channel_config import AdsChannelConfig
-from gwta.sema.types.channel_config import ChannelConfig
 from gwta.sema.types.data_channel_gt import DataChannelGt
 from gwta.sema.types.derived_channel_gt import DerivedChannelGt
 from gwta.sema.types.dfr_component_gt import DfrComponentGt
@@ -20,20 +19,23 @@ from gwta.sema.types.hubitat_gt import HubitatGt
 from gwta.sema.types.hubitat_poller_component_gt import HubitatPollerComponentGt
 from gwta.sema.types.hubitat_poller_gt import HubitatPollerGt
 from gwta.sema.types.hvac_zone import HvacZone
-from gwta.sema.types.i2c_adc_config import I2cAdcConfig
+from gwta.sema.types.i2c_adc_capability import I2cAdcCapability
 from gwta.sema.types.i2c_bit_address import I2cBitAddress
 from gwta.sema.types.i2c_bus import I2cBus
-from gwta.sema.types.i2c_dac_config import I2cDacConfig
+from gwta.sema.types.i2c_dac_capability import I2cDacCapability
+from gwta.sema.types.i2c_expander import I2cExpander
 from gwta.sema.types.i2c_multichannel_dt_relay_component_gt import (
     I2cMultichannelDtRelayComponentGt,
 )
 from gwta.sema.types.i2c_read_bit import I2cReadBit
 from gwta.sema.types.i2c_read_reg import I2cReadReg
 from gwta.sema.types.i2c_reg_address import I2cRegAddress
-from gwta.sema.types.i2c_relay_config import I2cRelayConfig
+from gwta.sema.types.i2c_relay_capability import I2cRelayCapability
 from gwta.sema.types.i2c_result import I2cResult
 from gwta.sema.types.i2c_thermistor_channel_config import I2cThermistorChannelConfig
-from gwta.sema.types.i2c_thermistor_interface_config import I2cThermistorInterfaceConfig
+from gwta.sema.types.i2c_thermistor_interface_capability import (
+    I2cThermistorInterfaceCapability,
+)
 from gwta.sema.types.i2c_thermistor_reader_component_gt import (
     I2cThermistorReaderComponentGt,
 )
@@ -64,7 +66,6 @@ __all__ = [
     "Ads111xBasedComponentGt",
     "Ads111xBasedDeviceTypeGt",
     "AdsChannelConfig",
-    "ChannelConfig",
     "DataChannelGt",
     "DerivedChannelGt",
     "DfrComponentGt",
@@ -83,18 +84,19 @@ __all__ = [
     "HubitatPollerComponentGt",
     "HubitatPollerGt",
     "HvacZone",
-    "I2cAdcConfig",
+    "I2cAdcCapability",
     "I2cBitAddress",
     "I2cBus",
-    "I2cDacConfig",
+    "I2cDacCapability",
+    "I2cExpander",
     "I2cMultichannelDtRelayComponentGt",
     "I2cReadBit",
     "I2cReadReg",
     "I2cRegAddress",
-    "I2cRelayConfig",
+    "I2cRelayCapability",
     "I2cResult",
     "I2cThermistorChannelConfig",
-    "I2cThermistorInterfaceConfig",
+    "I2cThermistorInterfaceCapability",
     "I2cThermistorReaderComponentGt",
     "I2cWriteBit",
     "I2cWriteReg",

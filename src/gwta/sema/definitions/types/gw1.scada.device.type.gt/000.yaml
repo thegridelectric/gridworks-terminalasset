@@ -4,7 +4,11 @@ $id: "https://schemas.electricity.works/types/gw1.scada.device.type.gt/000"
 title: "gw1.scada.device.type.gt"
 type: object
 description: >
-  The device-type record for a GridWorks SCADA board designed by GridWorks.
+  The device-type record for a GridWorks SCADA board: what the board offers.
+  Buses, I²C GPIO expanders, the relays with their board-level names and
+  supported wirings, native GPIO, ADCs and DACs. Deployment choices (a
+  DIP-selected expander address, a relay's chosen wiring) live on the
+  component and the layout, not here.
 
 properties:
 
@@ -49,29 +53,38 @@ properties:
     description: >
       The board's native (on-board) GPIO output pins.
 
+  Expanders:
+    type: array
+    items:
+      $ref: "https://schemas.electricity.works/types/i2c.expander/000"
+    description: >
+      The I²C GPIO expanders on the board, each with fixed or field-selectable
+      addressing.
+
   I2cRelays:
     type: array
     items:
-      $ref: "https://schemas.electricity.works/types/i2c.relay.config/000"
+      $ref: "https://schemas.electricity.works/types/i2c.relay.capability/000"
     description: >
-      The relays driven through the board's I²C GPIO expanders.
+      The relays the board offers, named by the device's physical markings and
+      driven through the board's expanders.
 
   CtAdc:
-    $ref: "https://schemas.electricity.works/types/i2c.adc.config/000"
+    $ref: "https://schemas.electricity.works/types/i2c.adc.capability/000"
     description: >
       The current-transformer ADC, when present.
 
   ThermistorAdcs:
     type: array
     items:
-      $ref: "https://schemas.electricity.works/types/i2c.thermistor.interface.config/000"
+      $ref: "https://schemas.electricity.works/types/i2c.thermistor.interface.capability/000"
     description: >
       The thermistor-reading ADC interfaces on the board.
 
   Dacs:
     type: array
     items:
-      $ref: "https://schemas.electricity.works/types/i2c.dac.config/000"
+      $ref: "https://schemas.electricity.works/types/i2c.dac.capability/000"
     description: >
       The digital-to-analog converters on the board.
 
@@ -88,15 +101,89 @@ required:
 
 additionalProperties: false
 
+examples:
+  - |
+    {
+      "DeviceType": "KridaDoubleRelayBoard16",
+      "DisplayName": "GridWorks relay panel: two 16-channel Krida boards, markings Relay1-Relay32",
+      "MinPollPeriodMs": 200,
+      "TelemetryNameList": [
+        "RelayState"
+      ],
+      "BusList": [
+        {
+          "Name": "DefaultBus",
+          "BusNumber": 1,
+          "TypeName": "i2c.bus",
+          "Version": "000"
+        }
+      ],
+      "Expanders": [
+        {
+          "ExpanderIdx": 1,
+          "I2cBus": "DefaultBus",
+          "AllowedI2cAddressList": [32, 33, 34, 35, 36, 37, 38, 39],
+          "TypeName": "i2c.expander",
+          "Version": "000"
+        },
+        {
+          "ExpanderIdx": 2,
+          "I2cBus": "DefaultBus",
+          "AllowedI2cAddressList": [32, 33, 34, 35, 36, 37, 38, 39],
+          "TypeName": "i2c.expander",
+          "Version": "000"
+        }
+      ],
+      "I2cRelays": [
+        {
+          "RelayName": "Relay1",
+          "ExpanderIdx": 1,
+          "RegisterIndex": 0,
+          "BitIndex": 7,
+          "SupportedWiringConfigs": [
+            "NormallyClosed",
+            "NormallyOpen",
+            "DoubleThrow"
+          ],
+          "TypeName": "i2c.relay.capability",
+          "Version": "000"
+        },
+        {
+          "RelayName": "Relay17",
+          "ExpanderIdx": 2,
+          "RegisterIndex": 0,
+          "BitIndex": 7,
+          "SupportedWiringConfigs": [
+            "NormallyClosed",
+            "NormallyOpen",
+            "DoubleThrow"
+          ],
+          "TypeName": "i2c.relay.capability",
+          "Version": "000"
+        }
+      ],
+      "TypeName": "gw1.scada.device.type.gt",
+      "Version": "000"
+    }
+
 x-gridworks:
   owner: "gridworks-energy"
   axioms:
     - number: 1
       name: "BusMembership"
       statement: >
-        Every I2cBus referenced by an entry in I2cRelays, CtAdc, ThermistorAdcs,
-        or Dacs SHALL appear as a Name in BusList.
+        Every I2cBus referenced by an entry in Expanders, CtAdc,
+        ThermistorAdcs, or Dacs SHALL appear as a Name in BusList.
+    - number: 2
+      name: "ExpanderMembership"
+      statement: >
+        Every ExpanderIdx referenced by an entry in I2cRelays SHALL appear as
+        an ExpanderIdx in Expanders.
   extended_description: >
     Various hardware layouts enforce membership in `gw1.device.type` for the
-    DeviceType (e.g. `GridworksScadaGw108`).
-
+    DeviceType (e.g. `GridworksScadaGw108`, `KridaDoubleRelayBoard16`). The
+    record describes what is ALLOWED; per-deployment choices live outside it —
+    a DIP-selected expander address on the component's I2cAddressList
+    (index-aligned with Expanders), a relay's chosen wiring in the layout's
+    relay configuration. Relay names carry the device's physical markings so
+    field technicians can identify relays from the record.

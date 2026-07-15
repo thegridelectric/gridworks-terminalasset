@@ -3,7 +3,6 @@
   "Version": "002",
   "ComponentId": "f7dca1af-d89d-463d-b3ab-a1c1a4fec75b",
   "DeviceType": "AbstractWebServer",
-  "ConfigList": [],
   "WebServer": {
     "Enabled": false,
     "Host": "example",

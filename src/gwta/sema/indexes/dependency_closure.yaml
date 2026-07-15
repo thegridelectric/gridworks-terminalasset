@@ -3,9 +3,8 @@
 
 types:
   ads.channel.config:
-    '000':
+    '001':
       enums:
-      - spaceheat.unit:001
       - thermistor.data.method:000
       formats:
       - pascal.case
@@ -16,7 +15,6 @@ types:
   ads111x.based.component.gt:
     '000':
       enums:
-      - spaceheat.unit:001
       - thermistor.data.method:000
       formats:
       - pascal.case
@@ -24,7 +22,7 @@ types:
       - spaceheat.name
       - uuid4.str
       types:
-      - ads.channel.config:000
+      - ads.channel.config:001
       versionless_types: []
   ads111x.based.device.type.gt:
     '000':
@@ -35,17 +33,20 @@ types:
       - positive.int
       types: []
       versionless_types: []
-  channel.config:
-    '000':
-      enums:
-      - spaceheat.unit:001
-      formats:
-      - positive.int
-      - spaceheat.name
-      types: []
-      versionless_types: []
   data.channel.gt:
     '002':
+      enums:
+      - gw1.quantity:000
+      - spaceheat.telemetry.name:007
+      formats:
+      - left.right.dot
+      - spaceheat.name
+      - utc.seconds
+      - uuid4.str
+      types:
+      - spaceheat.telemetry.quantity.projection:000
+      versionless_types: []
+    '003':
       enums:
       - gw1.quantity:000
       - spaceheat.telemetry.name:007
@@ -73,20 +74,18 @@ types:
       versionless_types: []
   dfr.component.gt:
     '000':
-      enums:
-      - spaceheat.unit:001
+      enums: []
       formats:
       - pascal.case
       - positive.int
       - spaceheat.name
       - uuid4.str
       types:
-      - dfr.config:000
+      - dfr.config:001
       versionless_types: []
   dfr.config:
-    '000':
-      enums:
-      - spaceheat.unit:001
+    '001':
+      enums: []
       formats:
       - positive.int
       - spaceheat.name
@@ -99,19 +98,16 @@ types:
       types: []
       versionless_types: []
   electric.meter.channel.config:
-    '000':
-      enums:
-      - spaceheat.unit:001
+    '001':
+      enums: []
       formats:
-      - positive.int
       - spaceheat.name
       types:
       - egauge.register.config:000
       versionless_types: []
   electric.meter.component.gt:
     '002':
-      enums:
-      - spaceheat.unit:001
+      enums: []
       formats:
       - pascal.case
       - positive.int
@@ -119,7 +115,7 @@ types:
       - uuid4.str
       types:
       - egauge.register.config:000
-      - electric.meter.channel.config:000
+      - electric.meter.channel.config:001
       versionless_types: []
   electric.meter.device.type.gt:
     '000':
@@ -131,7 +127,7 @@ types:
       types: []
       versionless_types: []
   g.node.gt:
-    '004':
+    '005':
       enums:
       - base.g.node.class:000
       - g.node.status:000
@@ -185,19 +181,18 @@ types:
       - utc.seconds
       - uuid4.str
       types:
-      - ads.channel.config:000
+      - ads.channel.config:001
       - ads111x.based.component.gt:000
       - ads111x.based.device.type.gt:000
-      - channel.config:000
-      - data.channel.gt:002
+      - data.channel.gt:003
       - derived.channel.gt:002
       - dfr.component.gt:000
-      - dfr.config:000
+      - dfr.config:001
       - egauge.register.config:000
-      - electric.meter.channel.config:000
+      - electric.meter.channel.config:001
       - electric.meter.component.gt:002
       - electric.meter.device.type.gt:000
-      - g.node.gt:004
+      - g.node.gt:005
       - gw.house0.hydronic:000
       - gw.native.gpio.pin:000
       - gw1.hvac.zone:000
@@ -207,20 +202,20 @@ types:
       - hubitat.gt:000
       - hubitat.poller.component.gt:000
       - hubitat.poller.gt:000
-      - i2c.adc.config:000
-      - i2c.bit.address:000
+      - i2c.adc.capability:000
       - i2c.bus:000
-      - i2c.dac.config:000
+      - i2c.dac.capability:000
+      - i2c.expander:000
       - i2c.multichannel.dt.relay.component.gt:005
-      - i2c.relay.config:000
-      - i2c.thermistor.interface.config:000
+      - i2c.relay.capability:000
+      - i2c.thermistor.interface.capability:000
       - maker.api.attribute.gt:000
       - pico.btu.meter.component.gt:001
       - pico.flow.module.component.gt:001
       - pico.tank.module.component.gt:012
-      - relay.actor.config:003
+      - relay.actor.config:004
       - sim.pico.tank.module.component.gt:001
-      - spaceheat.node.gt:302
+      - spaceheat.node.gt:303
       - spaceheat.telemetry.quantity.projection:000
       - web.server.component.gt:002
       versionless_types: []
@@ -252,7 +247,6 @@ types:
       - relay.closed.or.open:000
       - relay.wiring.config:000
       - spaceheat.telemetry.name:007
-      - spaceheat.unit:001
       - temp.calc.method:000
       formats:
       - handle.name
@@ -267,31 +261,30 @@ types:
       - uuid4.str
       types:
       - ads111x.based.device.type.gt:000
-      - channel.config:000
       - data.channel.gt:002
       - derived.channel.gt:002
       - egauge.register.config:000
-      - electric.meter.channel.config:000
+      - electric.meter.channel.config:001
       - electric.meter.component.gt:002
       - electric.meter.device.type.gt:000
-      - g.node.gt:004
+      - g.node.gt:005
       - gw.native.gpio.pin:000
       - gw1.scada.device.type.gt:000
       - gw1.unit.quantity.projection:000
       - gw108.gpio.sensor.component.gt:002
       - gw108.vdc.relay.component.gt:002
-      - i2c.adc.config:000
-      - i2c.bit.address:000
+      - i2c.adc.capability:000
       - i2c.bus:000
-      - i2c.dac.config:000
+      - i2c.dac.capability:000
+      - i2c.expander:000
       - i2c.multichannel.dt.relay.component.gt:005
-      - i2c.relay.config:000
-      - i2c.thermistor.channel.config:001
-      - i2c.thermistor.interface.config:000
+      - i2c.relay.capability:000
+      - i2c.thermistor.channel.config:002
+      - i2c.thermistor.interface.capability:000
       - i2c.thermistor.reader.component.gt:002
       - pico.btu.meter.component.gt:001
       - pico.tank.module.component.gt:012
-      - relay.actor.config:003
+      - relay.actor.config:004
       - sim.pico.tank.module.component.gt:001
       - spaceheat.node.gt:302
       - spaceheat.telemetry.quantity.projection:000
@@ -318,12 +311,12 @@ types:
       - positive.int
       types:
       - gw.native.gpio.pin:000
-      - i2c.adc.config:000
-      - i2c.bit.address:000
+      - i2c.adc.capability:000
       - i2c.bus:000
-      - i2c.dac.config:000
-      - i2c.relay.config:000
-      - i2c.thermistor.interface.config:000
+      - i2c.dac.capability:000
+      - i2c.expander:000
+      - i2c.relay.capability:000
+      - i2c.thermistor.interface.capability:000
       versionless_types: []
   gw1.simple.sim.layout:
     '000':
@@ -343,14 +336,11 @@ types:
     '002':
       enums:
       - gpio.sense.mode:000
-      - spaceheat.unit:001
       formats:
       - pascal.case
       - positive.int
-      - spaceheat.name
       - uuid4.str
-      types:
-      - channel.config:000
+      types: []
       versionless_types: []
   gw108.vdc.relay.component.gt:
     '002':
@@ -358,7 +348,6 @@ types:
       - change.relay.state:000
       - relay.closed.or.open:000
       - relay.wiring.config:000
-      - spaceheat.unit:001
       formats:
       - left.right.dot
       - non.empty.string
@@ -367,20 +356,16 @@ types:
       - spaceheat.name
       - uuid4.str
       types:
-      - relay.actor.config:003
+      - relay.actor.config:004
       versionless_types: []
   hubitat.component.gt:
     '000':
-      enums:
-      - spaceheat.unit:001
+      enums: []
       formats:
       - mac.address
       - pascal.case
-      - positive.int
-      - spaceheat.name
       - uuid4.str
       types:
-      - channel.config:000
       - hubitat.gt:000
       versionless_types: []
   hubitat.gt:
@@ -401,7 +386,6 @@ types:
       - spaceheat.name
       - uuid4.str
       types:
-      - channel.config:000
       - hubitat.poller.gt:000
       - maker.api.attribute.gt:000
       versionless_types: []
@@ -417,7 +401,7 @@ types:
       types:
       - maker.api.attribute.gt:000
       versionless_types: []
-  i2c.adc.config:
+  i2c.adc.capability:
     '000':
       enums:
       - i2c.adc.type:000
@@ -442,10 +426,19 @@ types:
       - pascal.case
       types: []
       versionless_types: []
-  i2c.dac.config:
+  i2c.dac.capability:
     '000':
       enums:
       - i2c.dac.type:000
+      formats:
+      - non.negative.int
+      - pascal.case
+      - positive.int
+      types: []
+      versionless_types: []
+  i2c.expander:
+    '000':
+      enums: []
       formats:
       - non.negative.int
       - pascal.case
@@ -458,7 +451,6 @@ types:
       - change.relay.state:000
       - relay.closed.or.open:000
       - relay.wiring.config:000
-      - spaceheat.unit:001
       formats:
       - left.right.dot
       - non.empty.string
@@ -467,7 +459,7 @@ types:
       - spaceheat.name
       - uuid4.str
       types:
-      - relay.actor.config:003
+      - relay.actor.config:004
       versionless_types: []
   i2c.read.bit:
     '000':
@@ -497,15 +489,15 @@ types:
       - non.negative.int
       types: []
       versionless_types: []
-  i2c.relay.config:
+  i2c.relay.capability:
     '000':
       enums:
       - relay.wiring.config:000
       formats:
       - non.negative.int
       - pascal.case
-      types:
-      - i2c.bit.address:000
+      - positive.int
+      types: []
       versionless_types: []
   i2c.result:
     '000':
@@ -519,16 +511,15 @@ types:
       types: []
       versionless_types: []
   i2c.thermistor.channel.config:
-    '001':
+    '002':
       enums:
       - i2c.adc.channel:000
-      - spaceheat.unit:001
       formats:
       - positive.int
       - spaceheat.name
       types: []
       versionless_types: []
-  i2c.thermistor.interface.config:
+  i2c.thermistor.interface.capability:
     '000':
       enums:
       - i2c.adc.type:000
@@ -542,7 +533,6 @@ types:
     '002':
       enums:
       - i2c.adc.channel:000
-      - spaceheat.unit:001
       - temp.calc.method:000
       formats:
       - pascal.case
@@ -551,7 +541,7 @@ types:
       - spaceheat.name
       - uuid4.str
       types:
-      - i2c.thermistor.channel.config:001
+      - i2c.thermistor.channel.config:002
       versionless_types: []
   i2c.write.bit:
     '000':
@@ -588,51 +578,41 @@ types:
       enums:
       - gpm.from.hz.method:000
       - hz.calc.method:001
-      - spaceheat.unit:001
       - temp.calc.method:000
       formats:
       - pascal.case
       - positive.float
-      - positive.int
       - spaceheat.name
       - uuid4.str
-      types:
-      - channel.config:000
+      types: []
       versionless_types: []
   pico.flow.module.component.gt:
     '001':
       enums:
       - gpm.from.hz.method:000
       - hz.calc.method:001
-      - spaceheat.unit:001
       formats:
       - pascal.case
-      - positive.int
       - spaceheat.name
       - uuid4.str
-      types:
-      - channel.config:000
+      types: []
       versionless_types: []
   pico.tank.module.component.gt:
     '012':
       enums:
-      - spaceheat.unit:001
       - temp.calc.method:000
       formats:
       - pascal.case
       - positive.int
-      - spaceheat.name
       - uuid4.str
-      types:
-      - channel.config:000
+      types: []
       versionless_types: []
   relay.actor.config:
-    '003':
+    '004':
       enums:
       - change.relay.state:000
       - relay.closed.or.open:000
       - relay.wiring.config:000
-      - spaceheat.unit:001
       formats:
       - left.right.dot
       - non.empty.string
@@ -643,15 +623,12 @@ types:
   sim.pico.tank.module.component.gt:
     '001':
       enums:
-      - spaceheat.unit:001
       - temp.calc.method:000
       formats:
       - pascal.case
       - positive.int
-      - spaceheat.name
       - uuid4.str
-      types:
-      - channel.config:000
+      types: []
       versionless_types: []
   sim.relay.component.gt:
     '000':
@@ -659,7 +636,6 @@ types:
       - change.relay.state:000
       - relay.closed.or.open:000
       - relay.wiring.config:000
-      - spaceheat.unit:001
       formats:
       - left.right.dot
       - non.empty.string
@@ -668,22 +644,28 @@ types:
       - spaceheat.name
       - uuid4.str
       types:
-      - relay.actor.config:003
+      - relay.actor.config:004
       versionless_types: []
   sim.sensor.component.gt:
     '000':
-      enums:
-      - spaceheat.unit:001
+      enums: []
       formats:
       - pascal.case
-      - positive.int
-      - spaceheat.name
       - uuid4.str
-      types:
-      - channel.config:000
+      types: []
       versionless_types: []
   spaceheat.node.gt:
     '302':
+      enums:
+      - gw1.actor.class:012
+      formats:
+      - handle.name
+      - positive.int
+      - spaceheat.name
+      - uuid4.str
+      types: []
+      versionless_types: []
+    '303':
       enums:
       - gw1.actor.class:012
       formats:
@@ -703,14 +685,10 @@ types:
       versionless_types: []
   web.server.component.gt:
     '002':
-      enums:
-      - spaceheat.unit:001
+      enums: []
       formats:
       - pascal.case
-      - positive.int
-      - spaceheat.name
       - uuid4.str
-      types:
-      - channel.config:000
+      types: []
       versionless_types: []
 versionless_types: {}

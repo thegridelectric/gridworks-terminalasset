@@ -10,10 +10,10 @@
 
 types:
   ads.channel.config:
-    latest_version: '000'
+    latest_version: '001'
     versioning_strategy: literal
     versions:
-      '000': definitions/types/ads.channel.config/000.yaml
+      '001': definitions/types/ads.channel.config/001.yaml
   ads111x.based.component.gt:
     latest_version: '000'
     versioning_strategy: literal
@@ -24,15 +24,11 @@ types:
     versioning_strategy: literal
     versions:
       '000': definitions/types/ads111x.based.device.type.gt/000.yaml
-  channel.config:
-    latest_version: '000'
-    versioning_strategy: literal
-    versions:
-      '000': definitions/types/channel.config/000.yaml
   data.channel.gt:
-    latest_version: '002'
+    latest_version: '003'
     versioning_strategy: literal
     versions:
+      '003': definitions/types/data.channel.gt/003.yaml
       '002': definitions/types/data.channel.gt/002.yaml
   derived.channel.gt:
     latest_version: '002'
@@ -45,20 +41,20 @@ types:
     versions:
       '000': definitions/types/dfr.component.gt/000.yaml
   dfr.config:
-    latest_version: '000'
+    latest_version: '001'
     versioning_strategy: literal
     versions:
-      '000': definitions/types/dfr.config/000.yaml
+      '001': definitions/types/dfr.config/001.yaml
   egauge.register.config:
     latest_version: '000'
     versioning_strategy: literal
     versions:
       '000': definitions/types/egauge.register.config/000.yaml
   electric.meter.channel.config:
-    latest_version: '000'
+    latest_version: '001'
     versioning_strategy: literal
     versions:
-      '000': definitions/types/electric.meter.channel.config/000.yaml
+      '001': definitions/types/electric.meter.channel.config/001.yaml
   electric.meter.component.gt:
     latest_version: '002'
     versioning_strategy: literal
@@ -70,10 +66,10 @@ types:
     versions:
       '000': definitions/types/electric.meter.device.type.gt/000.yaml
   g.node.gt:
-    latest_version: '004'
+    latest_version: '005'
     versioning_strategy: literal
     versions:
-      '004': definitions/types/g.node.gt/004.yaml
+      '005': definitions/types/g.node.gt/005.yaml
   gw.house0.hydronic:
     latest_version: '000'
     versioning_strategy: literal
@@ -144,11 +140,11 @@ types:
     versioning_strategy: literal
     versions:
       '000': definitions/types/hubitat.poller.gt/000.yaml
-  i2c.adc.config:
+  i2c.adc.capability:
     latest_version: '000'
     versioning_strategy: literal
     versions:
-      '000': definitions/types/i2c.adc.config/000.yaml
+      '000': definitions/types/i2c.adc.capability/000.yaml
   i2c.bit.address:
     latest_version: '000'
     versioning_strategy: literal
@@ -159,11 +155,16 @@ types:
     versioning_strategy: literal
     versions:
       '000': definitions/types/i2c.bus/000.yaml
-  i2c.dac.config:
+  i2c.dac.capability:
     latest_version: '000'
     versioning_strategy: literal
     versions:
-      '000': definitions/types/i2c.dac.config/000.yaml
+      '000': definitions/types/i2c.dac.capability/000.yaml
+  i2c.expander:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/i2c.expander/000.yaml
   i2c.multichannel.dt.relay.component.gt:
     latest_version: '005'
     versioning_strategy: literal
@@ -184,26 +185,26 @@ types:
     versioning_strategy: literal
     versions:
       '000': definitions/types/i2c.reg.address/000.yaml
-  i2c.relay.config:
+  i2c.relay.capability:
     latest_version: '000'
     versioning_strategy: literal
     versions:
-      '000': definitions/types/i2c.relay.config/000.yaml
+      '000': definitions/types/i2c.relay.capability/000.yaml
   i2c.result:
     latest_version: '000'
     versioning_strategy: literal
     versions:
       '000': definitions/types/i2c.result/000.yaml
   i2c.thermistor.channel.config:
-    latest_version: '001'
+    latest_version: '002'
     versioning_strategy: literal
     versions:
-      '001': definitions/types/i2c.thermistor.channel.config/001.yaml
-  i2c.thermistor.interface.config:
+      '002': definitions/types/i2c.thermistor.channel.config/002.yaml
+  i2c.thermistor.interface.capability:
     latest_version: '000'
     versioning_strategy: literal
     versions:
-      '000': definitions/types/i2c.thermistor.interface.config/000.yaml
+      '000': definitions/types/i2c.thermistor.interface.capability/000.yaml
   i2c.thermistor.reader.component.gt:
     latest_version: '002'
     versioning_strategy: literal
@@ -240,10 +241,10 @@ types:
     versions:
       '012': definitions/types/pico.tank.module.component.gt/012.yaml
   relay.actor.config:
-    latest_version: '003'
+    latest_version: '004'
     versioning_strategy: literal
     versions:
-      '003': definitions/types/relay.actor.config/003.yaml
+      '004': definitions/types/relay.actor.config/004.yaml
   sim.pico.tank.module.component.gt:
     latest_version: '001'
     versioning_strategy: literal
@@ -260,9 +261,10 @@ types:
     versions:
       '000': definitions/types/sim.sensor.component.gt/000.yaml
   spaceheat.node.gt:
-    latest_version: '302'
+    latest_version: '303'
     versioning_strategy: literal
     versions:
+      '303': definitions/types/spaceheat.node.gt/303.yaml
       '302': definitions/types/spaceheat.node.gt/302.yaml
   spaceheat.telemetry.quantity.projection:
     latest_version: '000'

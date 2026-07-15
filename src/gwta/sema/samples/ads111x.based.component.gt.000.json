@@ -6,12 +6,8 @@
   "ConfigList": [
     {
       "TypeName": "ads.channel.config",
-      "Version": "000",
+      "Version": "001",
       "ChannelName": "scada",
-      "CapturePeriodS": 1,
-      "AsyncCapture": false,
-      "Exponent": 0,
-      "Unit": "Unknown",
       "TerminalBlockIdx": 1,
       "ThermistorDeviceType": "MakeModel"
     }

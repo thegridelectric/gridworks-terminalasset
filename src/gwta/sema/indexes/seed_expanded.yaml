@@ -1,6 +1,6 @@
 metadata:
   generated_from: indexes/public_registry.yaml
-  generated_at: '2026-06-22T18:09:57Z'
+  generated_at: '2026-07-09T18:43:19Z'
   note: Transitive closure of initial_targets
 initial_targets:
 - gw.nolan.layout:000
@@ -9,7 +9,7 @@ initial_targets:
 - ads111x.based.component.gt:000
 - dfr.component.gt:000
 - electric.meter.component.gt:002
-- g.node.gt:004
+- g.node.gt:005
 - gw108.gpio.sensor.component.gt:002
 - gw108.vdc.relay.component.gt:002
 - hubitat.component.gt:000
@@ -22,15 +22,16 @@ initial_targets:
 - sim.pico.tank.module.component.gt:001
 - sim.relay.component.gt:000
 - sim.sensor.component.gt:000
-- spaceheat.node.gt:302
+- spaceheat.node.gt:303
 - web.server.component.gt:002
 - gw1.scada.device.type.gt:000
 - i2c.bit.address:000
 - i2c.reg.address:000
 - i2c.bus:000
-- i2c.adc.config:000
-- i2c.dac.config:000
-- i2c.relay.config:000
+- i2c.adc.capability:000
+- i2c.dac.capability:000
+- i2c.expander:000
+- i2c.relay.capability:000
 - i2c.read.bit:000
 - i2c.write.bit:000
 - i2c.read.reg:000
@@ -130,20 +131,19 @@ worklist:
         path: definitions/enums/thermistor.data.method/000.yaml
   types:
     ads.channel.config:
-      '000':
-        path: definitions/types/ads.channel.config/000.yaml
+      '001':
+        path: definitions/types/ads.channel.config/001.yaml
     ads111x.based.component.gt:
       '000':
         path: definitions/types/ads111x.based.component.gt/000.yaml
     ads111x.based.device.type.gt:
       '000':
         path: definitions/types/ads111x.based.device.type.gt/000.yaml
-    channel.config:
-      '000':
-        path: definitions/types/channel.config/000.yaml
     data.channel.gt:
       '002':
         path: definitions/types/data.channel.gt/002.yaml
+      '003':
+        path: definitions/types/data.channel.gt/003.yaml
     derived.channel.gt:
       '002':
         path: definitions/types/derived.channel.gt/002.yaml
@@ -151,14 +151,14 @@ worklist:
       '000':
         path: definitions/types/dfr.component.gt/000.yaml
     dfr.config:
-      '000':
-        path: definitions/types/dfr.config/000.yaml
+      '001':
+        path: definitions/types/dfr.config/001.yaml
     egauge.register.config:
       '000':
         path: definitions/types/egauge.register.config/000.yaml
     electric.meter.channel.config:
-      '000':
-        path: definitions/types/electric.meter.channel.config/000.yaml
+      '001':
+        path: definitions/types/electric.meter.channel.config/001.yaml
     electric.meter.component.gt:
       '002':
         path: definitions/types/electric.meter.component.gt/002.yaml
@@ -166,8 +166,8 @@ worklist:
       '000':
         path: definitions/types/electric.meter.device.type.gt/000.yaml
     g.node.gt:
-      '004':
-        path: definitions/types/g.node.gt/004.yaml
+      '005':
+        path: definitions/types/g.node.gt/005.yaml
     gw.house0.hydronic:
       '000':
         path: definitions/types/gw.house0.hydronic/000.yaml
@@ -210,18 +210,21 @@ worklist:
     hubitat.poller.gt:
       '000':
         path: definitions/types/hubitat.poller.gt/000.yaml
-    i2c.adc.config:
+    i2c.adc.capability:
       '000':
-        path: definitions/types/i2c.adc.config/000.yaml
+        path: definitions/types/i2c.adc.capability/000.yaml
     i2c.bit.address:
       '000':
         path: definitions/types/i2c.bit.address/000.yaml
     i2c.bus:
       '000':
         path: definitions/types/i2c.bus/000.yaml
-    i2c.dac.config:
+    i2c.dac.capability:
       '000':
-        path: definitions/types/i2c.dac.config/000.yaml
+        path: definitions/types/i2c.dac.capability/000.yaml
+    i2c.expander:
+      '000':
+        path: definitions/types/i2c.expander/000.yaml
     i2c.multichannel.dt.relay.component.gt:
       '005':
         path: definitions/types/i2c.multichannel.dt.relay.component.gt/005.yaml
@@ -234,18 +237,18 @@ worklist:
     i2c.reg.address:
       '000':
         path: definitions/types/i2c.reg.address/000.yaml
-    i2c.relay.config:
+    i2c.relay.capability:
       '000':
-        path: definitions/types/i2c.relay.config/000.yaml
+        path: definitions/types/i2c.relay.capability/000.yaml
     i2c.result:
       '000':
         path: definitions/types/i2c.result/000.yaml
     i2c.thermistor.channel.config:
-      '001':
-        path: definitions/types/i2c.thermistor.channel.config/001.yaml
-    i2c.thermistor.interface.config:
+      '002':
+        path: definitions/types/i2c.thermistor.channel.config/002.yaml
+    i2c.thermistor.interface.capability:
       '000':
-        path: definitions/types/i2c.thermistor.interface.config/000.yaml
+        path: definitions/types/i2c.thermistor.interface.capability/000.yaml
     i2c.thermistor.reader.component.gt:
       '002':
         path: definitions/types/i2c.thermistor.reader.component.gt/002.yaml
@@ -268,8 +271,8 @@ worklist:
       '012':
         path: definitions/types/pico.tank.module.component.gt/012.yaml
     relay.actor.config:
-      '003':
-        path: definitions/types/relay.actor.config/003.yaml
+      '004':
+        path: definitions/types/relay.actor.config/004.yaml
     sim.pico.tank.module.component.gt:
       '001':
         path: definitions/types/sim.pico.tank.module.component.gt/001.yaml
@@ -282,6 +285,8 @@ worklist:
     spaceheat.node.gt:
       '302':
         path: definitions/types/spaceheat.node.gt/302.yaml
+      '303':
+        path: definitions/types/spaceheat.node.gt/303.yaml
     spaceheat.telemetry.quantity.projection:
       '000':
         path: definitions/types/spaceheat.telemetry.quantity.projection/000.yaml

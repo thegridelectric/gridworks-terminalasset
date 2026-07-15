@@ -5,8 +5,10 @@
 # from the snapshot's recorded indexes/seed_expanded.yaml (the original request
 # was never checked in). Run:
 #
-#   uv run sema snapshot prepare gwta_seed_request.yaml
+#   uv run sema snapshot prepare --allow-staged gwta_seed_request.yaml
 #   uv run sema snapshot build --package-name gwta
+#
+# (--allow-staged: the layout vocabulary is staging until it promotes, OPS-445.)
 #
 # then copy output/sema/* into gridworks-terminalasset/src/gwta/sema/.
 #
@@ -57,9 +59,10 @@ initial_targets:
     i2c.bit.address: {}
     i2c.reg.address: {}
     i2c.bus: {}
-    i2c.adc.config: {}
-    i2c.dac.config: {}
-    i2c.relay.config: {}
+    i2c.adc.capability: {}
+    i2c.dac.capability: {}
+    i2c.expander: {}
+    i2c.relay.capability: {}
     i2c.read.bit: {}
     i2c.write.bit: {}
     i2c.read.reg: {}

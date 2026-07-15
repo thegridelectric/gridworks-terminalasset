@@ -1,0 +1,21 @@
+from typing import Literal
+from gwta.sema.base import SemaType
+from gwta.sema.enums import I2cAdcType
+from gwta.sema.property_format import NonNegativeInt
+from gwta.sema.property_format import PascalCase
+from gwta.sema.property_format import PositiveFloat
+
+
+class I2cThermistorInterfaceCapability(SemaType):
+    """Sema: https://schemas.electricity.works/types/i2c.thermistor.interface.capability/000"""
+
+    name: PascalCase
+    i2c_bus: PascalCase
+    i2c_address: NonNegativeInt
+    adc_type: I2cAdcType
+    adc_reference_volts: PositiveFloat
+    series_resistance_k_ohms: PositiveFloat
+    type_name: Literal["i2c.thermistor.interface.capability"] = (
+        "i2c.thermistor.interface.capability"
+    )
+    version: Literal["000"] = "000"

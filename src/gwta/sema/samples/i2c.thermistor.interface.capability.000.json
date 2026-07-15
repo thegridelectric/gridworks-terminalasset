@@ -1,0 +1,10 @@
+{
+  "TypeName": "i2c.thermistor.interface.capability",
+  "Version": "000",
+  "Name": "ThermistorAdc",
+  "I2cBus": "DefaultBus",
+  "I2cAddress": 73,
+  "AdcType": "Ads1115",
+  "AdcReferenceVolts": 3.3,
+  "SeriesResistanceKOhms": 5.65
+}

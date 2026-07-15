@@ -100,20 +100,37 @@ class House0Layout(SemaType):
     @model_validator(mode="after")
     def check_axiom_3(self) -> Self:
         """
-        Axiom 3: ZoneWhitewirePwrChannel
-        For each zone at 1-based index i in Hydronic.Zones, a channel named
-        "zone{i}-{Zone.Name}-whitewire-pwr" (lowercased) SHALL exist in the union
-        of DataChannels and DerivedChannels.
+        Axiom 3: ZoneHeatCallChannel
+        For each zone at 1-based index i in Hydronic.Zones, a DerivedChannel named
+        "zone{i}-{Zone.Name}-heat-call" (lowercased) with Strategy "heat-call" SHALL exist, and a
+        source DataChannel SHALL exist for that zone — either "zone{i}-{Zone.Name}-whitewire-pwr"
+        (power-sourced, e.g. an eGauge whitewire reading) or "zone{i}-{Zone.Name}-opto-input"
+        (opto-sourced, e.g. a gw108 reading the thermostat opto-coupler). The choice of source is
+        per-zone.
         """
         if self.hydronic is None:
             return self
-        channels = {d.name for d in (self.data_channels or [])}
-        channels |= {d.name for d in (self.derived_channels or [])}
+        derived_by_name = {d.name: d for d in (self.derived_channels or [])}
+        data_names = {d.name for d in (self.data_channels or [])}
         for i, zone in enumerate(self.hydronic.zones or [], start=1):
-            name = f"zone{i}-{zone.name}".lower() + "-whitewire-pwr"
-            if name not in channels:
+            base = f"zone{i}-{zone.name}".lower()
+            heat_call = f"{base}-heat-call"
+            dc = derived_by_name.get(heat_call)
+            if dc is None:
                 raise ValueError(
-                    f"Axiom 3 (ZoneWhitewirePwrChannel) failed: missing channel '{name}'."
+                    f"Axiom 3 (ZoneHeatCallChannel) failed: missing DerivedChannel '{heat_call}'."
+                )
+            if dc.strategy != "heat-call":
+                raise ValueError(
+                    f"Axiom 3 (ZoneHeatCallChannel) failed: DerivedChannel '{heat_call}' must have "
+                    f"Strategy 'heat-call', got '{dc.strategy}'."
+                )
+            whitewire = f"{base}-whitewire-pwr"
+            opto = f"{base}-opto-input"
+            if whitewire not in data_names and opto not in data_names:
+                raise ValueError(
+                    f"Axiom 3 (ZoneHeatCallChannel) failed: heat-call for zone {i} needs a source "
+                    f"DataChannel — '{whitewire}' (power) or '{opto}' (opto)."
                 )
         return self
 
@@ -153,5 +170,49 @@ class House0Layout(SemaType):
                 raise ValueError(
                     "Axiom 4 (PrimaryFlowSourceChannelAgreement) failed: DerivedSiegSum forbids a "
                     "'primary-flow' DataChannel."
+                )
+        return self
+
+    @model_validator(mode="after")
+    def check_axiom_5(self) -> Self:
+        """
+        Axiom 5: TransactivePowerChannel
+        DerivedChannels SHALL contain exactly one channel whose Strategy is
+        "transactive-power" — the metered transactive boundary, computed by the power-meter
+        actor (not the derived-generator). Each name in that channel's InputChannelNames
+        SHALL resolve to an existing DataChannel with TelemetryName "PowerW", and the
+        AboutNode of each such DataChannel SHALL carry a NameplatePowerW. (The metered set
+        is declared once here, replacing the former per-node InPowerMetering flag; the
+        NameplatePowerW obligation folds in spaceheat.node.gt's retired
+        InPowerMetering-requires-nameplate axiom.)
+        """
+        transactive = [
+            d
+            for d in (self.derived_channels or [])
+            if d.strategy == "transactive-power"
+        ]
+        if len(transactive) != 1:
+            raise ValueError(
+                "Axiom 5 (TransactivePowerChannel) failed: expected exactly one "
+                f"transactive-power DerivedChannel, found {len(transactive)}."
+            )
+        data_by_name = {d.name: d for d in (self.data_channels or [])}
+        node_by_name = {n.name: n for n in (self.sh_nodes or [])}
+        for name in transactive[0].input_channel_names:
+            ch = data_by_name.get(name)
+            if ch is None:
+                raise ValueError(
+                    f"Axiom 5 (TransactivePowerChannel) failed: input '{name}' is not a DataChannel."
+                )
+            if ch.telemetry_name != "PowerW":
+                raise ValueError(
+                    f"Axiom 5 (TransactivePowerChannel) failed: input '{name}' must be PowerW, "
+                    f"got '{ch.telemetry_name}'."
+                )
+            node = node_by_name.get(ch.about_node_name)
+            if node is None or node.nameplate_power_w is None:
+                raise ValueError(
+                    f"Axiom 5 (TransactivePowerChannel) failed: about-node "
+                    f"'{ch.about_node_name}' of input '{name}' has no NameplatePowerW."
                 )
         return self
