@@ -22,6 +22,15 @@ features.
 The longer arc is a hybrid fleet where simulated houses run alongside real
 ones on the same brokers, indistinguishable in their communication patterns.
 
+Message types are governed by **Sema** — the versioned vocabulary of
+JSON-Schema contracts for all GridWorks message boundaries, canonical at
+[`thegridelectric/sema`](https://github.com/thegridelectric/sema) (schema
+ids under `https://schemas.electricity.works`). This repo carries a vendored
+snapshot at `src/gwta/sema` — generated, never hand-edit; regenerate with
+`scripts/regen_sema_snapshot.sh` from the seed
+`src/gwta/sema_seed_request.yaml`. See `src/gwta/sema/README.md` for the
+working rules.
+
 ## Status
 
 Early. The project scaffold (uv, gridworks-base dependency, a hello-world

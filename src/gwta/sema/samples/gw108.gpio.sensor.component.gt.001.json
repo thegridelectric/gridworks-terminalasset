@@ -1,0 +1,9 @@
+{
+  "TypeName": "gw108.gpio.sensor.component.gt",
+  "Version": "001",
+  "ComponentId": "f49e721c-b510-418e-a6af-843de90b3032",
+  "DeviceType": "GridworksScadaGw108",
+  "GpioPin": 1,
+  "SenseMode": "Polling",
+  "SendToDerived": false
+}

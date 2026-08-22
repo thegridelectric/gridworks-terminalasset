@@ -5,8 +5,7 @@ title: "dfr.component.gt"
 type: object
 description: >
   A DFRobot analog-output component (one installed device instance): one or more DFR0971
-  dual analog-out (0-10V DAC) boards driving pump-speed / control outputs. Flat — the shared
-  component fields are spelled out here; ConfigList references the dfr channel config by $ref.
+  dual analog-out (0-10V DAC) boards driving pump-speed / control outputs.
 
 properties:
 
@@ -18,9 +17,8 @@ properties:
   DeviceType:
     $ref: "https://schemas.electricity.works/formats/pascal.case"
     description: >
-      The device category this component is built on, an open `pascal.case` string
-      (a `gw1.device.type` value, e.g. `DfrobotDualAnalogOut`). The hardware layout
-      enforces membership in `gw1.device.type`.
+      The device category this component is built on, an open
+      pascal-case string.
 
   ConfigList:
     type: array
@@ -68,10 +66,6 @@ examples:
       "ConfigList": [
         {
           "ChannelName": "scada",
-          "CapturePeriodS": 1,
-          "AsyncCapture": false,
-          "Exponent": 0,
-          "Unit": "Unknown",
           "OutputIdx": 1,
           "InitialVoltsTimes100": 0,
           "TypeName": "dfr.config",
@@ -84,6 +78,17 @@ examples:
       "TypeName": "dfr.component.gt",
       "Version": "000"
     }
-
 x-gridworks:
   owner: "gridworks-energy"
+  axioms:
+    - number: 1
+      name: "ChannelNameUniqueness"
+      statement: >
+        Channel names SHALL be unique across the ConfigList.
+  extended_description: >
+    The `.gt` suffix declares that this type is coupled bijectively with a table in
+    a canonical seed database (here, the terminalasset registry): the table's rows are
+    instances of this type. Sema is the authority over what a row means; the seed
+    table is the authority over which instances are currently asserted.
+
+    DeviceType values come from the `gw1.device.type` vocabulary; the hardware layout enforces membership.

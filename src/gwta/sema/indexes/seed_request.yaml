@@ -1,0 +1,62 @@
+# sema_seed_request.yaml
+#
+# Seed request for the gridworks-terminalasset (gwta) Sema snapshot — the
+# hardware-layout vocabulary the scada emits and gwta decodes. Reconstructed
+# from the snapshot's recorded indexes/seed_expanded.yaml (the original request
+# was never checked in). Regenerate the vendored snapshot with:
+#
+#   scripts/regen_sema_snapshot.sh
+#
+# Latest version of each type ({}); configs, enums, and formats are pulled in
+# through type dependencies (e.g. the mac.address format via hubitat.component.gt).
+
+# Local (Python) class/module names for the generated gwta snapshot. The rule
+# drops the leading `gw1.`/`gw.` namespace segment (so `gw1.unit` -> `Unit`,
+# `gw.house0.layout` -> `House0Layout`); `gw108.*` is untouched (its head is
+# `gw108`, not `gw1`/`gw`). The dotted TypeName wire identity is unchanged.
+local_names:
+  strip_prefixes: [gw1, gw]
+  overrides:
+    # spaceheat.unit deliberately stays SpaceheatUnit; only telemetry.name is shortened.
+    spaceheat.telemetry.name: telemetry.name   # -> TelemetryName
+
+initial_targets:
+  types:
+    # The three mutating layout types (Sema is the source of truth; snapshot to
+    # gwta, hand-port to gwsproto, test via the round-trip script).
+    gw.nolan.layout: {}
+    gw.house0.layout: {}
+    gw1.simple.sim.layout: {}
+
+    ads111x.based.component.gt: {}
+    dfr.component.gt: {}
+    electric.meter.component.gt: {}
+    g.node.gt: {}
+    gw108.gpio.sensor.component.gt: {}
+    gw108.vdc.relay.component.gt: {}
+    hubitat.component.gt: {}
+    hubitat.poller.component.gt: {}
+    i2c.multichannel.dt.relay.component.gt: {}
+    i2c.thermistor.reader.component.gt: {}
+    pico.btu.meter.component.gt: {}
+    pico.flow.module.component.gt: {}
+    pico.tank.module.component.gt: {}
+    sim.pico.tank.module.component.gt: {}
+    sim.relay.component.gt: {}
+    sim.sensor.component.gt: {}
+    spaceheat.node.gt: {}
+    web.server.component.gt: {}
+
+    # gw108 board descriptor (-> ScadaDeviceTypeGt) + the generic i2c.* family,
+    # for the broker round-trip EDD sweep that aligns the hand-written gwsproto
+    # types to these codegen'd sema words. (Likely removed from gwta afterward.)
+    gw1.scada.device.type.gt: {}
+    i2c.bit.address: {}
+    i2c.reg.address: {}
+    i2c.bus: {}
+    i2c.relay.config: {}
+    i2c.read.bit: {}
+    i2c.write.bit: {}
+    i2c.read.reg: {}
+    i2c.write.reg: {}
+    i2c.result: {}

@@ -1,4 +1,5 @@
 from typing import Literal
+from pydantic import model_validator
 from gwta.sema.base import SemaType
 from gwta.sema.property_format import PascalCase
 from gwta.sema.property_format import PositiveInt
@@ -7,7 +8,7 @@ from gwta.sema.types.relay_actor_config import RelayActorConfig
 
 
 class Gw108VdcRelayComponentGt(SemaType):
-    """Sema: https://schemas.electricity.works/types/gw108.vdc.relay.component.gt/002"""
+    """Sema: https://schemas.electricity.works/types/gw108.vdc.relay.component.gt/001"""
 
     component_id: UUID4Str
     device_type: PascalCase
@@ -16,4 +17,18 @@ class Gw108VdcRelayComponentGt(SemaType):
     display_name: str | None = None
     hw_uid: str | None = None
     type_name: Literal["gw108.vdc.relay.component.gt"] = "gw108.vdc.relay.component.gt"
-    version: Literal["002"] = "002"
+    version: Literal["001"] = "001"
+
+    @model_validator(mode="after")
+    def check_axiom_1(self) -> "Gw108VdcRelayComponentGt":
+        """
+        Axiom 1: ChannelNameUniqueness
+        Channel names SHALL be unique across the ConfigList.
+        """
+        channel_names = [config.channel_name for config in self.config_list]
+        if len(channel_names) != len(set(channel_names)):
+            raise ValueError(
+                "Axiom 1 (ChannelNameUniqueness) failed: channel names must be "
+                "unique across the ConfigList."
+            )
+        return self

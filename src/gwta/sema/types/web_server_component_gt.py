@@ -3,7 +3,6 @@ from pydantic import BaseModel, ConfigDict, StrictInt
 from gwta.sema.base import SemaType
 from gwta.sema.property_format import PascalCase
 from gwta.sema.property_format import UUID4Str
-from gwta.sema.types.channel_config import ChannelConfig
 
 
 class WebServer(BaseModel):
@@ -21,13 +20,12 @@ class WebServer(BaseModel):
 
 
 class WebServerComponentGt(SemaType):
-    """Sema: https://schemas.electricity.works/types/web.server.component.gt/002"""
+    """Sema: https://schemas.electricity.works/types/web.server.component.gt/001"""
 
     component_id: UUID4Str
     device_type: PascalCase
-    config_list: list[ChannelConfig]
     web_server: WebServer
     display_name: str | None = None
     hw_uid: str | None = None
     type_name: Literal["web.server.component.gt"] = "web.server.component.gt"
-    version: Literal["002"] = "002"
+    version: Literal["001"] = "001"

@@ -8,15 +8,13 @@ from gwta.sema.property_format import PascalCase
 from gwta.sema.property_format import PositiveFloat
 from gwta.sema.property_format import SpaceheatName
 from gwta.sema.property_format import UUID4Str
-from gwta.sema.types.channel_config import ChannelConfig
 
 
 class PicoBtuMeterComponentGt(SemaType):
-    """Sema: https://schemas.electricity.works/types/pico.btu.meter.component.gt/001"""
+    """Sema: https://schemas.electricity.works/types/pico.btu.meter.component.gt/000"""
 
     component_id: UUID4Str
     device_type: PascalCase
-    config_list: list[ChannelConfig]
     enabled: bool
     serial_number: str
     flow_channel_name: SpaceheatName
@@ -37,4 +35,4 @@ class PicoBtuMeterComponentGt(SemaType):
     display_name: str | None = None
     hw_uid: str | None = None
     type_name: Literal["pico.btu.meter.component.gt"] = "pico.btu.meter.component.gt"
-    version: Literal["001"] = "001"
+    version: Literal["000"] = "000"

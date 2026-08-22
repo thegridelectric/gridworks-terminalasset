@@ -8,7 +8,7 @@ from gwta.sema.types.relay_actor_config import RelayActorConfig
 
 
 class I2cMultichannelDtRelayComponentGt(SemaType):
-    """Sema: https://schemas.electricity.works/types/i2c.multichannel.dt.relay.component.gt/005"""
+    """Sema: https://schemas.electricity.works/types/i2c.multichannel.dt.relay.component.gt/004"""
 
     component_id: UUID4Str
     device_type: PascalCase
@@ -20,14 +20,28 @@ class I2cMultichannelDtRelayComponentGt(SemaType):
     type_name: Literal["i2c.multichannel.dt.relay.component.gt"] = (
         "i2c.multichannel.dt.relay.component.gt"
     )
-    version: Literal["005"] = "005"
+    version: Literal["004"] = "004"
 
     model_config = ConfigDict(**(SemaType.model_config | {"extra": "allow"}))
 
     @model_validator(mode="after")
     def check_axiom_1(self) -> "I2cMultichannelDtRelayComponentGt":
         """
-        Axiom 1: ActorAndRelayIndexUniqueness
+        Axiom 1: ChannelNameUniqueness
+        Channel names SHALL be unique across the ConfigList.
+        """
+        channel_names = [config.channel_name for config in self.config_list]
+        if len(channel_names) != len(set(channel_names)):
+            raise ValueError(
+                "Axiom 1 (ChannelNameUniqueness) failed: channel names must be "
+                "unique across the ConfigList."
+            )
+        return self
+
+    @model_validator(mode="after")
+    def check_axiom_2(self) -> "I2cMultichannelDtRelayComponentGt":
+        """
+        Axiom 2: ActorAndRelayIndexUniqueness
         ConfigList SHALL NOT contain duplicate ActorName values or duplicate RelayIdx
         values.
         """
@@ -35,12 +49,12 @@ class I2cMultichannelDtRelayComponentGt(SemaType):
         relay_idxs = [c.relay_idx for c in self.config_list]
         if len(actor_names) != len(set(actor_names)):
             raise ValueError(
-                "Axiom 1 (ActorAndRelayIndexUniqueness): ConfigList SHALL NOT "
+                "Axiom 2 (ActorAndRelayIndexUniqueness): ConfigList SHALL NOT "
                 "contain duplicate ActorName values."
             )
         if len(relay_idxs) != len(set(relay_idxs)):
             raise ValueError(
-                "Axiom 1 (ActorAndRelayIndexUniqueness): ConfigList SHALL NOT "
+                "Axiom 2 (ActorAndRelayIndexUniqueness): ConfigList SHALL NOT "
                 "contain duplicate RelayIdx values."
             )
         return self

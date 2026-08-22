@@ -6,7 +6,6 @@ from gwta.sema.enums import HzCalcMethod
 from gwta.sema.property_format import PascalCase
 from gwta.sema.property_format import SpaceheatName
 from gwta.sema.property_format import UUID4Str
-from gwta.sema.types.channel_config import ChannelConfig
 
 
 class PicoFlowModuleComponentGt(SemaType):
@@ -14,7 +13,6 @@ class PicoFlowModuleComponentGt(SemaType):
 
     component_id: UUID4Str
     device_type: PascalCase
-    config_list: list[ChannelConfig]
     display_name: str | None = None
     hw_uid: str | None = None
     enabled: bool

@@ -1,0 +1,16 @@
+{
+  "TypeName": "i2c.expander",
+  "Version": "000",
+  "ExpanderIdx": 1,
+  "I2cBus": "DefaultBus",
+  "AllowedI2cAddressList": [
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39
+  ]
+}

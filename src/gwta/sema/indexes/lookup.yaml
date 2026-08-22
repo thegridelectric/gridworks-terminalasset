@@ -19,11 +19,21 @@ types:
     versioning_strategy: literal
     versions:
       '000': definitions/types/ads111x.based.component.gt/000.yaml
-  channel.config:
+  ads111x.based.device.type.gt:
     latest_version: '000'
     versioning_strategy: literal
     versions:
-      '000': definitions/types/channel.config/000.yaml
+      '000': definitions/types/ads111x.based.device.type.gt/000.yaml
+  data.channel.gt:
+    latest_version: '003'
+    versioning_strategy: literal
+    versions:
+      '003': definitions/types/data.channel.gt/003.yaml
+  derived.channel.gt:
+    latest_version: '002'
+    versioning_strategy: literal
+    versions:
+      '002': definitions/types/derived.channel.gt/002.yaml
   dfr.component.gt:
     latest_version: '000'
     versioning_strategy: literal
@@ -45,25 +55,100 @@ types:
     versions:
       '000': definitions/types/electric.meter.channel.config/000.yaml
   electric.meter.component.gt:
-    latest_version: '002'
+    latest_version: '001'
     versioning_strategy: literal
     versions:
-      '002': definitions/types/electric.meter.component.gt/002.yaml
+      '001': definitions/types/electric.meter.component.gt/001.yaml
+  electric.meter.device.type.gt:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/electric.meter.device.type.gt/000.yaml
   g.node.gt:
-    latest_version: '004'
+    latest_version: '006'
     versioning_strategy: literal
     versions:
-      '004': definitions/types/g.node.gt/004.yaml
+      '006': definitions/types/g.node.gt/006.yaml
+  gpio.relay.component.gt:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/gpio.relay.component.gt/000.yaml
+  gpio.sensor.component.gt:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/gpio.sensor.component.gt/000.yaml
+  gw.house0.layout:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/gw.house0.layout/000.yaml
+  gw.hydronic:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/gw.hydronic/000.yaml
+  gw.native.gpio.pin:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/gw.native.gpio.pin/000.yaml
+  gw.nolan.layout:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/gw.nolan.layout/000.yaml
+  gw0.required.energy.layered:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/gw0.required.energy.layered/000.yaml
+  gw0.usable.energy.layered:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/gw0.usable.energy.layered/000.yaml
+  gw1.hvac.zone:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/gw1.hvac.zone/000.yaml
+  gw1.scada.device.type.gt:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/gw1.scada.device.type.gt/000.yaml
+  gw1.simple.sim.layout:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/gw1.simple.sim.layout/000.yaml
+  gw1.unit.quantity.projection:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/gw1.unit.quantity.projection/000.yaml
+  gw1.zone.call.circuit:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/gw1.zone.call.circuit/000.yaml
+  gw1.zone.thermostat:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/gw1.zone.thermostat/000.yaml
   gw108.gpio.sensor.component.gt:
-    latest_version: '002'
+    latest_version: '001'
     versioning_strategy: literal
     versions:
-      '002': definitions/types/gw108.gpio.sensor.component.gt/002.yaml
+      '001': definitions/types/gw108.gpio.sensor.component.gt/001.yaml
   gw108.vdc.relay.component.gt:
-    latest_version: '002'
+    latest_version: '001'
     versioning_strategy: literal
     versions:
-      '002': definitions/types/gw108.vdc.relay.component.gt/002.yaml
+      '001': definitions/types/gw108.vdc.relay.component.gt/001.yaml
   hubitat.component.gt:
     latest_version: '000'
     versioning_strategy: literal
@@ -84,31 +169,121 @@ types:
     versioning_strategy: literal
     versions:
       '000': definitions/types/hubitat.poller.gt/000.yaml
-  i2c.multichannel.dt.relay.component.gt:
-    latest_version: '005'
+  i2c.bit.address:
+    latest_version: '000'
     versioning_strategy: literal
     versions:
-      '005': definitions/types/i2c.multichannel.dt.relay.component.gt/005.yaml
-  i2c.thermistor.channel.config:
+      '000': definitions/types/i2c.bit.address/000.yaml
+  i2c.bus:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/i2c.bus/000.yaml
+  i2c.ct.interface.capability:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/i2c.ct.interface.capability/000.yaml
+  i2c.dac.capability:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/i2c.dac.capability/000.yaml
+  i2c.dac.channel.config:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/i2c.dac.channel.config/000.yaml
+  i2c.dac.writer.component.gt:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/i2c.dac.writer.component.gt/000.yaml
+  i2c.expander:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/i2c.expander/000.yaml
+  i2c.multichannel.dt.relay.component.gt:
+    latest_version: '004'
+    versioning_strategy: literal
+    versions:
+      '004': definitions/types/i2c.multichannel.dt.relay.component.gt/004.yaml
+  i2c.mux:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/i2c.mux/000.yaml
+  i2c.read.bit:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/i2c.read.bit/000.yaml
+  i2c.read.reg:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/i2c.read.reg/000.yaml
+  i2c.reg.address:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/i2c.reg.address/000.yaml
+  i2c.relay.capability:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/i2c.relay.capability/000.yaml
+  i2c.relay.component.gt:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/i2c.relay.component.gt/000.yaml
+  i2c.relay.config:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/i2c.relay.config/000.yaml
+  i2c.result:
     latest_version: '001'
     versioning_strategy: literal
     versions:
-      '001': definitions/types/i2c.thermistor.channel.config/001.yaml
-  i2c.thermistor.reader.component.gt:
-    latest_version: '002'
+      '001': definitions/types/i2c.result/001.yaml
+  i2c.thermistor.channel.config:
+    latest_version: '000'
     versioning_strategy: literal
     versions:
-      '002': definitions/types/i2c.thermistor.reader.component.gt/002.yaml
+      '000': definitions/types/i2c.thermistor.channel.config/000.yaml
+  i2c.thermistor.interface.capability:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/i2c.thermistor.interface.capability/000.yaml
+  i2c.thermistor.reader.component.gt:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/i2c.thermistor.reader.component.gt/000.yaml
+  i2c.write.bit:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/i2c.write.bit/000.yaml
+  i2c.write.reg:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/i2c.write.reg/000.yaml
   maker.api.attribute.gt:
     latest_version: '000'
     versioning_strategy: literal
     versions:
       '000': definitions/types/maker.api.attribute.gt/000.yaml
   pico.btu.meter.component.gt:
-    latest_version: '001'
+    latest_version: '000'
     versioning_strategy: literal
     versions:
-      '001': definitions/types/pico.btu.meter.component.gt/001.yaml
+      '000': definitions/types/pico.btu.meter.component.gt/000.yaml
   pico.flow.module.component.gt:
     latest_version: '001'
     versioning_strategy: literal
@@ -124,6 +299,21 @@ types:
     versioning_strategy: literal
     versions:
       '003': definitions/types/relay.actor.config/003.yaml
+  relay.control.config:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/relay.control.config/000.yaml
+  scada.board.component.gt:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/scada.board.component.gt/000.yaml
+  sim.dac.writer.component.gt:
+    latest_version: '000'
+    versioning_strategy: literal
+    versions:
+      '000': definitions/types/sim.dac.writer.component.gt/000.yaml
   sim.pico.tank.module.component.gt:
     latest_version: '001'
     versioning_strategy: literal
@@ -144,11 +334,16 @@ types:
     versioning_strategy: literal
     versions:
       '302': definitions/types/spaceheat.node.gt/302.yaml
-  web.server.component.gt:
-    latest_version: '002'
+  spaceheat.telemetry.quantity.projection:
+    latest_version: '000'
     versioning_strategy: literal
     versions:
-      '002': definitions/types/web.server.component.gt/002.yaml
+      '000': definitions/types/spaceheat.telemetry.quantity.projection/000.yaml
+  web.server.component.gt:
+    latest_version: '001'
+    versioning_strategy: literal
+    versions:
+      '001': definitions/types/web.server.component.gt/001.yaml
 enums:
   base.g.node.class:
     enum_type: versioned
@@ -173,11 +368,32 @@ enums:
     latest_version: '000'
     versions:
       '000': definitions/enums/gpm.from.hz.method/000.yaml
+  gw.house0.primary.flow.source:
+    enum_type: versioned
+    latest_version: '000'
+    versions:
+      '000': definitions/enums/gw.house0.primary.flow.source/000.yaml
   gw1.actor.class:
     enum_type: versioned
-    latest_version: '012'
+    latest_version: '013'
     versions:
-      '012': definitions/enums/gw1.actor.class/012.yaml
+      '013': definitions/enums/gw1.actor.class/013.yaml
+  gw1.emission.method:
+    enum_type: versioned
+    latest_version: '000'
+    versions:
+      '000': definitions/enums/gw1.emission.method/000.yaml
+  gw1.quantity:
+    enum_type: versioned
+    latest_version: '001'
+    versions:
+      '001': definitions/enums/gw1.quantity/001.yaml
+      '000': definitions/enums/gw1.quantity/000.yaml
+  gw1.unit:
+    enum_type: versioned
+    latest_version: '001'
+    versions:
+      '001': definitions/enums/gw1.unit/001.yaml
   hz.calc.method:
     enum_type: versioned
     latest_version: '001'
@@ -186,6 +402,36 @@ enums:
   i2c.adc.channel:
     enum_type: literal
     schema: definitions/enums/i2c.adc.channel/000.yaml
+  i2c.adc.type:
+    enum_type: versioned
+    latest_version: '000'
+    versions:
+      '000': definitions/enums/i2c.adc.type/000.yaml
+  i2c.dac.channel:
+    enum_type: versioned
+    latest_version: '000'
+    versions:
+      '000': definitions/enums/i2c.dac.channel/000.yaml
+  i2c.dac.type:
+    enum_type: versioned
+    latest_version: '000'
+    versions:
+      '000': definitions/enums/i2c.dac.type/000.yaml
+  i2c.dac.vref:
+    enum_type: versioned
+    latest_version: '000'
+    versions:
+      '000': definitions/enums/i2c.dac.vref/000.yaml
+  i2c.mux.type:
+    enum_type: versioned
+    latest_version: '000'
+    versions:
+      '000': definitions/enums/i2c.mux.type/000.yaml
+  i2c.operation:
+    enum_type: versioned
+    latest_version: '001'
+    versions:
+      '001': definitions/enums/i2c.operation/001.yaml
   relay.closed.or.open:
     enum_type: literal
     schema: definitions/enums/relay.closed.or.open/000.yaml
@@ -214,12 +460,36 @@ enums:
     latest_version: '000'
     versions:
       '000': definitions/enums/thermistor.data.method/000.yaml
+  thermostat.kind:
+    enum_type: versioned
+    latest_version: '000'
+    versions:
+      '000': definitions/enums/thermostat.kind/000.yaml
+  zone.actuator.kind:
+    enum_type: versioned
+    latest_version: '000'
+    versions:
+      '000': definitions/enums/zone.actuator.kind/000.yaml
+  zone.circuit.role:
+    enum_type: versioned
+    latest_version: '000'
+    versions:
+      '000': definitions/enums/zone.circuit.role/000.yaml
+  zone.setpoint.source:
+    enum_type: versioned
+    latest_version: '000'
+    versions:
+      '000': definitions/enums/zone.setpoint.source/000.yaml
 formats:
   handle.name: definitions/formats/handle.name.yaml
   left.right.dot: definitions/formats/left.right.dot.yaml
+  mac.address: definitions/formats/mac.address.yaml
   non.empty.string: definitions/formats/non.empty.string.yaml
+  non.negative.int: definitions/formats/non.negative.int.yaml
   pascal.case: definitions/formats/pascal.case.yaml
   positive.float: definitions/formats/positive.float.yaml
   positive.int: definitions/formats/positive.int.yaml
   spaceheat.name: definitions/formats/spaceheat.name.yaml
+  utc.milliseconds: definitions/formats/utc.milliseconds.yaml
+  utc.seconds: definitions/formats/utc.seconds.yaml
   uuid4.str: definitions/formats/uuid4.str.yaml

@@ -6,7 +6,7 @@ type: object
 description: >
   A Hubitat poller component (one polled Hubitat device instance): the poller settings that
   map a Hubitat device's attributes onto SCADA channels. Flat — the shared component fields
-  are spelled out here; Poller references the hubitat.poller.gt word by $ref.
+  are spelled out here; Poller references the poller record word by $ref.
 
 properties:
 
@@ -18,21 +18,13 @@ properties:
   DeviceType:
     $ref: "https://schemas.electricity.works/formats/pascal.case"
     description: >
-      The device category this component is built on, an open `pascal.case` string
-      (a `gw1.device.type` value). The hardware layout enforces membership in
-      `gw1.device.type`.
+      The device category this component is built on, an open
+      pascal-case string.
 
   Poller:
     $ref: "https://schemas.electricity.works/types/hubitat.poller.gt/000"
     description: >
       The poller settings for this Hubitat device.
-
-  ConfigList:
-    type: array
-    items:
-      $ref: "https://schemas.electricity.works/types/channel.config/000"
-    description: >
-      Per-channel configurations for the channels this device feeds.
 
   DisplayName:
     type: string
@@ -52,7 +44,6 @@ required:
   - ComponentId
   - DeviceType
   - Poller
-  - ConfigList
   - TypeName
   - Version
 
@@ -90,20 +81,17 @@ examples:
         "TypeName": "hubitat.poller.gt",
         "Version": "000"
       },
-      "ConfigList": [
-        {
-          "ChannelName": "scada",
-          "CapturePeriodS": 1,
-          "AsyncCapture": false,
-          "Exponent": 0,
-          "Unit": "Unknown",
-          "TypeName": "channel.config",
-          "Version": "000"
-        }
-      ],
       "TypeName": "hubitat.poller.component.gt",
       "Version": "000"
     }
-
 x-gridworks:
   owner: "gridworks-energy"
+  extended_description: >
+    The `.gt` suffix declares that this type is coupled bijectively with a table in
+    a canonical seed database (here, the terminalasset registry): the table's rows are
+    instances of this type. Sema is the authority over what a row means; the seed
+    table is the authority over which instances are currently asserted.
+
+    DeviceType values come from the `gw1.device.type` vocabulary; the hardware layout enforces membership.
+
+    The poller record is a `hubitat.poller.gt`.
