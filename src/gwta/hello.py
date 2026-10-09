@@ -52,7 +52,7 @@ def ensure_g_node_json(path: Path, *, alias: str) -> Path:
                 "PositionPointId": str(uuid.uuid4()),
                 "Status": "Active",
                 "TypeName": "g.node.gt",
-                "Version": "004",
+                "Version": "006",
             },
             indent=2,
         )
