@@ -15,6 +15,7 @@ ta-hello = "gwta.hello:main"
 [dependency-groups]
 dev = [
     "pytest>=8.0",
+    "pyyaml>=6.0.3",
     "ruff>=0.4",
 ]
 
