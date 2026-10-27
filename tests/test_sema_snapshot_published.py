@@ -1,11 +1,11 @@
-"""The vendored sema snapshot ships only published vocabulary on `dev`.
+"""The vendored sema snapshot ships only published vocabulary on `main`.
 
 A snapshot built with `--allow-staged` is for dev brokers only (sema spec,
 snapshot "Published-only by default"); the terminal asset is released from
-`dev`.
+`main`, and `dev` and topic branches may hold staging words.
 The snapshot's own `definitions/registry.yaml` records the status of every
 word and version it ships, so the test reads that and nothing outside the
-repo. Off `dev` the non-published words are reported, not failed.
+repo. Off `main` the non-published words are reported, not failed.
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 SNAPSHOT = ROOT / "src" / "gwta" / "sema"
-PRODUCTION_BRANCH = "dev"
+PRODUCTION_BRANCH = "main"
 
 
 def current_branch() -> str:
@@ -58,7 +58,7 @@ def non_published(snapshot: Path) -> list[str]:
     return sorted(found)
 
 
-def test_snapshot_is_published_only_on_dev() -> None:
+def test_snapshot_is_published_only_on_main() -> None:
     offenders = non_published(SNAPSHOT)
     if not offenders:
         return
