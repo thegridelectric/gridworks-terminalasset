@@ -1,5 +1,6 @@
 from gwta.sema.enums.actor_class import ActorClass
 from gwta.sema.enums.base_g_node_class import BaseGNodeClass
+from gwta.sema.enums.change_relay_pin import ChangeRelayPin
 from gwta.sema.enums.change_relay_state import ChangeRelayState
 from gwta.sema.enums.circulator_role import CirculatorRole
 from gwta.sema.enums.emission_method import EmissionMethod
@@ -22,6 +23,7 @@ from gwta.sema.enums.quantity import Quantity
 from gwta.sema.enums.refrigerant_cycle import RefrigerantCycle
 from gwta.sema.enums.relay_closed_or_open import RelayClosedOrOpen
 from gwta.sema.enums.relay_wiring_config import RelayWiringConfig
+from gwta.sema.enums.sim_device_type import SimDeviceType
 from gwta.sema.enums.spaceheat_unit import SpaceheatUnit
 from gwta.sema.enums.telemetry_name import TelemetryName
 from gwta.sema.enums.temp_calc_method import TempCalcMethod
@@ -34,6 +36,7 @@ from gwta.sema.enums.zone_setpoint_source import ZoneSetpointSource
 __all__ = [
     "ActorClass",
     "BaseGNodeClass",
+    "ChangeRelayPin",
     "ChangeRelayState",
     "CirculatorRole",
     "EmissionMethod",
@@ -56,6 +59,7 @@ __all__ = [
     "RefrigerantCycle",
     "RelayClosedOrOpen",
     "RelayWiringConfig",
+    "SimDeviceType",
     "SpaceheatUnit",
     "TelemetryName",
     "TempCalcMethod",

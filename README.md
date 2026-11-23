@@ -33,10 +33,262 @@ working rules.
 
 ## Status
 
-Early. The project scaffold (uv, gridworks-base dependency, a hello-world
-actor that connects to a dev RabbitMQ broker and emits a heartbeat) is the
-current work. Physics modeling beyond synthetic constant/sawtooth channels is
-deliberately out of scope for now.
+Early. Two actors run against a dev RabbitMQ broker: `ta-hello`, which
+connects and emits a heartbeat, and `ta-plant`, a simulated plant whose
+values either drift at random or are the physics of its house.
+
+## The simulated plant
+
+```shell
+GWTA_SERVICE_ALIAS=<the layout's TerminalAsset alias> \
+  uv run ta-plant --layout <hardware-layout.json>
+```
+
+The plant reads one house's hardware layout (a `gw.house0.layout`, a
+`gw.house0.no.sieg` or a `gw.katahdin.layout`) and speaks two words, both
+wrapped in a `gw` envelope on `amq.topic`:
+
+- `sim.plant.flux`, every `--flux-seconds`: a value for each enabled channel
+  that a simulated sensing device captures, in the channel's own encoding.
+  Routing key `gw.<plant>.to.<scada>.sim-plant-flux`, aliases with their
+  dots as hyphens.
+- `sim.plant.actuation`, taken from
+  `gw.<scada>.to.<plant>.sim-plant-actuation`: a relay's node name and
+  whether it was energised or de-energised.
+
+Channel names and relay node names are all that cross the broker. A relay's
+state and an output's level are never in the flux.
+
+The plant's inside is a `PlantModel` (`src/gwta/plant_model.py`): time and
+actuations in, channel values out, with no knowledge of the broker. There
+are two. `DriftModel` is a seeded random walk per channel inside bounds set
+by the channel's telemetry, which keeps the actuations it hears and does
+not act on them. `FmuPlantModel` is the physics of the house, run from an
+FMU: `KatahdinPlant.fmu` for a `gw.katahdin.layout`, `BeechPlant.fmu` for a
+`gw.house0.layout`. No FMU is the plant of a `gw.house0.no.sieg`.
+
+## The Katahdin plant
+
+```shell
+scripts/build_fmu.sh
+GWTA_SERVICE_ALIAS=<the layout's TerminalAsset alias> \
+  uv run ta-plant --layout <katahdin-layout.json> --fmu build/KatahdinPlant.fmu
+```
+
+A Katahdin house is a monobloc heat pump on a glycol loop, a plate
+exchanger, a secondary pump, three store tanks in series, a zoned
+distribution loop with its own circulator, five motorised valves (V1 to V5)
+and an oil boiler or immersion elements as backup. Its physics is one
+Modelica model, `modelica/Katahdin.mo`, with no library behind it:
+
+- **Water moves where the valves and pumps send it.** The pipework is a
+  pressure network solved at every instant, so a flow splits between the
+  store and the house by their resistances, reverses through the store
+  when the house draws more than the exchanger gives, and stops when a
+  pump has nowhere to send it.
+- **Heat follows the water.** Each store tank is thirty-six layers that keep
+  their stratification, mixing only where a warmer layer lies under a
+  colder one. The heat pump's capacity and COP are tables over outdoor
+  temperature and leaving glycol temperature; its compressor rises to
+  steady heat on a first-order ramp and stops at a leaving-temperature
+  limit. Each zone is a thermostat with a deadband, an emitter and a room
+  that loses heat to the outdoors.
+- **What it leaves out:** the immersion elements, a firing boiler (the
+  boiler is a volume of water on its branch), defrost and valve travel
+  time.
+
+`scripts/build_fmu.sh` compiles the model with OpenModelica, in docker, to
+`build/KatahdinPlant.fmu`: an FMI 2.0 co-simulation FMU that carries its own
+variable-step solver, so what the plant does is the same whether `ta-plant`
+steps it every second or every minute. `src/gwta/fmu_model.py` runs an FMU
+as a `PlantModel`; `src/gwta/katahdin.py` says which FMU output each
+channel of a Katahdin layout reads and which FMU input each relay drives;
+`src/gwta/sensing.py` gives a tank module's thermistor voltage and a flow
+meter's pulse rate for the channels that carry those.
+
+`modelica/Hydronic.mo` is a library of the parts of a heating plant (pipes,
+valves, check valves, pumps, flow meters, tanks, a plate exchanger, heat
+pumps, a boiler, a zoned house), each with an icon, for a Modelica tool such
+as OMEdit or Dymola. Two plants are built of it, each a placed diagram of
+connected parts:
+
+- `KatahdinComponents.Plant` (`modelica/KatahdinComponents.mo`) is the
+  Katahdin house, with the inputs, outputs and parameters of
+  `Katahdin.Plant`.
+- `Beech.Plant` (`modelica/Beech.mo`) is a House0 plant, Beech: a split
+  heat pump behind a Siegenthaler valve, a buffer, three store tanks behind
+  an ISO valve and a charge/discharge valve, an oil boiler with its own
+  pump, and two zones, each part placed where the plant's schematic draws
+  it. Its inputs are what the relays and the 0-10 V outputs do (the heat
+  pump's call and who holds it, the Siegenthaler valve's motor and
+  direction, the charge/discharge relay, each pump and who runs the
+  primary one, each zone's call and who holds it, who holds the boiler);
+  its outputs are the temperatures, flows and powers the house senses. Its
+  coefficients are placeholders, but for its zones', which are fitted to
+  the house.
+
+`KatahdinPlant.fmu` is built from `Katahdin.mo` and `BeechPlant.fmu` from
+`Beech.mo`; the FMU build also checks that `KatahdinComponents.Plant`
+translates.
+
+A relay acts through its contact. `katahdin.py` holds what a closed contact
+does (it feeds a valve's motor, runs the secondary pump, calls the heat
+pump), and the layout's `relay.control.config` says which of the relay's two
+positions closes it. A valve with no feed rests where the house's failsafe
+needs it. In a house with a boiler the call reaches the heat pump only
+while the boiler backup's failsafe relay is energised; de-energised, the
+heat pump is its aquastat's, and the model has the aquastat make no call.
+
+Every coefficient is a parameter of the model with a placeholder value:
+pipe resistances, pump curves, tank and exchanger conductances, the heat
+pump tables, the zones' heat loss. `--fmu-overrides <file.json>` replaces
+any of them, and any input no relay drives, at start:
+
+```json
+{"UAExchanger": 2500, "COPTable[2,1]": 2.4, "TOutdoor": 263.15, "TStartPlant": 318.15}
+```
+
+The values are SI (kelvin, m3/s, W, Pa); the parameters and their meanings
+are the declarations at the top of `model Plant`, and a table is set one
+cell at a time. The pump speeds (`secondaryPumpSpeed`, `distPumpSpeed`,
+each 0 to 1) are inputs that hold their start value through a run.
+`--weather-url` and `--weather-bundle` poll that bundle's temperature
+forecast and set `TOutdoor` from it: each slice is a point at the slice's
+start, and between points the temperature moves in a straight line. Until
+the first forecast arrives, `TOutdoor` holds the value it started with.
+
+The plant refuses, by name, a layout it cannot serve: one with a channel
+the model has no value for, one with a number of zone circuits other than
+the four the FMU is generated with, one that does not say which position of
+a relay closes its contact, and an override that names neither a parameter
+nor an input free of a relay.
+
+### A Katahdin layout
+
+```shell
+uv run ta-katahdin-layout \
+  --house0 tests/config/gw.house0.no.sieg.hazel.layout.json \
+  --ltn-alias d1.isone.ct.newhaven.larch1 \
+  --zones north south east west \
+  --out tests/config/gw.katahdin.larch.layout.json
+```
+
+`ta-katahdin-layout` (`src/gwta/katahdin_layout.py`) makes a
+`gw.katahdin.layout` from a House0 layout. The scada's own nodes, the relay
+board, the meters and the simulated sensors are the House0 house's; the
+pipework is a Katahdin house's: the five valves on the board's free relays,
+a 0-10 V output for the secondary pump, the heat pump's control box, three
+80-gallon store tanks and one call circuit for each zone named. What a
+Katahdin house has no part for is left behind. `--no-boiler` gives a house
+with no backup and no boiler valve. Ids are made from the alias and each
+thing's name, so the same arguments give the same file.
+
+`tests/config/gw.katahdin.larch.layout.json` is the output of the command
+above, and a test holds it to that. Larch is no real house: its alias, its
+zones and where its relays sit on the board are the generator's.
+
+### In a container
+
+```shell
+docker build -t gwta-plant .
+docker run --rm --network host \
+  -e GWTA_SERVICE_ALIAS=<the layout's TerminalAsset alias> \
+  -v <dir holding the layout>:/layouts:ro \
+  gwta-plant --layout /layouts/<katahdin-layout.json> \
+  --fmu /opt/gwta/KatahdinPlant.fmu
+```
+
+The image generates both FMUs, `/opt/gwta/KatahdinPlant.fmu` and
+`/opt/gwta/BeechPlant.fmu`, and installs the package beside them; its
+entrypoint is `ta-plant`. An FMU's binary is for Linux on the processor it
+was built on, so an FMU from `scripts/build_fmu.sh` loads on a Linux host
+and, on a Mac, the container is the place to run it.
+
+## The House0 plant
+
+```shell
+scripts/build_fmu.sh
+GWTA_SERVICE_ALIAS=<the layout's TerminalAsset alias> \
+  uv run ta-plant --layout <house0-layout.json> --fmu build/BeechPlant.fmu
+```
+
+A House0 house with a Siegenthaler loop is run from `Beech.Plant`, so the
+house it can be is Beech's: two zone circuits and three store tanks. The
+plant refuses a layout with another count of either. The buffer and each
+store tank are the house's 119 US gal vessels, each 36 layers, with the
+three depth sensors on the layers whose centres sit near 101, 58 and 5 US
+gal from the bottom; an inverted layer mixes in about a second. The heat
+pump's capacity and COP tables, and a one-minute soft start of compressor
+heat and power, are fitted to Beech's buffer charges with the Millinocket
+forecast outdoor air; the indoor unit draws 36 % of the compressor power.
+`src/gwta/house0.py` says which FMU output each channel reads and which FMU
+input each relay drives:
+
+| Relay | De-energised | Energised |
+| --- | --- | --- |
+| `hp-failsafe-relay` | the heat pump is its aquastat's, which makes no call | the scada holds the call |
+| `hp-scada-ops-relay` | the scada calls the heat pump | no call |
+| `aquastat-ctrl-relay` | the boiler holds the middle of the buffer at its aquastat setting | the boiler is off |
+| `primary-pump-failsafe-relay` | the heat pump runs the primary pump while it is called | the scada runs it |
+| `primary-pump-scada-ops-relay` | off | the scada's primary pump is on |
+| `hp-loop-on-off-relay` | the Siegenthaler valve's motor runs | the valve holds |
+| `hp-loop-keep-send-relay` | the motor runs toward send | toward keep |
+| `charge-discharge-relay` | the store discharges and the ISO valve is open | the store charges and the ISO valve is closed |
+| `store-pump-relay` | off | the store pump is on |
+| a zone's failsafe relay | the zone's thermostat calls | the scada holds the zone's call |
+| a zone's ops relay | no call | the scada calls the zone |
+
+The table is for a house whose layout gives each relay those two states
+that way round: which state a relay is in when energised is read from its
+`relay.control.config`, and a layout that does not say it is refused. With
+every relay de-energised the boiler heats the house and the Siegenthaler
+valve travels to send. The relay that powers the picos and the one on the
+thermostats' common wire switch nothing the model has.
+
+Each zone has coefficients of its own (`Hydronic.Zones`), one value a zone,
+down then up:
+
+- **A thermostat cycles its call.** The share of the time it calls rises
+  from none to all as its air falls through `dTZoneThrottle` about its
+  setpoint (`TZoneSet`, 67 °F down and 63 °F up), and no call and no pause
+  is shorter than `tCallMin`: five minutes, which is three cycles an hour
+  at half load. While it calls, the meter on its wire reads `PZoneValve`.
+- **The water passes along an emitter** cut into four lengths
+  (`CEmitter`, `UAEmitter`), so the return stays cool until the hot water
+  has crossed it, and an emitter filled by a short call gives its heat up
+  over the half hour after.
+- **A room is its air and its fabric.** The air, with what warms with it
+  within the hour (`CAir`), is what the thermostat and the zone's
+  temperature channel read; it passes heat to the fabric (`UAFabric`,
+  `CFabric`), which loses it outdoors (`UAZone`).
+
+The thermostat timing and emitter sizes are fitted to what Beech's
+thermostat wires, zone temperatures and distribution loop showed overnight
+on 17 November 2026, its buffer near 77 °C: the down zone called for six
+minutes every 50 and its air moved under half a kelvin, the up zone called
+for five minutes every three and a half hours, and its air rose three
+kelvin after each call, and a call put about 6 MJ into the down zone and
+4.4 MJ into the up zone. The zone losses to outdoor air (`UAZone`) are
+fitted to the house's distribution heat on October nights that carry a
+Millinocket forecast outdoor air: about 164 W/K in all, 138 down and 26 up.
+The zone resistances (`dpZoneNominal`) and the distribution pump's own
+shutoff (`dpDistPumpShutoff`) are fitted to the house's meter: 2.0 US gpm
+with the down zone calling, 1.5 with the up zone, 3.0 with both, at full
+speed, and a head of about 11 kPa on the downstairs flow. The pump draws
+7 W at that speed (`PDistPump`). The primary pump draws 15 W
+(`PPrimaryPump`) and its shutoff (`dpPrimaryPumpShutoff`) is set so it
+moves 5.2 US gpm through the heat-pump loop. Each zone starts at its
+setpoint (`TStartZone`).
+
+The Siegenthaler valve takes 94 seconds between its stops and passes from
+all sent to all kept between 26 and 56 seconds of that travel
+(`siegTravel`, `siegOnset`, `siegComplete`). The pump speeds
+(`primaryPumpSpeed`, `storePumpSpeed`, `distPumpSpeed`, each 0 to 1) hold
+their start value through a run. `TOutdoor` does the same unless
+`--weather-url` names a service: then it follows that bundle's temperature
+forecast, a straight line between the slices. `--fmu-overrides` sets any
+parameter, and any input the weather is not driving, as it does for a
+Katahdin house.
 
 ## Development
 
@@ -47,9 +299,9 @@ uv sync
 ./ci.sh
 ```
 
-`ci.sh` is the gate: ruff, ruff format, pyright and the test suite,
-including the `live` tests, which need the dev RabbitMQ on
-`localhost:5672` (start it with gridworks-base's `arm.sh` or `x86.sh`).
-The GitHub workflow runs the same script against the same broker image,
-so a local pass is a CI pass. `uv run pytest` alone runs the offline
-tests.
+`ci.sh` is the gate: ruff, ruff format, pyright, the FMU build and the
+test suite, including the `live` tests, which need the dev RabbitMQ on
+`localhost:5672` (start it with gridworks-base's `arm.sh` or `x86.sh`), and
+the `fmu` tests, which need docker to generate the FMU. The GitHub workflow
+runs the same script against the same broker image, so a local pass is a CI
+pass. `uv run pytest` alone runs the offline tests.
