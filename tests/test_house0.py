@@ -136,7 +136,7 @@ def open_bench(
 
 
 def test_every_channel_of_the_house_reads_an_fmu_output() -> None:
-    variables = variable_by_channel(layout().hydronic)
+    variables = variable_by_channel(layout())
     assert variables["hp-lwt"] == "hpLwt"
     assert variables["sieg-flow"] == "siegFlow"
     assert variables["sieg-flow-hz"] == "siegFlow"

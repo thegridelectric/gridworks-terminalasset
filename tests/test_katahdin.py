@@ -263,14 +263,14 @@ def test_every_relay_of_the_house_is_on_a_board_output_of_its_own() -> None:
 
 
 def test_every_katahdin_channel_reads_an_fmu_output() -> None:
-    variables = variable_by_channel(layout().hydronic)
+    variables = variable_by_channel(layout())
     assert variables["hp-lwt"] == "hpLwt"
     assert variables["store-flow"] == "storeFlow"
     assert variables["tank1-depth1"] == "tankDepth[1,1]"
     assert variables["tank3-depth3"] == "tankDepth[3,3]"
     assert variables["tank2-depth1-device"] == "tankDepth[2,1]"
     assert variables["tank2-depth1-micro-v"] == "tankDepth[2,1]"
-    assert variables["zone2-kitchen-opto-input"] == "zoneCallPower[2]"
+    assert variables["zone2-kitchen-opto-input"] == "zoneCall[2]"
     assert variables["zone4-upstairs-gw-temp"] == "zoneTemperature[4]"
     shown = set(layout().telemetry_by_channel)
     assert shown - set(variables) == set(ZONE_VOLTAGES)
@@ -316,7 +316,7 @@ def test_a_heat_calls_pin_is_at_the_level_its_interpretation_calls_active(
     pin = "zone1-living-rm-opto-input"
     read = katahdin._replace(heat_call_interpretation_by_channel={pin: interpretation})
     encode = device_encodings(read)[pin].encode
-    assert (encode(10.0), encode(0.0)) == (calling, quiet)
+    assert (encode(1.0), encode(0.0)) == (calling, quiet)
 
 
 def test_relays_rest_where_the_houses_failsafe_needs_them() -> None:
@@ -421,7 +421,7 @@ def test_a_sensors_own_reading_is_encoded_as_that_sensor_does() -> None:
     encodings = device_encodings(layout())
     assert set(encodings) == set(TANK_VOLTAGES + ZONE_VOLTAGES + ZONE_PINS)
     assert {encodings[name].unit for name in ZONE_VOLTAGES} == {"K"}
-    assert {encodings[name].unit for name in ZONE_PINS} == {"W"}
+    assert {encodings[name].unit for name in ZONE_PINS} == {"1"}
     assert {encodings[name].unit for name in TANK_VOLTAGES} == {"K"}
 
 
@@ -431,7 +431,7 @@ def test_a_tank_voltage_follows_the_water(bench: list[Bench]) -> None:
     plant.charge()
     values = plant.run(20 * 60)
     for depth, voltage in zip(TANK_DEPTHS, TANK_VOLTAGES, strict=True):
-        kelvin = plant.model.read(variable_by_channel(layout().hydronic)[depth])
+        kelvin = plant.model.read(variable_by_channel(layout())[depth])
         assert values[voltage] == thermistor_microvolts(
             3977, divider_kohms=5.65, volts=3.3
         )(kelvin)
@@ -724,7 +724,7 @@ def test_a_channel_the_plant_has_no_value_for_is_refused_by_name() -> None:
         FmuPlantModel(
             fmu_path=FMU_PATH,
             telemetry_by_channel=house0.telemetry_by_channel,
-            variable_by_channel=variable_by_channel(house0.hydronic),
+            variable_by_channel=variable_by_channel(house0),
             encoding_by_channel={},
             effect_by_relay={},
             overrides={},

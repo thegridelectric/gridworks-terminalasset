@@ -20,6 +20,7 @@ from gwta.fmu_model import (
     relay_effects,
 )
 from gwta.plant_layout import PlantLayout
+from gwta.sema.enums import TelemetryName
 from gwta.sema.property_format import SpaceheatName, UTCMilliseconds
 from gwta.sema.types import BoilerBackup, Hydronic
 from gwta.sensing import device_encodings
@@ -66,13 +67,16 @@ KEEP_SEND = {"SendLess": 1.0, "SendMore": 0.0}
 HEATCALL_SOURCE = {"Scada": 1.0, "WallThermostat": 0.0}
 
 
-def variable_by_channel(hydronic: Hydronic) -> dict[SpaceheatName, str]:
+def variable_by_channel(layout: PlantLayout) -> dict[SpaceheatName, str]:
     """The FMU output behind every channel a House0 house with a
     Siegenthaler loop can show. Tank 1 is the hot tank; depth 1 is the top
     of a tank or of the buffer. The zone at circuit position i is the
     model's zone i. A flow is also behind its meter's pulse rate (`-hz`),
     and a depth behind its module's temperature (`-device`) and thermistor
-    voltage (`-micro-v`)."""
+    voltage (`-micro-v`). A zone's thermostat wire is behind the wire's power
+    when its channel is a power reading and behind the call itself, 1 or 0,
+    when its channel is a pin."""
+    hydronic = layout.hydronic
     variables = dict(VARIABLE_BY_PLANT_CHANNEL)
     for flow, variable in VARIABLE_BY_FLOW_CHANNEL.items():
         variables[flow] = variables[f"{flow}-hz"] = variable
@@ -89,7 +93,12 @@ def variable_by_channel(hydronic: Hydronic) -> dict[SpaceheatName, str]:
                     )
     for circuit in hydronic.zone_call_circuits:
         zone = circuit.circuit_position
-        variables[circuit.whitewire_channel_name] = f"zoneCallPower[{zone}]"
+        wire = circuit.whitewire_channel_name
+        variables[wire] = (
+            f"zoneCall[{zone}]"
+            if layout.telemetry_by_channel.get(wire) == TelemetryName.BinaryState
+            else f"zoneCallPower[{zone}]"
+        )
         if circuit.temp_channel_name is not None:
             variables[circuit.temp_channel_name] = f"zoneTemperature[{zone}]"
     return variables
@@ -162,7 +171,7 @@ def house0_model(
     return FmuPlantModel(
         fmu_path=fmu_path,
         telemetry_by_channel=layout.telemetry_by_channel,
-        variable_by_channel=variable_by_channel(layout.hydronic),
+        variable_by_channel=variable_by_channel(layout),
         encoding_by_channel=device_encodings(layout),
         effect_by_relay=effect_by_relay(layout),
         overrides=overrides,

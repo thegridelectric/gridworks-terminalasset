@@ -150,6 +150,7 @@ package Katahdin
     output Real secondaryPumpPower(unit = "W");
     output Real zoneTemperature[nZones](each unit = "K");
     output Real zoneCallPower[nZones](each unit = "W") "Power on each zone's thermostat wire";
+    output Real zoneCall[nZones](each unit = "1") "1 while a zone's thermostat circuit is closed, else 0";
     output Real heatPumpHeat(unit = "W") "Heat the heat pump is putting into the glycol";
     output Real storeCharge(unit = "m3/s") "Store flow signed: positive into a tank top";
     output Real thermalEnergy(unit = "J") "Heat held by every volume and zone, above 0 degC";
@@ -390,6 +391,7 @@ package Katahdin
     secondaryPumpPower = PPumpNominal * speedSecondary ^ 3;
     zoneTemperature = TZone;
     zoneCallPower = PZoneValve * zonePosition;
+    zoneCall = zonePosition;
     heatPumpHeat = QHeatPump;
     storeCharge = qCold;
     thermalEnergy = CHeatPump * (THeatPump - T0) + CExchangerSide * (TExchangerGlycol + TExchangerWater - 2 * T0)

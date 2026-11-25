@@ -45,10 +45,6 @@ CALLING_LEVEL_BY_INTERPRETATION = {
     HeatCallInterpretation.DigitalOneIsActive: 1,
 }
 
-# A thermostat wire is live when it has this much power or more: the least
-# a PowerW channel reads as other than zero.
-LIVE_WIRE_WATTS = 0.5
-
 # The meter behind a flow that a sim.sensor.component.gt reads. Hand-kept:
 # that word names no meter, and a flow read by a
 # sim.pico.flow.module.component.gt, which does, retires this.
@@ -72,10 +68,11 @@ def thermistor_microvolts(
 
 
 def pin_level(calling_level: int) -> Callable[[float], int]:
-    """The level of a pin on a thermostat wire at the wire's power in W."""
+    """The level of a pin on a thermostat wire from the model's call, 1
+    while the thermostat circuit is closed and 0 while it is open."""
 
-    def encode(watts: float) -> int:
-        return calling_level if watts >= LIVE_WIRE_WATTS else 1 - calling_level
+    def encode(call: float) -> int:
+        return calling_level if round(call) == 1 else 1 - calling_level
 
     return encode
 
@@ -132,7 +129,7 @@ def device_encoding(
             else CALLING_LEVEL_BY_INTERPRETATION.get(interpretation)
         )
         if isinstance(sensor, GpioSensorComponentGt) and calling_level is not None:
-            return DeviceEncoding("W", pin_level(calling_level))
+            return DeviceEncoding("1", pin_level(calling_level))
     elif telemetry == TelemetryName.MicroHz:
         if isinstance(sensor, SimSensorComponentGt):
             return DeviceEncoding(

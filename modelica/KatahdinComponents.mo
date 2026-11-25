@@ -133,6 +133,8 @@ package KatahdinComponents
       annotation(Placement(transformation(origin = {540, -70}, extent = {{-5, -5}, {5, 5}})));
     Hydronic.RealOutput zoneCallPower[nZones](each unit = "W") "Power on each zone's thermostat wire"
       annotation(Placement(transformation(origin = {540, -84}, extent = {{-5, -5}, {5, 5}})));
+    Hydronic.RealOutput zoneCall[nZones](each unit = "1") "1 while a zone's thermostat circuit is closed, else 0"
+      annotation(Placement(transformation(origin = {540, -91}, extent = {{-5, -5}, {5, 5}})));
     Hydronic.RealOutput heatPumpHeat(unit = "W") "Heat the heat pump is putting into the glycol"
       annotation(Placement(transformation(origin = {540, -98}, extent = {{-5, -5}, {5, 5}})));
     Hydronic.RealOutput storeCharge(unit = "m3/s") "Store flow signed: positive into a tank top"
@@ -361,6 +363,7 @@ package KatahdinComponents
     secondaryPumpPower = secondaryPump.power;
     zoneTemperature = zones.TZone;
     zoneCallPower = zones.callPower;
+    zoneCall = zones.position;
     heatPumpHeat = heatPump.Q;
     storeCharge = storeReturn.q;
 

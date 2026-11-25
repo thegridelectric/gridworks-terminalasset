@@ -174,6 +174,8 @@ package Beech
       annotation(Placement(transformation(origin = {1590, -771}, extent = {{-5, -5}, {5, 5}})));
     Hydronic.RealOutput zoneCallPower[nZones](each unit = "W") "Power on each zone's thermostat wire"
       annotation(Placement(transformation(origin = {1590, -804}, extent = {{-5, -5}, {5, 5}})));
+    Hydronic.RealOutput zoneCall[nZones](each unit = "1") "1 while a zone's thermostat circuit is closed, else 0"
+      annotation(Placement(transformation(origin = {1590, -820}, extent = {{-5, -5}, {5, 5}})));
     Hydronic.RealOutput heatPumpHeat(unit = "W") "Heat the heat pump is putting into the water"
       annotation(Placement(transformation(origin = {1590, -837}, extent = {{-5, -5}, {5, 5}})));
     Hydronic.RealOutput boilerHeat(unit = "W") "Heat the boiler is putting into the water"
@@ -471,6 +473,7 @@ package Beech
     oilBoilerPower = boiler.power + boilerPump.power;
     zoneTemperature = zones.TZone;
     zoneCallPower = zones.callPower;
+    zoneCall = zones.position;
     heatPumpHeat = heatPump.Q;
     boilerHeat = boiler.Q;
     storeCharge = storeHot.q;
