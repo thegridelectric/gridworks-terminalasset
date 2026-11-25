@@ -11,6 +11,90 @@
 # Latest version of each type ({}); configs, enums, and formats are pulled in
 # through type dependencies (e.g. the mac.address format via hubitat.component.gt).
 
+package_name: gwta
+vendor_dir: sema
+
+# The layout and sim-plant vocabulary is staging, so this is a dev-only
+# snapshot: `staging.allow` names every staging word the closure reaches.
+# A word leaves the list when it is published.
+staging:
+  allow:
+    - ads.channel.config
+    - ads111x.based.component.gt
+    - ads111x.based.device.type.gt
+    - dac.output.config
+    - device.component.gt
+    - dfr.component.gt
+    - dfr.config
+    - egauge.register.config
+    - electric.meter.channel.config
+    - electric.meter.component.gt
+    - electric.meter.device.type.gt
+    - gpio.relay.component.gt
+    - gpio.sense.mode
+    - gpio.sensor.component.gt
+    - gw.circulator
+    - gw.circulator.role
+    - gw.element.backup
+    - gw.house0.layout
+    - gw.house0.no.sieg
+    - gw.hydronic
+    - gw.katahdin.layout
+    - gw.native.gpio.pin
+    - gw.nolan.layout
+    - gw.primary.flow.source
+    - gw.primary.pump.owner
+    - gw.refrigerant.cycle
+    - gw.water.store
+    - gw.zone.emitter.type
+    - gw1.hvac.zone
+    - gw1.scada.device.type.gt
+    - gw1.sim.device.type
+    - gw1.simple.sim.layout
+    - gw1.zone.call.circuit
+    - gw1.zone.thermostat
+    - gw108.gpio.sensor.component.gt
+    - gw108.vdc.relay.component.gt
+    - hp.control.box.device.type.gt
+    - hp.device.type.gt
+    - hubitat.component.gt
+    - hubitat.poller.component.gt
+    - hubitat.poller.gt
+    - i2c.adc.channel
+    - i2c.adc.type
+    - i2c.bus
+    - i2c.ct.interface.capability
+    - i2c.dac.capability
+    - i2c.dac.channel
+    - i2c.dac.output.component.gt
+    - i2c.dac.type
+    - i2c.expander
+    - i2c.expander.type
+    - i2c.mux
+    - i2c.mux.type
+    - i2c.relay.capability
+    - i2c.relay.component.gt
+    - i2c.thermistor.channel.config
+    - i2c.thermistor.interface.capability
+    - i2c.thermistor.reader.component.gt
+    - maker.api.attribute.gt
+    - pico.btu.meter.component.gt
+    - pico.flow.module.component.gt
+    - pico.tank.module.component.gt
+    - relay.actor.config
+    - relay.control.config
+    - scada.board.component.gt
+    - sim.pico.btu.meter.component.gt
+    - sim.pico.flow.module.component.gt
+    - sim.pico.tank.module.component.gt
+    - sim.plant.actuation
+    - sim.plant.flux
+    - sim.sensor.component.gt
+    - thermistor.data.method
+    - thermostat.kind
+    - web.server.component.gt
+    - zone.setpoint.source
+
 # Local (Python) class/module names for the generated gwta snapshot. The rule
 # drops the leading `gw1.`/`gw.` namespace segment (so `gw1.unit` -> `Unit`,
 # `gw.house0.layout` -> `House0Layout`); `gw108.*` is untouched (its head is
@@ -72,3 +156,6 @@ initial_targets:
     # A component whose DeviceType is one of these is simulated: what its
     # channels read comes from the plant.
     gw1.sim.device.type: {}
+    # How the raw channel behind a heat call is read; the plant puts a pin
+    # at the level its heat call reads as calling.
+    gw1.heat.call.interpretation: {}

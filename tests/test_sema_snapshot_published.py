@@ -1,6 +1,6 @@
 """The vendored sema snapshot ships only published vocabulary on `main`.
 
-A snapshot built with `--allow-staged` is for dev brokers only (sema spec,
+A snapshot whose seed allows staging words is for dev brokers only (sema spec,
 snapshot "Published-only by default"); the terminal asset is released from
 `main`, and `dev` and topic branches may hold staging words.
 The snapshot's own `definitions/registry.yaml` records the status of every

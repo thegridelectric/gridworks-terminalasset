@@ -13,7 +13,6 @@ dependencies = [
 [project.scripts]
 ta-hello = "gwta.hello:main"
 ta-plant = "gwta.plant:main"
-ta-katahdin-layout = "gwta.katahdin_layout:main"
 
 [dependency-groups]
 dev = [

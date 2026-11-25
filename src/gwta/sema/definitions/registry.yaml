@@ -1,6 +1,6 @@
 metadata:
   registry_version: "1.0"
-  last_updated: "2026-11-09T01:50:00Z"
+  last_updated: "2026-11-25T21:20:00Z"
   maintainer: "gridworks-energy"
 
 formats:
@@ -96,6 +96,14 @@ formats:
     description: "Canonical lowercase UUIDv4 string (RFC 4122) in 8-4-4-4-12 format"
 
 enums:
+  aquastat.control.state:
+    owner: gridworks-energy
+    enum_type: "literal"
+    description: "Controller the aquastat relay hands the aquastat circuit to."
+    schema_url: "https://schemas.electricity.works/enums/aquastat.control.state/000"
+    created: "2026-10-23T00:15:00Z"
+    status: "published"
+
   base.g.node.class:
     latest_version: "000"
     owner: gridworks-energy
@@ -248,6 +256,18 @@ enums:
         created: "2026-02-02T22:17:00Z"
         status: "published"
 
+  gw1.heat.call.interpretation:
+    latest_version: "000"
+    owner: gridworks-energy
+    enum_type: "versioned"
+    description: "Defines how a source telemetry channel is interpreted to determine whether a zone is calling for heat."
+
+    versions:
+      "000":
+        schema_url: "https://schemas.electricity.works/enums/gw1.heat.call.interpretation/000"
+        created: "2026-03-16T14:14:00Z"
+        status: "published"
+
   gw1.quantity:
     latest_version: "003"
     owner: gridworks-energy
@@ -384,19 +404,16 @@ enums:
         status: "staging"
 
   i2c.operation:
-    latest_version: "001"
+    latest_version: "000"
     owner: gridworks-energy
     enum_type: "versioned"
     description: "The kind of I²C bus operation an i2c.result reports."
 
     versions:
-      "001":
-        schema_url: "https://schemas.electricity.works/enums/i2c.operation/001"
-        created: "2026-08-12T16:50:00Z"
-        status: "staging"
-        added_values:
-          - "WriteByte"
-          - "ReadBytes"
+      "000":
+        schema_url: "https://schemas.electricity.works/enums/i2c.operation/000"
+        created: "2026-06-22T16:35:00Z"
+        status: "published"
 
   pico.board.variant:
     latest_version: "000"
@@ -491,6 +508,14 @@ enums:
         schema_url: "https://schemas.electricity.works/enums/thermostat.kind/000"
         created: "2026-08-11T15:55:00Z"
         status: "staging"
+
+  valve.open.or.closed:
+    owner: gridworks-energy
+    enum_type: "literal"
+    description: "Binary position of a two-position valve: open (flow permitted) or closed (flow blocked)."
+    schema_url: "https://schemas.electricity.works/enums/valve.open.or.closed/000"
+    created: "2026-08-11T21:05:00Z"
+    status: "published"
 
   zone.setpoint.source:
     latest_version: "000"
@@ -806,17 +831,17 @@ types:
             - "uuid4.str"
 
   gw.boiler.backup:
-    latest_version: "000"
+    latest_version: "001"
     owner: gridworks-energy
     versioning_strategy: "literal"
-    description: "A boiler held by its aquastat as backup heat: its failsafe and aquastat-control relays, and whether it is in service."
+    description: "A boiler fired by an aquastat as backup heat: its intercept relay, a heat pump failsafe relay where the plant has one, and whether it is in service."
 
     versions:
-      "000":
-        schema_url: "https://schemas.electricity.works/types/gw.boiler.backup/000"
-        created: "2026-10-06T18:10:00Z"
-        status: "staging"
-        summary: "FailsafeRelayName and AquastatCtrlRelayName (spaceheat.name), InService (boolean). Axiom DistinctRelays. Carried by gw.hydronic as one kind of the optional Backup."
+      "001":
+        schema_url: "https://schemas.electricity.works/types/gw.boiler.backup/001"
+        created: "2026-11-25T18:20:00Z"
+        status: "published"
+        summary: "- FailsafeRelayName becomes optional - AquastatCtrlRelayName becomes InterceptRelayName"
         direct_dependencies:
           structural:
             - "spaceheat.name"
@@ -863,7 +888,7 @@ types:
     versions:
       "000":
         schema_url: "https://schemas.electricity.works/types/gw.house0.layout/000"
-        created: "2026-11-01T15:50:00Z"
+        created: "2026-11-25T18:20:00Z"
         status: "staging"
         summary: "The complete deployable artifact for a House0-fleet home: every collection and Hydronic required. The word MEANS has-a-siegenthaler-loop (beech, maple); sieg-less homes are gw.house0.no.sieg. Components: eGauge, ADS111x thermistor snaps, the House0 board record (Krida expanders and GP8403 DACs) with per-relay and per-output components, pico flow and BTU meters, tank modules real and sim, Hubitat with poller, web-server, all over the DeviceType record model. The axioms carry the layout invariants; wording is identical across layout words where the axiom name is shared. The cold-override command node is required; the backup command node exists if and only if Hydronic.Backup is present, and the relays a backup names are Relay ShNodes (axiom BackupRelays). Axiom CirculatorRunningChannels: every circulator in Hydronic.Circulators has its running channel on the circulator-running strategy reading its declared power or CT input."
         direct_dependencies:
@@ -898,7 +923,7 @@ types:
             - "spaceheat.node.gt:303"
             - "web.server.component.gt:001"
           axiom:
-            - "gw.boiler.backup:000"
+            - "gw.boiler.backup:001"
             - "gw.element.backup:000"
             - "gw.zone.emitter.type:000"
             - "gw0.required.energy.layered:000"
@@ -917,7 +942,7 @@ types:
     versions:
       "000":
         schema_url: "https://schemas.electricity.works/types/gw.house0.no.sieg/000"
-        created: "2026-11-01T15:50:00Z"
+        created: "2026-11-25T18:20:00Z"
         status: "staging"
         summary: "The complete deployable artifact for a House0-fleet home with no Siegenthaler loop (elm, fir, oak): every collection and Hydronic required. Homes with a loop are gw.house0.layout. No sieg-loop command node, sieg channels or sieg relays are required; PrimaryFlowSource is Measured. RequiredActuators names secondary-pump-relay and secondary-pump-hack-relay, both of which hp-boss owns beside the call relay (a plant with a heat exchanger between the heat pump and the house has a secondary pump; the hack relay is the one whose contacts the pump feed still passes through, energized with the pump until it is wired out). Components: eGauge, ADS111x thermistor snaps, the House0 board record (Krida expanders and GP8403 DACs) with per-relay and per-output components, pico flow and BTU meters, tank modules real and sim, Hubitat with poller, web-server, all over the DeviceType record model. The axioms carry the layout invariants; wording is identical across layout words where the axiom name is shared. The cold-override command node is required; the backup command node exists if and only if Hydronic.Backup is present, and the relays a backup names are Relay ShNodes (axiom BackupRelays). Axiom 39 HpWatchNode: an hp-watch node, whose sensed running state hp-boss runs the secondary pump from. Axiom 38 CirculatorRunningChannels replaces the secondary-pump special case: every circulator in Hydronic.Circulators has its running channel on the circulator-running strategy reading its declared power or CT input."
         direct_dependencies:
@@ -952,7 +977,7 @@ types:
             - "spaceheat.node.gt:303"
             - "web.server.component.gt:001"
           axiom:
-            - "gw.boiler.backup:000"
+            - "gw.boiler.backup:001"
             - "gw.element.backup:000"
             - "gw.zone.emitter.type:000"
             - "gw0.required.energy.layered:000"
@@ -971,12 +996,12 @@ types:
     versions:
       "000":
         schema_url: "https://schemas.electricity.works/types/gw.hydronic/000"
-        created: "2026-11-01T15:50:00Z"
+        created: "2026-11-25T18:20:00Z"
         status: "staging"
         summary: "- Typed hydronic block promoted out of gw.house0.layout's freeform Hydronic: Zones (gw1.hvac.zone list), ZoneCallCircuits (gw1.zone.call.circuit list, required), PrimaryFlowSource (gw.primary.flow.source), Strategy. Axioms: Cardinality, CircuitResolution. The Siegenthaler-loop flags left this word: plumbed-ness is what a has-sieg layout word means, and use is operational (gw.house0.family.params SiegLoopStrategy). - HpCommandNodeName (optional spaceheat.name): the node that takes heat-pump commands under hp-boss; absent = nothing commands the heat pump. The layout words' CommandableHeatPump axiom governs it. - Strategy dropped: the control family is the layout word's own TypeName (invariant per word, so not a data field; the same rule that retired SiegLoopPlumbed). - WaterStore (optional gw.water.store): the water store tanks; absent for a layout whose store is not water tanks. Cardinality bounds the zones. - PrimaryPumpOwner (gw.primary.pump.owner, required): who runs the primary pump, the heat pump or the scada; the layout words' PrimaryPumpActuators axiom ties the actuator nodes to it. RefrigerantCycle (gw.refrigerant.cycle, required): single compressor or two-compressor cascade, for the optimizer's COP model. - Backup (optional, one of gw.boiler.backup or gw.element.backup): the backup heat; absent for a layout with no backup. - CircuitResolution b: a circuit's CircuitPosition is its 1-based place in ZoneCallCircuits. PrimaryCircuit axiom: each zone's PrimaryCircuitPosition names a circuit serving that zone, and that circuit carries a setpoint channel. CircuitDistinctness axiom: no two circuits share a Name, a whitewire channel, a setpoint channel, a temperature channel or a relay node. CircuitResolution d is dropped: PrimaryCircuit implies every zone is served. - Circulators (required list of gw.circulator): the circulator pumps with their roles and channels; axiom CirculatorDistinctness: no two share a PumpNodeName."
         direct_dependencies:
           structural:
-            - "gw.boiler.backup:000"
+            - "gw.boiler.backup:001"
             - "gw.circulator:000"
             - "gw.element.backup:000"
             - "gw.primary.flow.source:000"
@@ -996,9 +1021,9 @@ types:
     versions:
       "000":
         schema_url: "https://schemas.electricity.works/types/gw.katahdin.layout/000"
-        created: "2026-11-09T01:50:00Z"
+        created: "2026-11-25T18:20:00Z"
         status: "staging"
-        summary: "The complete deployable artifact for a Katahdin home (schematic D1116): monobloc heat pump, plate heat exchanger, secondary pump, a water store of one to six tanks (Hydronic.WaterStore required; the bound is gw.water.store TankCount) charged through the V2 hot-top / V3 cold-top valve pair and discharged by the distribution pump, the gw108 board. A copy of gw.nolan.layout 000 with the buffer, the iso valve and the store pump removed: RequiredActuators names vdc-relay, secondary-pump-relay, hp-scada-ops-relay and the four FCM valve relays v1-hx-house-relay, v2-store-hot-relay, v3-store-cold-relay, v4-house-return-relay, plus v5-boiler-relay where Hydronic.Backup is a boiler; both 0-10 V outputs secondary-010v and dist-010v; RequiredSensing is the four BTU meters (primary, secondary, store, dist) and the heat-pump and pump powers. No BufferTank or SingleStoreTank axiom; element relays come from Hydronic.Backup through BackupRelays. This is the first layout with no store-pump-relay: scada code that requires one (HydronicSpaceheatNodeNames.store_pump_relay, the store_pump_relay layout accessor, the store pump monitor and doctor) does not hold for this family. Every other axiom keeps the Nolan wording verbatim, renumbered from 1."
+        summary: "The complete deployable artifact for a Katahdin home (schematic D1116): monobloc heat pump, plate heat exchanger, secondary pump, a water store of one to six tanks (Hydronic.WaterStore required; the bound is gw.water.store TankCount) charged through the V2 hot-top / V3 cold-top valve pair and discharged by the distribution pump, the gw108 board. A copy of gw.nolan.layout 000 with the buffer, the iso valve and the store pump removed: RequiredActuators names vdc-relay, secondary-pump-relay, hp-scada-ops-relay and the four FCM valve relays v1-hx-house-relay, v2-store-hot-relay, v3-store-cold-relay, v4-house-return-relay, plus v5-boiler-relay where Hydronic.Backup is a boiler; both 0-10 V outputs secondary-010v and dist-010v; RequiredSensing is the four BTU meters (primary, secondary, store, dist) and the heat-pump and pump powers. No BufferTank or SingleStoreTank axiom; element relays come from Hydronic.Backup through BackupRelays, which requires a boiler backup to have no FailsafeRelayName (the boiler fires on its own aquastat; a dead scada leaves the heat pump off) and ValveDefaultsFollowBackup ties the V4 and V5 relay configs to the backup kind so the valves rest in the D1116 failsafe posture. InterceptPassesAtRest requires the intercept relay to pass the aquastat signal to the boiler when de-energized. This is the first layout with no store-pump-relay: scada code that requires one (HydronicSpaceheatNodeNames.store_pump_relay, the store_pump_relay layout accessor, the store pump monitor and doctor) does not hold for this family. Every other axiom keeps the Nolan wording verbatim, renumbered from 1."
         direct_dependencies:
           structural:
             - "ads111x.based.device.type.gt:000"
@@ -1028,12 +1053,14 @@ types:
             - "spaceheat.node.gt:303"
             - "web.server.component.gt:001"
           axiom:
-            - "gw.boiler.backup:000"
+            - "aquastat.control.state:000"
+            - "gw.boiler.backup:001"
             - "gw.element.backup:000"
             - "gw.zone.emitter.type:000"
             - "gw1.actor.class:014"
             - "gw1.quantity:003"
             - "gw2.lc.top.state:000"
+            - "valve.open.or.closed:000"
             - "zone.setpoint.source:000"
 
   gw.native.gpio.pin:
@@ -1062,7 +1089,7 @@ types:
     versions:
       "000":
         schema_url: "https://schemas.electricity.works/types/gw.nolan.layout/000"
-        created: "2026-11-01T15:50:00Z"
+        created: "2026-11-25T18:20:00Z"
         status: "staging"
         summary: "The complete deployable artifact for a Nolan home: monobloc heat pump, one store tank, the gw108 board. Components are the cac-free DeviceType versions; DeviceTypes holds the per-family device-type records; every relay is a per-relay component against the board record. The axioms carry the layout invariants; wording is identical across layout words where the axiom name is shared. The cold-override command node is required; the backup command node exists if and only if Hydronic.Backup is present, and the relays a backup names are Relay ShNodes (axiom BackupRelays). Axiom CirculatorRunningChannels: every circulator in Hydronic.Circulators has its running channel on the circulator-running strategy reading its declared power or CT input."
         direct_dependencies:
@@ -1094,7 +1121,7 @@ types:
             - "spaceheat.node.gt:303"
             - "web.server.component.gt:001"
           axiom:
-            - "gw.boiler.backup:000"
+            - "gw.boiler.backup:001"
             - "gw.element.backup:000"
             - "gw.zone.emitter.type:000"
             - "gw1.actor.class:014"
@@ -1176,7 +1203,7 @@ types:
         schema_url: "https://schemas.electricity.works/types/gw1.scada.device.type.gt/000"
         created: "2026-09-10T21:25:00Z"
         status: "staging"
-        summary: "Board descriptor (DeviceType, DisplayName, MinPollPeriodMs, TelemetryNameList, NativeGpio, Expanders, Muxes, I2cRelays, SupportsPinReadback, RelayEnergizedLevel, CtAdc, ThermistorAdcs, Dacs; axioms BusMembership / ExpanderMembership / BoardIdentifierUniqueness / MuxConsistency / RelayEnergizedLevelRange / SingleBus). The record describes what is allowed; deployment choices (DIP-selected expander address, chosen wiring) live on the component and layout."
+        summary: "Board descriptor (DeviceType, DisplayName, MinPollPeriodMs, TelemetryNameList, NativeGpio, Expanders, Muxes, I2cRelays, SupportsPinReadback, RelayEnergizedLevel, CtAdc, ThermistorAdcs, Dacs; axioms BusMembership / ExpanderMembership / BoardIdentifierUniqueness / MuxConsistency / RelayEnergizedLevelRange / BusUniqueness). The record describes what is allowed; deployment choices (DIP-selected expander address, chosen wiring) live on the component and layout."
         direct_dependencies:
           structural:
             - "gw.native.gpio.pin:000"
@@ -1455,7 +1482,7 @@ types:
         schema_url: "https://schemas.electricity.works/types/i2c.ct.interface.capability/000"
         created: "2026-07-27T16:15:00Z"
         status: "staging"
-        summary: "- Initial version. CT sibling of i2c.thermistor.interface.capability: Name, I2cBus, I2cAddress, AdcType, AdcReferenceVolts, Channels. Replaces the generic i2c.adc.capability (deleted; staging-only, single referrer)."
+        summary: "- Initial version. CT sibling of i2c.thermistor.interface.capability: Name, I2cBus, I2cAddress, AdcType, AdcReferenceVolts, Channels, optional MuxName and MuxChannel for an ADC behind a board mux (axiom MuxPairing). Replaces the generic i2c.adc.capability (deleted; staging-only, single referrer)."
         direct_dependencies:
           structural:
             - "i2c.adc.type:000"
@@ -1521,24 +1548,20 @@ types:
             - "positive.int"
 
   i2c.multichannel.dt.relay.component.gt:
-    latest_version: "004"
+    latest_version: "003"
     owner: gridworks-energy
     versioning_strategy: "literal"
     description: "Configuration for a multi-channel I2C relay board component."
 
     versions:
-      "004":
-        schema_url: "https://schemas.electricity.works/types/i2c.multichannel.dt.relay.component.gt/004"
-        created: "2026-08-13T16:30:00Z"
-        status: "staging"
-        summary: "- AsyncCaptureDelta: ConfigList[0] example now sets it explicitly (the
-  relay.actor.config dependency itself is unchanged from 003: :002)
-- ComponentAttributeClassId (cac UUID) -> DeviceType (gw1.device.type value, pascal.case).
-  Context-dependent: the device type lived on the referenced cac, not the component."
+      "003":
+        schema_url: "https://schemas.electricity.works/types/i2c.multichannel.dt.relay.component.gt/003"
+        created: "2026-01-28T15:17:00Z"
+        status: "published"
+        summary: "- Add I2cBus"
         direct_dependencies:
           structural:
-            - "pascal.case"
-            - "relay.actor.config:003"
+            - "relay.actor.config:002"
             - "spaceheat.name"
             - "uuid4.str"
 
@@ -1672,20 +1695,20 @@ types:
             - "relay.wiring.config:000"
 
   i2c.result:
-    latest_version: "001"
+    latest_version: "000"
     owner: gridworks-energy
     versioning_strategy: "literal"
     description: "The result of an I²C bus operation, correlated to its request by TriggerId."
 
     versions:
-      "001":
-        schema_url: "https://schemas.electricity.works/types/i2c.result/001"
-        created: "2026-08-12T16:50:00Z"
-        status: "staging"
-        summary: "Operation ref moves to i2c.operation/001; optional Bytes list for multi-byte (ReadBytes) results."
+      "000":
+        schema_url: "https://schemas.electricity.works/types/i2c.result/000"
+        created: "2026-06-22T16:35:00Z"
+        status: "published"
+        summary: "Initial draft (Bus, Operation, Value, Success, Error, UnixTimeMs, TriggerId)."
         direct_dependencies:
           structural:
-            - "i2c.operation:001"
+            - "i2c.operation:000"
             - "non.negative.int"
             - "spaceheat.name"
             - "utc.milliseconds"
@@ -1891,6 +1914,22 @@ types:
             - "positive.int"
             - "relay.wiring.config:000"
             - "spaceheat.name"
+          axiom:
+            - "change.relay.state:000"
+            - "relay.closed.or.open:000"
+      "002":
+        schema_url: "https://schemas.electricity.works/types/relay.actor.config/002"
+        created: "2024-12-08T00:00:00Z"
+        status: "published"
+        summary: "- StateType: add (optional on the wire for the version's first two days, 2024-12-31 to 2025-01-01) - DeEnergizedState: add - EnergizedState: add"
+        direct_dependencies:
+          structural:
+            - "left.right.dot"
+            - "non.empty.string"
+            - "positive.int"
+            - "relay.wiring.config:000"
+            - "spaceheat.name"
+            - "spaceheat.unit:001"
           axiom:
             - "change.relay.state:000"
             - "relay.closed.or.open:000"

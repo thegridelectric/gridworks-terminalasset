@@ -1,4 +1,5 @@
 from gwta.sema.enums.actor_class import ActorClass
+from gwta.sema.enums.aquastat_control_state import AquastatControlState
 from gwta.sema.enums.base_g_node_class import BaseGNodeClass
 from gwta.sema.enums.change_relay_pin import ChangeRelayPin
 from gwta.sema.enums.change_relay_state import ChangeRelayState
@@ -8,6 +9,7 @@ from gwta.sema.enums.g_node_status import GNodeStatus
 from gwta.sema.enums.gpio_sense_mode import GpioSenseMode
 from gwta.sema.enums.gpm_from_hz_method import GpmFromHzMethod
 from gwta.sema.enums.gw2_lc_top_state import Gw2LcTopState
+from gwta.sema.enums.heat_call_interpretation import HeatCallInterpretation
 from gwta.sema.enums.hz_calc_method import HzCalcMethod
 from gwta.sema.enums.i2c_adc_channel import I2cAdcChannel
 from gwta.sema.enums.i2c_adc_type import I2cAdcType
@@ -30,11 +32,13 @@ from gwta.sema.enums.temp_calc_method import TempCalcMethod
 from gwta.sema.enums.thermistor_data_method import ThermistorDataMethod
 from gwta.sema.enums.thermostat_kind import ThermostatKind
 from gwta.sema.enums.unit import Unit
+from gwta.sema.enums.valve_open_or_closed import ValveOpenOrClosed
 from gwta.sema.enums.zone_emitter_type import ZoneEmitterType
 from gwta.sema.enums.zone_setpoint_source import ZoneSetpointSource
 
 __all__ = [
     "ActorClass",
+    "AquastatControlState",
     "BaseGNodeClass",
     "ChangeRelayPin",
     "ChangeRelayState",
@@ -44,6 +48,7 @@ __all__ = [
     "GpioSenseMode",
     "GpmFromHzMethod",
     "Gw2LcTopState",
+    "HeatCallInterpretation",
     "HzCalcMethod",
     "I2cAdcChannel",
     "I2cAdcType",
@@ -66,6 +71,7 @@ __all__ = [
     "ThermistorDataMethod",
     "ThermostatKind",
     "Unit",
+    "ValveOpenOrClosed",
     "ZoneEmitterType",
     "ZoneSetpointSource",
 ]

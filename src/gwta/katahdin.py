@@ -8,14 +8,19 @@ drives.
 
 from collections.abc import Mapping
 from pathlib import Path
-from typing import NamedTuple
 
 from fmpy import read_model_description
 
-from gwta.fmu_model import FmuPlantModel, RelayEffect
-from gwta.sensing import device_encodings
+from gwta.fmu_model import (
+    CONTACT,
+    FmuPlantModel,
+    RelayEffect,
+    StateEffect,
+    relay_effects,
+)
+from gwta.sensing import device_encodings, with_shared_thermistors
 from gwta.plant_layout import PlantLayout
-from gwta.sema.enums import RelayClosedOrOpen
+from gwta.sema.enums import ValveOpenOrClosed
 from gwta.sema.property_format import SpaceheatName, UTCMilliseconds
 from gwta.sema.types import BoilerBackup, Hydronic
 
@@ -42,17 +47,10 @@ VARIABLE_BY_FLOW_CHANNEL: dict[SpaceheatName, str] = {
 }
 
 
-class ContactEffect(NamedTuple):
-    """What one relay's contact does to the plant: the FMU input it drives
-    and the value that input takes with the contact closed and open."""
-
-    variable: str
-    closed: float
-    open: float
-
-
-OPEN_WHEN_POWERED = (1.0, 0.0)
-CLOSED_WHEN_POWERED = (0.0, 1.0)
+VALVE = {
+    ValveOpenOrClosed.ValveOpen.value: 1.0,
+    ValveOpenOrClosed.ValveClosed.value: 0.0,
+}
 
 
 def variable_by_channel(hydronic: Hydronic) -> dict[SpaceheatName, str]:
@@ -80,61 +78,28 @@ def variable_by_channel(hydronic: Hydronic) -> dict[SpaceheatName, str]:
     return variables
 
 
-def contact_effects(hydronic: Hydronic) -> dict[SpaceheatName, ContactEffect]:
-    """What a closed contact does, for each relay of a Katahdin house that
-    switches something the model has. A valve's relay feeds its motor, and
-    with no feed a valve rests where the house's failsafe needs it: the
-    boiler heats a house that has one, with the store valved off from the
-    house, and the store heats a house that has none. Hand-kept: no word
-    says what a valve does when it is fed, and one that does retires
-    this table."""
-    has_boiler = isinstance(hydronic.backup, BoilerBackup)
+def state_effects(hydronic: Hydronic) -> dict[SpaceheatName, StateEffect]:
+    """What each relay of a Katahdin house that switches something the
+    model has does in each of its states. The boiler's valve is in a house
+    with a boiler. The boiler's intercept relay switches nothing the model
+    has: the model's boiler fires on its own aquastat."""
     effects = {
-        "v1-hx-house-relay": ContactEffect("v1Position", *OPEN_WHEN_POWERED),
-        "v2-store-hot-relay": ContactEffect("v2Position", *CLOSED_WHEN_POWERED),
-        "v3-store-cold-relay": ContactEffect("v3Position", *OPEN_WHEN_POWERED),
-        "v4-house-return-relay": ContactEffect(
-            "v4Position",
-            *(OPEN_WHEN_POWERED if has_boiler else CLOSED_WHEN_POWERED),
-        ),
-        "secondary-pump-relay": ContactEffect("secondaryPumpOn", 1.0, 0.0),
-        "hp-scada-ops-relay": ContactEffect("hpEnable", 1.0, 0.0),
+        "v1-hx-house-relay": StateEffect("v1Position", VALVE),
+        "v2-store-hot-relay": StateEffect("v2Position", VALVE),
+        "v3-store-cold-relay": StateEffect("v3Position", VALVE),
+        "v4-house-return-relay": StateEffect("v4Position", VALVE),
+        "secondary-pump-relay": StateEffect("secondaryPumpOn", CONTACT),
+        "hp-scada-ops-relay": StateEffect("hpEnable", CONTACT),
     }
-    if has_boiler:
-        effects["v5-boiler-relay"] = ContactEffect("v5Position", *CLOSED_WHEN_POWERED)
+    if isinstance(hydronic.backup, BoilerBackup):
+        effects["v5-boiler-relay"] = StateEffect("v5Position", VALVE)
     return effects
 
 
 def effect_by_relay(layout: PlantLayout) -> dict[SpaceheatName, RelayEffect]:
-    """What each relay of a Katahdin house drives. Which of a relay's two
-    positions closes its contact is the layout's to say, and a layout that
-    does not say it for a relay the model needs is refused. In a house
-    with a boiler the scada's call reaches the heat pump only while the
-    boiler's failsafe relay is energized."""
-    effects: dict[SpaceheatName, RelayEffect] = {}
-    for relay, contact in contact_effects(layout.hydronic).items():
-        config = layout.config_by_relay.get(relay)
-        states = (
-            None
-            if config is None
-            else {config.energized_state, config.de_energized_state}
-        )
-        if config is None or states != set(RelayClosedOrOpen.values()):
-            raise ValueError(
-                f"the layout does not say which position of {relay} closes its contact"
-            )
-        closes_when_energized = (
-            config.energized_state == RelayClosedOrOpen.RelayClosed.value
-        )
-        effects[relay] = RelayEffect(
-            contact.variable,
-            energized=contact.closed if closes_when_energized else contact.open,
-            de_energized=contact.open if closes_when_energized else contact.closed,
-        )
-    backup = layout.hydronic.backup
-    if isinstance(backup, BoilerBackup):
-        effects[backup.failsafe_relay_name] = RelayEffect("hpScadaControl", 1.0, 0.0)
-    return effects
+    """What each relay of a Katahdin house drives, in the states the layout
+    gives it."""
+    return relay_effects(layout, state_effects(layout.hydronic))
 
 
 def katahdin_model(
@@ -160,7 +125,9 @@ def katahdin_model(
     return FmuPlantModel(
         fmu_path=fmu_path,
         telemetry_by_channel=layout.telemetry_by_channel,
-        variable_by_channel=variable_by_channel(layout.hydronic),
+        variable_by_channel=with_shared_thermistors(
+            layout, variable_by_channel(layout.hydronic)
+        ),
         encoding_by_channel=device_encodings(layout),
         effect_by_relay=effect_by_relay(layout),
         overrides=overrides,

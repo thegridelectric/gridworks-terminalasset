@@ -230,22 +230,21 @@ x-gridworks:
     - number: 4
       name: "MuxConsistency"
       statement: >
-        a. Every MuxName referenced by an entry in Dacs SHALL appear as a
-        MuxName in Muxes.
-        b. Every Dacs entry carrying MuxChannel SHALL satisfy MuxChannel less
-        than the Channels of the mux named by its MuxName.
-        c. Every Dacs entry carrying MuxName SHALL have an I2cBus equal to
-        that mux's I2cBus.
+        a. Every MuxName referenced by an entry in Dacs or by CtAdc SHALL
+        appear as a MuxName in Muxes.
+        b. Every Dacs entry or CtAdc carrying MuxChannel SHALL satisfy
+        MuxChannel less than the Channels of the mux named by its MuxName.
+        c. Every Dacs entry or CtAdc carrying MuxName SHALL have an I2cBus
+        equal to that mux's I2cBus.
     - number: 5
       name: "RelayEnergizedLevelRange"
       statement: >
         RelayEnergizedLevel SHALL be 0 or 1.
     - number: 6
-      name: "SingleBus"
+      name: "BusUniqueness"
       statement: >
-        BusList SHALL have exactly one entry: a scada process drives one bus,
-        and the bus actor opens that entry's adapter. (Retired by the
-        multi-bus work, which replaces this axiom with per-bus binding.)
+        a. The Name of every BusList entry SHALL be unique within BusList.
+        b. The BusNumber of every BusList entry SHALL be unique within BusList.
   extended_description: >
     Various hardware layouts enforce membership in `gw1.device.type` for the
     DeviceType (e.g. `Gw108RevB`, `KridaDoubleRelayBoard16`). The relay drive

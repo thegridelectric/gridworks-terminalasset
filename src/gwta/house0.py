@@ -9,13 +9,17 @@ of such a house reads and which of its inputs each relay drives.
 
 from collections.abc import Mapping
 from pathlib import Path
-from typing import NamedTuple
 
 from fmpy import read_model_description
 
-from gwta.fmu_model import FmuPlantModel, RelayEffect
+from gwta.fmu_model import (
+    CONTACT,
+    FmuPlantModel,
+    RelayEffect,
+    StateEffect,
+    relay_effects,
+)
 from gwta.plant_layout import PlantLayout
-from gwta.sema.enums import RelayClosedOrOpen
 from gwta.sema.property_format import SpaceheatName, UTCMilliseconds
 from gwta.sema.types import BoilerBackup, Hydronic
 from gwta.sensing import device_encodings
@@ -50,28 +54,16 @@ DEPTH_SUFFIXES = ("", "-device", "-micro-v")
 
 # What each of a relay's two states is to the plant input the relay drives,
 # by the state's name in the relay's relay.control.config. Hand-kept: the
-# names are the values of relay.closed.or.open, store.flow.relay,
-# heat.pump.control, aquastat.control.state, primary.pump.control,
-# hp.loop.keep.send and heatcall.source, and the snapshot holds the first
-# of those alone; the other six in the snapshot retire these strings.
-CONTACT = {
-    RelayClosedOrOpen.RelayClosed.value: 1.0,
-    RelayClosedOrOpen.RelayOpen.value: 0.0,
-}
+# names are the values of store.flow.relay, heat.pump.control,
+# aquastat.control.state, primary.pump.control, hp.loop.keep.send and
+# heatcall.source, and the snapshot holds aquastat.control.state alone; the
+# other five in the snapshot retire these strings.
 STORE_FLOW = {"ChargingStore": 1.0, "DischargingStore": 0.0}
 HEAT_PUMP_CONTROL = {"Scada": 1.0, "BufferTankAquastat": 0.0}
 AQUASTAT_CONTROL = {"Scada": 1.0, "Boiler": 0.0}
 PRIMARY_PUMP_CONTROL = {"Scada": 1.0, "HeatPump": 0.0}
 KEEP_SEND = {"SendLess": 1.0, "SendMore": 0.0}
 HEATCALL_SOURCE = {"Scada": 1.0, "WallThermostat": 0.0}
-
-
-class StateEffect(NamedTuple):
-    """What one relay does to the plant: the FMU input it drives and the
-    value that input takes in each of the relay's two states."""
-
-    variable: str
-    value_by_state: Mapping[str, float]
 
 
 def variable_by_channel(hydronic: Hydronic) -> dict[SpaceheatName, str]:
@@ -122,10 +114,12 @@ def state_effects(hydronic: Hydronic) -> dict[SpaceheatName, StateEffect]:
     }
     backup = hydronic.backup
     if isinstance(backup, BoilerBackup):
+        if backup.failsafe_relay_name is None:
+            raise ValueError("the boiler backup names no heat pump failsafe relay")
         effects[backup.failsafe_relay_name] = StateEffect(
             "hpScadaControl", HEAT_PUMP_CONTROL
         )
-        effects[backup.aquastat_ctrl_relay_name] = StateEffect(
+        effects[backup.intercept_relay_name] = StateEffect(
             "boilerScadaControl", AQUASTAT_CONTROL
         )
     for circuit in hydronic.zone_call_circuits:
@@ -138,26 +132,9 @@ def state_effects(hydronic: Hydronic) -> dict[SpaceheatName, StateEffect]:
 
 
 def effect_by_relay(layout: PlantLayout) -> dict[SpaceheatName, RelayEffect]:
-    """What each relay of the house drives. Which of a relay's two states
-    it is in when energized is the layout's to say, and a layout that does
-    not say it for a relay the model needs is refused."""
-    effects: dict[SpaceheatName, RelayEffect] = {}
-    for relay, effect in state_effects(layout.hydronic).items():
-        config = layout.config_by_relay.get(relay)
-        if config is None or {
-            config.energized_state,
-            config.de_energized_state,
-        } != set(effect.value_by_state):
-            raise ValueError(
-                f"the layout does not say which of {relay}'s positions is "
-                f"{' and which '.join(effect.value_by_state)}"
-            )
-        effects[relay] = RelayEffect(
-            effect.variable,
-            energized=effect.value_by_state[config.energized_state],
-            de_energized=effect.value_by_state[config.de_energized_state],
-        )
-    return effects
+    """What each relay of the house drives, in the states the layout gives
+    it."""
+    return relay_effects(layout, state_effects(layout.hydronic))
 
 
 def house0_model(

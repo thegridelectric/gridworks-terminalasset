@@ -63,7 +63,6 @@ package Katahdin
     input Real secondaryPumpSpeed(start = 1) "Pump 2 speed as a fraction of full";
     input Real distPumpSpeed(start = 1) "Distribution circulator speed as a fraction of full";
     input Real hpEnable(start = 0) "The scada's call for the heat pump: 0 no call, 1 call";
-    input Real hpScadaControl(start = 1) "Who holds the heat pump's call: 0 its aquastat, which makes none here, 1 the scada";
     input Real TOutdoor(unit = "K", start = 268.15) "Outdoor air temperature";
 
     parameter Real rhoWater(unit = "kg/m3") = 990;
@@ -184,7 +183,7 @@ package Katahdin
     Real v5 = min(max(v5Position, 0), 1);
     Real speedSecondary = min(max(secondaryPumpOn, 0), 1) * min(max(secondaryPumpSpeed, 0), 1);
     Real speedDist = min(max(distPumpSpeed, 0), 1);
-    Real enable = min(max(hpEnable, 0), 1) * min(max(hpScadaControl, 0), 1);
+    Real enable = min(max(hpEnable, 0), 1);
 
     Real pSupply(unit = "Pa") "Supply header, above the return header";
     Real pJunction(unit = "Pa") "Middle tank bottom and cold tank top";

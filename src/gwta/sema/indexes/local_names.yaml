@@ -1,4 +1,5 @@
 enums:
+  aquastat.control.state: aquastat.control.state
   base.g.node.class: base.g.node.class
   change.relay.pin: change.relay.pin
   change.relay.state: change.relay.state
@@ -12,6 +13,7 @@ enums:
   gw.zone.emitter.type: zone.emitter.type
   gw1.actor.class: actor.class
   gw1.emission.method: emission.method
+  gw1.heat.call.interpretation: heat.call.interpretation
   gw1.quantity: quantity
   gw1.sim.device.type: sim.device.type
   gw1.unit: unit
@@ -32,6 +34,7 @@ enums:
   temp.calc.method: temp.calc.method
   thermistor.data.method: thermistor.data.method
   thermostat.kind: thermostat.kind
+  valve.open.or.closed: valve.open.or.closed
   zone.setpoint.source: zone.setpoint.source
 types:
   ads.channel.config: ads.channel.config

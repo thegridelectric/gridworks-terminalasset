@@ -1,13 +1,15 @@
 """The Katahdin plant, driven as a scada drives it: relays in, channel
-readings out. The house is larch, the layout ta-katahdin-layout makes from
-hazel's; a house with no boiler or another count of zones is made the
-same way, in memory."""
+readings out. The house is larch, whose layout is a copy of the one the
+layout generator makes. A house with no boiler or another count of zones
+is larch's layout adjusted and decoded again, so the layout word has
+accepted every house a test runs."""
 
 import json
 import math
 import time
-from collections.abc import Iterator, Mapping
+from collections.abc import Callable, Iterator, Mapping
 from pathlib import Path
+from typing import Any
 
 import pytest
 from gwbase.transport_encoding import WrappedRoutingEnvelope
@@ -18,66 +20,131 @@ from gwta.config import GwtaSettings
 from gwta.fmu_model import ENCODER_BY_UNIT_AND_TELEMETRY, FmuPlantModel, RelayEffect
 from gwta.hello import provision_topology, wait_for_consuming
 from gwta.katahdin import effect_by_relay, katahdin_model, variable_by_channel
-from gwta.katahdin_layout import katahdin_layout, load_house0
 from gwta.plant import SimulatedPlant, actuation_binding_key, lrh, write_g_node_json
-from gwta.plant_layout import PlantLayout, load_plant_layout, plant_layout
+from gwta.plant_layout import (
+    PlantLayout,
+    load_layout,
+    load_plant_layout,
+    plant_layout,
+)
 from gwta.sema.codec import SemaCodec
-from gwta.sema.enums import ChangeRelayPin, RelayClosedOrOpen, TelemetryName
+from gwta.sema.enums import (
+    ChangeRelayPin,
+    HeatCallInterpretation,
+    RelayClosedOrOpen,
+    TelemetryName,
+    ValveOpenOrClosed,
+)
 from gwta.sema.types import (
-    BoilerBackup,
+    GpioRelayComponentGt,
     I2cRelayComponentGt,
     KatahdinLayout,
     RelayControlConfig,
     SimPlantActuation,
     SimPlantFlux,
 )
-from gwta.sensing import device_encodings, pulse_microhertz, thermistor_microvolts
+from gwta.sensing import (
+    device_encodings,
+    pulse_microhertz,
+    thermistor_microvolts,
+    with_shared_thermistors,
+)
 
 FMU_PATH = Path(__file__).parent.parent / "build" / "KatahdinPlant.fmu"
 CONFIG = Path(__file__).parent / "config"
 HAZEL_PATH = CONFIG / "gw.house0.no.sieg.hazel.layout.json"
 LARCH_PATH = CONFIG / "gw.katahdin.larch.layout.json"
-LARCH_ALIAS = "d1.isone.ct.newhaven.larch1"
+LARCH_ALIAS = "d1.isone.me.versant.keene.larch"
 START_MS = 1_794_300_000_000
-ZONES = ("north", "south", "east", "west")
 
 FLOWS = ("primary-flow", "secondary-flow", "dist-flow", "store-flow")
-FLOW_PULSES = ("primary-flow-hz", "dist-flow-hz", "store-flow-hz")
 TANK_DEPTHS = tuple(
     f"tank{tank}-depth{depth}-device" for tank in (1, 2, 3) for depth in (1, 2, 3)
 )
+ZONES = ("zone1-living-rm", "zone2-kitchen", "zone3-bedrooms", "zone4-upstairs")
+ZONE_VOLTAGES = tuple(f"{zone}-gw-microvolts" for zone in ZONES)
+ZONE_PINS = tuple(f"{zone}-opto-input" for zone in ZONES)
 TANK_VOLTAGES = tuple(
     f"tank{tank}-depth{depth}-micro-v" for tank in (1, 2, 3) for depth in (1, 2, 3)
 )
-CHARGING = ("v1-hx-house-relay", "secondary-pump-relay", "hp-scada-ops-relay")
+BOILER_NODES = {"backup", "boiler-intercept-relay", "v5-boiler-relay"}
 
 WARM_ZONES = {"TStartZone": 295.15}
 COLD_ZONES = {"TStartZone": 291.15}
 
 
-def larch(boiler: bool = True, zones: tuple[str, ...] = ZONES) -> KatahdinLayout:
-    return katahdin_layout(
-        load_house0(HAZEL_PATH), ltn_alias=LARCH_ALIAS, zones=zones, boiler=boiler
+Adjust = Callable[[dict[str, Any]], None]
+
+
+def adjusted(adjust: Adjust) -> KatahdinLayout:
+    """Larch with its layout adjusted, as the layout word decodes it."""
+    larch = json.loads(LARCH_PATH.read_text())
+    adjust(larch)
+    return KatahdinLayout.from_dict(larch)
+
+
+def remove_nodes(larch: dict[str, Any], gone: Callable[[str], bool]) -> None:
+    """The nodes whose names `gone` picks leave the layout, with their
+    channels, their relay and channel configs and their components."""
+    larch["ShNodes"] = [n for n in larch["ShNodes"] if not gone(n["Name"])]
+    for channels in ("DataChannels", "DerivedChannels"):
+        larch[channels] = [c for c in larch[channels] if not gone(c["Name"])]
+    for component in larch["Components"]:
+        if "ConfigList" in component:
+            component["ConfigList"] = [
+                config
+                for config in component["ConfigList"]
+                if not gone(config.get("ActorName") or config.get("ChannelName") or "")
+            ]
+    bound = {node.get("ComponentId") for node in larch["ShNodes"]}
+    larch["Components"] = [c for c in larch["Components"] if c["ComponentId"] in bound]
+
+
+def without_boiler(larch: dict[str, Any]) -> None:
+    """No backup, none of the boiler's nodes, and V4 open with its relay at
+    rest, so the store heats the house."""
+    del larch["Hydronic"]["Backup"]
+    remove_nodes(larch, lambda name: name in BOILER_NODES)
+    [v4] = [
+        config
+        for component in larch["Components"]
+        for config in component.get("ConfigList", [])
+        if config.get("ActorName") == "v4-house-return-relay"
+    ]
+    v4["EnergizedState"], v4["DeEnergizedState"] = (
+        v4["DeEnergizedState"],
+        v4["EnergizedState"],
+    )
+    v4["EnergizingEvent"], v4["DeEnergizingEvent"] = (
+        v4["DeEnergizingEvent"],
+        v4["EnergizingEvent"],
     )
 
 
-def layout(boiler: bool = True, zones: tuple[str, ...] = ZONES) -> PlantLayout:
-    if boiler and zones == ZONES:
+def two_circuits(larch: dict[str, Any]) -> None:
+    """The first two zones and their circuits alone."""
+    hydronic = larch["Hydronic"]
+    hydronic["Zones"] = hydronic["Zones"][:2]
+    hydronic["ZoneCallCircuits"] = hydronic["ZoneCallCircuits"][:2]
+    remove_nodes(larch, lambda name: name.startswith(("zone3-", "zone4-")))
+
+
+def layout(boiler: bool = True) -> PlantLayout:
+    if boiler:
         return load_plant_layout(LARCH_PATH)
-    return plant_layout(larch(boiler, zones))
+    return plant_layout(adjusted(without_boiler))
 
 
 class Bench:
-    """One plant and the clock it is stepped by. A scada in charge holds
-    the heat pump's call itself and makes none until a test closes the
-    call's relay; with none in charge every relay is de-energized."""
+    """One plant and the clock it is stepped by, started with every relay
+    de-energized: the heat pump is not called until a test closes its
+    call's relay."""
 
     def __init__(
         self,
         overrides: Mapping[str, float],
         boiler: bool = True,
         tick_s: int = 60,
-        scada_in_charge: bool = True,
     ) -> None:
         if not FMU_PATH.exists():
             pytest.fail(f"{FMU_PATH} is missing: run scripts/build_fmu.sh")
@@ -91,11 +158,6 @@ class Bench:
         self.now_ms = START_MS
         self.tick_s = tick_s
         self.history: list[dict[str, int]] = []
-        if scada_in_charge:
-            backup = self.layout.hydronic.backup
-            if isinstance(backup, BoilerBackup):
-                self.energize(backup.failsafe_relay_name)
-            self.open("hp-scada-ops-relay")
 
     def actuate(self, relay: str, action: ChangeRelayPin) -> None:
         self.model.actuate(
@@ -111,19 +173,41 @@ class Bench:
         for relay in relays:
             self.actuate(relay, ChangeRelayPin.Energize)
 
-    def set_contact(self, relay: str, state: RelayClosedOrOpen) -> None:
-        energized = self.layout.config_by_relay[relay].energized_state == state.value
+    def put(self, relay: str, state: str) -> None:
+        energized = self.layout.config_by_relay[relay].energized_state == state
         self.actuate(
             relay, ChangeRelayPin.Energize if energized else ChangeRelayPin.DeEnergize
         )
 
     def close(self, *relays: str) -> None:
         for relay in relays:
-            self.set_contact(relay, RelayClosedOrOpen.RelayClosed)
+            self.put(relay, RelayClosedOrOpen.RelayClosed.value)
 
     def open(self, *relays: str) -> None:
         for relay in relays:
-            self.set_contact(relay, RelayClosedOrOpen.RelayOpen)
+            self.put(relay, RelayClosedOrOpen.RelayOpen.value)
+
+    def open_valve(self, *relays: str) -> None:
+        for relay in relays:
+            self.put(relay, ValveOpenOrClosed.ValveOpen.value)
+
+    def shut_valve(self, *relays: str) -> None:
+        for relay in relays:
+            self.put(relay, ValveOpenOrClosed.ValveClosed.value)
+
+    def charge(self) -> None:
+        """The heat pump called, with its heat sent on by the secondary pump."""
+        self.open_valve("v1-hx-house-relay")
+        self.close("secondary-pump-relay", "hp-scada-ops-relay")
+
+    def stop_charging(self) -> None:
+        self.shut_valve("v1-hx-house-relay")
+        self.open("secondary-pump-relay", "hp-scada-ops-relay")
+
+    def heat_house(self) -> None:
+        """The house return through the exchanger and the boiler valved off."""
+        self.open_valve("v4-house-return-relay")
+        self.shut_valve("v5-boiler-relay")
 
     def run(self, seconds: int) -> dict[str, int]:
         end_ms = self.now_ms + seconds * 1000
@@ -152,39 +236,30 @@ def open_bench(
     overrides: Mapping[str, float],
     boiler: bool = True,
     tick_s: int = 60,
-    scada_in_charge: bool = True,
 ) -> Bench:
-    opened.append(Bench(overrides, boiler, tick_s, scada_in_charge))
+    opened.append(Bench(overrides, boiler, tick_s))
     return opened[-1]
 
 
-def test_the_larch_layout_is_what_its_generator_makes_from_hazel() -> None:
-    assert json.loads(LARCH_PATH.read_text()) == json.loads(
-        json.dumps(larch().to_dict())
-    )
-
-
-def test_a_house_with_no_boiler_has_no_backup_and_no_boiler_valve() -> None:
-    without = larch(boiler=False)
+def test_a_house_with_no_boiler_has_no_backup_and_none_of_the_boilers_nodes() -> None:
+    without = adjusted(without_boiler)
     assert without.hydronic.backup is None
-    names = {node.name for node in without.sh_nodes}
-    assert names == {node.name for node in larch().sh_nodes} - {
-        "backup",
-        "hp-failsafe-relay",
-        "aquastat-ctrl-relay",
-        "v5-boiler-relay",
-    }
+    assert {node.name for node in without.sh_nodes} == {
+        node.name for node in load_layout(LARCH_PATH).sh_nodes
+    } - BOILER_NODES
 
 
-def test_every_relay_of_the_house_is_on_a_board_relay_of_its_own() -> None:
-    relay_by_node = {
+def test_every_relay_of_the_house_is_on_a_board_output_of_its_own() -> None:
+    output_by_node = {
         config.actor_name: component.relay_name
-        for component in larch().components
         if isinstance(component, I2cRelayComponentGt)
+        else component.gpio_name
+        for component in load_layout(LARCH_PATH).components
+        if isinstance(component, (I2cRelayComponentGt, GpioRelayComponentGt))
         for config in component.config_list
     }
-    assert set(relay_by_node) == layout().relay_names
-    assert len(set(relay_by_node.values())) == len(relay_by_node) == 18
+    assert set(output_by_node) == layout().relay_names
+    assert len(set(output_by_node.values())) == len(output_by_node) == 17
 
 
 def test_every_katahdin_channel_reads_an_fmu_output() -> None:
@@ -195,10 +270,53 @@ def test_every_katahdin_channel_reads_an_fmu_output() -> None:
     assert variables["tank3-depth3"] == "tankDepth[3,3]"
     assert variables["tank2-depth1-device"] == "tankDepth[2,1]"
     assert variables["tank2-depth1-micro-v"] == "tankDepth[2,1]"
-    assert variables["dist-flow-hz"] == "distFlow"
-    assert variables["zone2-south-whitewire-pwr"] == "zoneCallPower[2]"
-    assert variables["zone4-west-temp"] == "zoneTemperature[4]"
-    assert set(layout().telemetry_by_channel) <= set(variables)
+    assert variables["zone2-kitchen-opto-input"] == "zoneCallPower[2]"
+    assert variables["zone4-upstairs-gw-temp"] == "zoneTemperature[4]"
+    shown = set(layout().telemetry_by_channel)
+    assert shown - set(variables) == set(ZONE_VOLTAGES)
+    variables = with_shared_thermistors(layout(), variables)
+    assert variables["zone4-upstairs-gw-microvolts"] == "zoneTemperature[4]"
+    assert shown <= set(variables)
+
+
+def test_a_simulated_boards_own_inputs_are_the_plants_to_show() -> None:
+    katahdin = layout()
+    for zone in ZONES:
+        assert katahdin.telemetry_by_channel[f"{zone}-gw-temp"] == (
+            TelemetryName.CelsiusTimes100
+        )
+        assert katahdin.telemetry_by_channel[f"{zone}-gw-microvolts"] == (
+            TelemetryName.MicroVolts
+        )
+        assert katahdin.telemetry_by_channel[f"{zone}-opto-input"] == (
+            TelemetryName.BinaryState
+        )
+    adc = katahdin.thermistor_adc_by_channel["zone1-living-rm-gw-microvolts"]
+    assert (adc.name, adc.series_resistance_k_ohms, adc.adc_reference_volts) == (
+        "Thermistors1",
+        5.65,
+        3.3,
+    )
+    assert katahdin.heat_call_interpretation_by_channel == dict.fromkeys(
+        ZONE_PINS, HeatCallInterpretation.DigitalZeroIsActive
+    )
+
+
+@pytest.mark.parametrize(
+    ("interpretation", "calling", "quiet"),
+    [
+        (HeatCallInterpretation.DigitalZeroIsActive, 0, 1),
+        (HeatCallInterpretation.DigitalOneIsActive, 1, 0),
+    ],
+)
+def test_a_heat_calls_pin_is_at_the_level_its_interpretation_calls_active(
+    interpretation: HeatCallInterpretation, calling: int, quiet: int
+) -> None:
+    katahdin = layout()
+    pin = "zone1-living-rm-opto-input"
+    read = katahdin._replace(heat_call_interpretation_by_channel={pin: interpretation})
+    encode = device_encodings(read)[pin].encode
+    assert (encode(10.0), encode(0.0)) == (calling, quiet)
 
 
 def test_relays_rest_where_the_houses_failsafe_needs_them() -> None:
@@ -215,12 +333,10 @@ def test_relays_rest_where_the_houses_failsafe_needs_them() -> None:
         "v4-house-return-relay": ("v4Position", 0.0),
         "v5-boiler-relay": ("v5Position", 1.0),
         "secondary-pump-relay": ("secondaryPumpOn", 0.0),
-        "hp-scada-ops-relay": ("hpEnable", 1.0),
-        "hp-failsafe-relay": ("hpScadaControl", 0.0),
+        "hp-scada-ops-relay": ("hpEnable", 0.0),
     }
     assert without["v4-house-return-relay"] == RelayEffect("v4Position", 0.0, 1.0)
     assert "v5-boiler-relay" not in without
-    assert "hp-failsafe-relay" not in without
     for effect in (*with_boiler.values(), *without.values()):
         assert {effect.energized, effect.de_energized} == {0.0, 1.0}
 
@@ -229,21 +345,19 @@ def rewired(config: RelayControlConfig, **fields: str) -> RelayControlConfig:
     return RelayControlConfig.model_validate(config.model_dump() | fields)
 
 
-def test_a_relay_closes_its_contact_in_the_position_the_layout_gives_it() -> None:
+def test_a_relay_is_in_the_state_the_layout_gives_its_energized_position() -> None:
     katahdin = layout()
     pump = katahdin.config_by_relay["secondary-pump-relay"]
-    call = katahdin.config_by_relay["hp-scada-ops-relay"]
-    assert (pump.energized_state, call.energized_state) == ("RelayClosed", "RelayOpen")
+    assert pump.energized_state == "RelayClosed"
     swapped = katahdin._replace(
         config_by_relay=katahdin.config_by_relay
         | {
             "secondary-pump-relay": rewired(
                 pump,
-                wiring_config=call.wiring_config,
-                energizing_event=call.energizing_event,
-                de_energizing_event=call.de_energizing_event,
-                energized_state=call.energized_state,
-                de_energized_state=call.de_energized_state,
+                energizing_event=pump.de_energizing_event,
+                de_energizing_event=pump.energizing_event,
+                energized_state=pump.de_energized_state,
+                de_energized_state=pump.energized_state,
             )
         }
     )
@@ -256,15 +370,15 @@ def test_a_relay_closes_its_contact_in_the_position_the_layout_gives_it() -> Non
 
 
 @pytest.mark.parametrize("relay", ["v1-hx-house-relay", "hp-scada-ops-relay"])
-def test_a_relay_whose_closing_position_the_layout_does_not_give_is_refused(
+def test_a_relay_whose_states_the_layout_does_not_give_is_refused(
     relay: str,
 ) -> None:
     katahdin = layout()
-    failsafe = katahdin.config_by_relay["hp-failsafe-relay"]
-    message = f"does not say which position of {relay} closes its contact"
+    intercept = katahdin.config_by_relay["boiler-intercept-relay"]
+    message = f"does not say which of {relay}'s positions is"
     for configs in (
         {name: c for name, c in katahdin.config_by_relay.items() if name != relay},
-        katahdin.config_by_relay | {relay: failsafe},
+        katahdin.config_by_relay | {relay: intercept},
     ):
         with pytest.raises(ValueError, match=message):
             effect_by_relay(katahdin._replace(config_by_relay=configs))
@@ -287,13 +401,15 @@ def test_si_values_are_encoded_as_their_channel_reads(
 
 
 def test_a_thermistor_voltage_reads_back_as_the_water_it_stands_in() -> None:
-    microvolts = thermistor_microvolts(3977)(273.15 + 50)
+    microvolts = thermistor_microvolts(3977, divider_kohms=5.65, volts=3.3)(273.15 + 50)
     volts = microvolts / 1e6
     kohms = 5.65 * volts / (3.3 - volts)
     assert 1 / (1 / 298 + math.log(kohms / 10) / 3977) - 273 == pytest.approx(
         50, abs=0.001
     )
-    assert thermistor_microvolts(3977)(298.15) == 2_108_626
+    assert (
+        thermistor_microvolts(3977, divider_kohms=5.65, volts=3.3)(298.15) == 2_108_626
+    )
 
 
 def test_a_pulse_rate_is_the_flow_over_the_meters_gallons_per_pulse() -> None:
@@ -303,25 +419,23 @@ def test_a_pulse_rate_is_the_flow_over_the_meters_gallons_per_pulse() -> None:
 
 def test_a_sensors_own_reading_is_encoded_as_that_sensor_does() -> None:
     encodings = device_encodings(layout())
-    assert set(encodings) == set(TANK_VOLTAGES + FLOW_PULSES)
+    assert set(encodings) == set(TANK_VOLTAGES + ZONE_VOLTAGES + ZONE_PINS)
+    assert {encodings[name].unit for name in ZONE_VOLTAGES} == {"K"}
+    assert {encodings[name].unit for name in ZONE_PINS} == {"W"}
     assert {encodings[name].unit for name in TANK_VOLTAGES} == {"K"}
-    assert {encodings[name].unit for name in FLOW_PULSES} == {"m3/s"}
 
 
 @pytest.mark.fmu
-def test_a_tank_voltage_and_a_pulse_rate_follow_the_water(bench: list[Bench]) -> None:
+def test_a_tank_voltage_follows_the_water(bench: list[Bench]) -> None:
     plant = open_bench(bench, WARM_ZONES)
-    plant.close(*CHARGING)
+    plant.charge()
     values = plant.run(20 * 60)
     for depth, voltage in zip(TANK_DEPTHS, TANK_VOLTAGES, strict=True):
         kelvin = plant.model.read(variable_by_channel(layout().hydronic)[depth])
-        assert values[voltage] == thermistor_microvolts(3977)(kelvin)
+        assert values[voltage] == thermistor_microvolts(
+            3977, divider_kohms=5.65, volts=3.3
+        )(kelvin)
     assert values["tank1-depth1-micro-v"] < values["tank3-depth3-micro-v"]
-    assert values["store-flow-hz"] == pytest.approx(
-        values["store-flow"] / 100 / 60 / 0.0009 * 1e6, rel=2e-3
-    )
-    assert values["dist-flow-hz"] == 0
-    assert values["primary-flow-hz"] > 90_000_000
 
 
 @pytest.mark.fmu
@@ -334,7 +448,11 @@ def test_a_plant_at_rest_reports_every_channel_and_moves_no_water(
     assert [values[name] for name in FLOWS] == [0, 0, 0, 0]
     assert values["hp-odu-pwr"] == 20
     assert values["tank2-depth2-device"] == 3000
-    assert values["zone1-north-temp"] in range(2190, 2201)
+    assert values["zone1-living-rm-gw-temp"] in range(2190, 2201)
+    assert values["zone1-living-rm-gw-microvolts"] == thermistor_microvolts(
+        3977, divider_kohms=5.65, volts=3.3
+    )(plant.model.read("zoneTemperature[1]"))
+    assert [values[pin] for pin in ZONE_PINS] == [1, 1, 1, 1]
 
 
 @pytest.mark.fmu
@@ -342,7 +460,7 @@ def test_heat_store_from_hp_sends_the_whole_secondary_flow_down_the_store(
     bench: list[Bench],
 ) -> None:
     plant = open_bench(bench, WARM_ZONES)
-    plant.close(*CHARGING)
+    plant.charge()
     values = plant.run(20 * 60)
     assert values["secondary-flow"] in range(490, 511)
     assert values["store-flow"] == values["secondary-flow"]
@@ -360,7 +478,8 @@ def test_heat_house_from_hp_leaves_the_store_what_the_house_does_not_take(
     bench: list[Bench],
 ) -> None:
     plant = open_bench(bench, COLD_ZONES)
-    plant.close(*CHARGING, "v4-house-return-relay", "v5-boiler-relay")
+    plant.charge()
+    plant.heat_house()
     values = plant.run(20 * 60)
     assert values["secondary-flow"] in range(490, 541)
     assert values["dist-flow"] in range(480, 531)
@@ -369,9 +488,7 @@ def test_heat_house_from_hp_leaves_the_store_what_the_house_does_not_take(
     assert 0 < surplus < plant.model.read("VFlowMeterMin")
     assert values["dist-swt"] > values["dist-rwt"] + 300
     assert values["dist-pump-pwr"] == 60
-    assert all(
-        values[f"zone{i}-{name}-whitewire-pwr"] == 10 for i, name in enumerate(ZONES, 1)
-    )
+    assert [values[pin] for pin in ZONE_PINS] == [0, 0, 0, 0]
 
 
 @pytest.mark.fmu
@@ -379,7 +496,7 @@ def test_heat_house_from_store_draws_the_store_down_from_its_hot_end(
     bench: list[Bench],
 ) -> None:
     plant = open_bench(bench, COLD_ZONES | {"TStartPlant": 318.15})
-    plant.close("v4-house-return-relay", "v5-boiler-relay")
+    plant.heat_house()
     values = plant.run(30 * 60)
     assert values["secondary-flow"] == 0
     assert values["dist-flow"] in range(460, 511)
@@ -395,9 +512,7 @@ def test_heat_house_from_store_draws_the_store_down_from_its_hot_end(
 def test_with_every_relay_de_energized_a_boiler_house_is_cut_off_from_the_store(
     bench: list[Bench],
 ) -> None:
-    plant = open_bench(
-        bench, COLD_ZONES | {"TStartPlant": 318.15}, scada_in_charge=False
-    )
+    plant = open_bench(bench, COLD_ZONES | {"TStartPlant": 318.15})
     values = plant.run(10 * 60)
     assert [values[name] for name in FLOWS] == [0, 0, 0, 0]
     assert values["hp-odu-pwr"] == 20
@@ -413,7 +528,6 @@ def test_with_every_relay_de_energized_a_house_with_no_boiler_heats_from_the_sto
         bench,
         COLD_ZONES | {"TStartPlant": 318.15},
         boiler=False,
-        scada_in_charge=False,
     )
     values = plant.run(10 * 60)
     assert values["dist-flow"] in range(460, 511)
@@ -426,7 +540,9 @@ def test_a_pump_with_nowhere_to_send_water_moves_none_and_still_draws_power(
     bench: list[Bench],
 ) -> None:
     plant = open_bench(bench, WARM_ZONES)
-    plant.close("v1-hx-house-relay", "secondary-pump-relay", "v2-store-hot-relay")
+    plant.open_valve("v1-hx-house-relay")
+    plant.close("secondary-pump-relay")
+    plant.shut_valve("v2-store-hot-relay")
     values = plant.run(5 * 60)
     assert values["secondary-flow"] == 0
     assert values["store-flow"] == 0
@@ -438,7 +554,9 @@ def test_charging_through_v3_warms_the_cold_tank_and_no_other(
     bench: list[Bench],
 ) -> None:
     plant = open_bench(bench, WARM_ZONES)
-    plant.close(*CHARGING, "v2-store-hot-relay", "v3-store-cold-relay")
+    plant.charge()
+    plant.shut_valve("v2-store-hot-relay")
+    plant.open_valve("v3-store-cold-relay")
     values = plant.run(30 * 60)
     assert values["store-flow"] in range(490, 511)
     assert values["tank3-depth1-device"] > 3300
@@ -452,7 +570,7 @@ def test_a_charge_reaches_the_store_top_first_and_stays_layered(
     bench: list[Bench],
 ) -> None:
     plant = open_bench(bench, WARM_ZONES)
-    plant.close(*CHARGING)
+    plant.charge()
     values = plant.run(15 * 60)
     down_the_store = [values[name] for name in TANK_DEPTHS]
     assert down_the_store == sorted(down_the_store, reverse=True)
@@ -464,7 +582,7 @@ def test_the_compressor_stops_at_its_leaving_temperature_limit(
     bench: list[Bench],
 ) -> None:
     plant = open_bench(bench, WARM_ZONES | {"TStartPlant": 313.15})
-    plant.close(*CHARGING)
+    plant.charge()
     plant.run(90 * 60)
     assert max(values["hp-lwt"] for values in plant.history) in range(5490, 5511)
     running = [values["hp-odu-pwr"] > 1000 for values in plant.history]
@@ -476,9 +594,10 @@ def test_the_compressor_stops_at_its_leaving_temperature_limit(
 def test_colder_weather_makes_the_zones_call_for_longer(bench: list[Bench]) -> None:
     def calling_share(outdoor_k: float) -> float:
         plant = open_bench(bench, {"TOutdoor": outdoor_k})
-        plant.close(*CHARGING, "v4-house-return-relay", "v5-boiler-relay")
+        plant.charge()
+        plant.heat_house()
         plant.run(12 * 3600)
-        calls = [values["zone1-north-whitewire-pwr"] == 10 for values in plant.history]
+        calls = [values["zone1-living-rm-opto-input"] == 0 for values in plant.history]
         assert True in calls and False in calls
         return sum(calls) / len(calls)
 
@@ -489,14 +608,15 @@ def test_colder_weather_makes_the_zones_call_for_longer(bench: list[Bench]) -> N
 def test_heat_is_neither_made_nor_lost_across_every_mode(bench: list[Bench]) -> None:
     plant = open_bench(bench, COLD_ZONES)
     initial = plant.model.read("thermalEnergy")
-    plant.close(*CHARGING)
+    plant.charge()
     plant.run(3600 + 17)
-    plant.close("v4-house-return-relay", "v5-boiler-relay")
+    plant.heat_house()
     plant.run(3600 + 41)
-    plant.open(*CHARGING)
+    plant.stop_charging()
     plant.run(3600)
-    plant.close("v2-store-hot-relay", "v3-store-cold-relay")
-    plant.open("v5-boiler-relay")
+    plant.shut_valve("v2-store-hot-relay")
+    plant.open_valve("v3-store-cold-relay")
+    plant.open_valve("v5-boiler-relay")
     plant.run(3600)
     delivered = plant.model.read("heatPumpEnergy")
     assert delivered > 15 * 3.6e6
@@ -509,11 +629,11 @@ def test_what_the_plant_does_is_the_same_at_a_one_second_and_a_one_minute_tick(
 ) -> None:
     def day(tick_s: int) -> dict[str, int]:
         plant = open_bench(bench, COLD_ZONES, tick_s=tick_s)
-        plant.close(*CHARGING)
+        plant.charge()
         plant.run(2 * 3600 + 17)
-        plant.close("v4-house-return-relay", "v5-boiler-relay")
+        plant.heat_house()
         plant.run(2 * 3600 + 41)
-        plant.open(*CHARGING)
+        plant.stop_charging()
         return plant.run(2 * 3600 + 2)
 
     allowed_by_telemetry = {
@@ -521,7 +641,7 @@ def test_what_the_plant_does_is_the_same_at_a_one_second_and_a_one_minute_tick(
         TelemetryName.GpmTimes100: 2,
         TelemetryName.PowerW: 5,
         TelemetryName.MicroVolts: 1500,
-        TelemetryName.MicroHz: 400_000,
+        TelemetryName.BinaryState: 0,
     }
     fine, coarse = day(1), day(60)
     for name, telemetry in layout().telemetry_by_channel.items():
@@ -535,13 +655,13 @@ def test_an_actuation_takes_effect_at_the_instant_it_is_stamped(
 ) -> None:
     stepped = open_bench(bench, WARM_ZONES)
     stepped.run(30)
-    stepped.close(*CHARGING)
+    stepped.charge()
     stepped.tick_s = 30
     at_the_minute = stepped.run(30)
 
     stamped = open_bench(bench, WARM_ZONES)
     stamped.now_ms = START_MS + 30_000
-    stamped.close(*CHARGING)
+    stamped.charge()
     assert stamped.model.step(START_MS + 60_000) == at_the_minute
     assert at_the_minute["secondary-flow"] > 0
 
@@ -550,7 +670,7 @@ def test_an_actuation_takes_effect_at_the_instant_it_is_stamped(
 def test_a_relay_the_plant_does_not_model_moves_nothing(bench: list[Bench]) -> None:
     quiet = open_bench(bench, COLD_ZONES)
     told = open_bench(bench, COLD_ZONES)
-    told.energize("vdc-relay", "zone1-north-ops-relay")
+    told.energize("vdc-relay", "zone1-living-rm-ops-relay")
     assert told.run(600) == quiet.run(600)
 
 
@@ -558,7 +678,7 @@ def test_a_relay_the_plant_does_not_model_moves_nothing(bench: list[Bench]) -> N
 def test_an_override_replaces_the_fmus_own_value(bench: list[Bench]) -> None:
     def charging(overrides: dict[str, float]) -> Bench:
         plant = open_bench(bench, WARM_ZONES | overrides)
-        plant.close(*CHARGING)
+        plant.charge()
         plant.run(10 * 60)
         return plant
 
@@ -632,7 +752,7 @@ def test_a_house_with_another_number_of_zones_is_refused() -> None:
     with pytest.raises(ValueError, match="2 zone circuits and .* models 4 zones"):
         katahdin_model(
             fmu_path=FMU_PATH,
-            layout=layout(zones=("north", "south")),
+            layout=plant_layout(adjusted(two_circuits)),
             overrides={},
             start_ms=START_MS,
         )
@@ -712,7 +832,7 @@ def test_a_katahdin_plant_answers_its_scada_across_the_broker(tmp_path: Path) ->
 
         energize("v1-hx-house-relay", "v1Position")
         energize("secondary-pump-relay", "secondaryPumpOn")
-        energize("hp-failsafe-relay", "hpScadaControl")
+        energize("hp-scada-ops-relay", "hpEnable")
         clock[0] += 20 * 60 * 1000
         charging = next_flux()
         assert charging["secondary-flow"] in range(490, 511)

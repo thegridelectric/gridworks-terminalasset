@@ -49,7 +49,8 @@ The plant reads one house's hardware layout (a `gw.house0.layout`, a
 wrapped in a `gw` envelope on `amq.topic`:
 
 - `sim.plant.flux`, every `--flux-seconds`: a value for each enabled channel
-  that a simulated sensing device captures, in the channel's own encoding.
+  that a simulated sensing device captures or a simulated board reads on
+  its own pins and ADCs, in the channel's own encoding.
   Routing key `gw.<plant>.to.<scada>.sim-plant-flux`, aliases with their
   dots as hyphens.
 - `sim.plant.actuation`, taken from
@@ -103,8 +104,9 @@ variable-step solver, so what the plant does is the same whether `ta-plant`
 steps it every second or every minute. `src/gwta/fmu_model.py` runs an FMU
 as a `PlantModel`; `src/gwta/katahdin.py` says which FMU output each
 channel of a Katahdin layout reads and which FMU input each relay drives;
-`src/gwta/sensing.py` gives a tank module's thermistor voltage and a flow
-meter's pulse rate for the channels that carry those.
+`src/gwta/sensing.py` gives a thermistor's voltage, a flow meter's pulse
+rate and the level of a pin a heat call is read from, for the channels
+that have those.
 
 `modelica/Hydronic.mo` is a library of the parts of a heating plant (pipes,
 valves, check valves, pumps, flow meters, tanks, a plate exchanger, heat
@@ -131,13 +133,13 @@ connected parts:
 `Beech.mo`; the FMU build also checks that `KatahdinComponents.Plant`
 translates.
 
-A relay acts through its contact. `katahdin.py` holds what a closed contact
-does (it feeds a valve's motor, runs the secondary pump, calls the heat
-pump), and the layout's `relay.control.config` says which of the relay's two
-positions closes it. A valve with no feed rests where the house's failsafe
-needs it. In a house with a boiler the call reaches the heat pump only
-while the boiler backup's failsafe relay is energised; de-energised, the
-heat pump is its aquastat's, and the model has the aquastat make no call.
+`katahdin.py` holds which input of the model each relay drives (a valve's
+position, the secondary pump, the heat pump's call) and the value that
+input takes in each of the relay's two states. The layout's
+`relay.control.config` names those states and says which one the relay is
+in when energised, so where a valve rests is the layout's to say. The
+boiler's intercept relay drives nothing in the model: the model's boiler
+fires on its own aquastat.
 
 Every coefficient is a parameter of the model with a placeholder value:
 pipe resistances, pump curves, tank and exchanger conductances, the heat
@@ -159,33 +161,16 @@ the first forecast arrives, `TOutdoor` holds the value it started with.
 
 The plant refuses, by name, a layout it cannot serve: one with a channel
 the model has no value for, one with a number of zone circuits other than
-the four the FMU is generated with, one that does not say which position of
-a relay closes its contact, and an override that names neither a parameter
-nor an input free of a relay.
+the four the FMU is generated with, one that does not say which of a
+relay's two states it is in when energised, and an override that names
+neither a parameter nor an input free of a relay.
 
 ### A Katahdin layout
 
-```shell
-uv run ta-katahdin-layout \
-  --house0 tests/config/gw.house0.no.sieg.hazel.layout.json \
-  --ltn-alias d1.isone.ct.newhaven.larch1 \
-  --zones north south east west \
-  --out tests/config/gw.katahdin.larch.layout.json
-```
-
-`ta-katahdin-layout` (`src/gwta/katahdin_layout.py`) makes a
-`gw.katahdin.layout` from a House0 layout. The scada's own nodes, the relay
-board, the meters and the simulated sensors are the House0 house's; the
-pipework is a Katahdin house's: the five valves on the board's free relays,
-a 0-10 V output for the secondary pump, the heat pump's control box, three
-80-gallon store tanks and one call circuit for each zone named. What a
-Katahdin house has no part for is left behind. `--no-boiler` gives a house
-with no backup and no boiler valve. Ids are made from the alias and each
-thing's name, so the same arguments give the same file.
-
-`tests/config/gw.katahdin.larch.layout.json` is the output of the command
-above, and a test holds it to that. Larch is no real house: its alias, its
-zones and where its relays sit on the board are the generator's.
+`tests/config/gw.katahdin.larch.layout.json` is larch, a simulated Katahdin
+house with an oil boiler and four zones. The tests that need a house with
+no boiler or with two zones adjust larch's layout and decode it again as a
+`gw.katahdin.layout`, so every house a test runs is one the word accepts.
 
 ### In a container
 

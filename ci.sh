@@ -19,6 +19,8 @@ step "uv sync (locked)" uv sync --all-groups --locked
 step "ruff check" uv run ruff check --no-fix --no-cache .
 step "ruff format --check" uv run ruff format --check --no-cache .
 step "pyright" uv run pyright
+step "sema snapshot staging check" uv run python -P \
+  src/gwta/sema/check_staging.py src/gwta/sema_seed_request.yaml --deploy-branch main
 
 if ! nc -z localhost 5672 2>/dev/null; then
   echo "ERROR: no broker on localhost:5672 — start the dev rabbit (gridworks-base arm.sh or x86.sh)." >&2

@@ -5,7 +5,7 @@ an `examples:` block. Generated from the authored examples (never edited
 by hand) and consumed by `roundtrip.py`. A type version without a sample
 is silently untested by the round-trip, so its absence is recorded here.
 
-Coverage: **67 of 78** seeded type versions have a sample.
+Coverage: **68 of 79** seeded type versions have a sample.
 
 Seeded type versions lacking a sample (no `examples:`):
 
