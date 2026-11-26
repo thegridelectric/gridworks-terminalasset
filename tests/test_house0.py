@@ -86,7 +86,8 @@ class Bench:
                 action=action,
                 actuation_time_unix_ms=self.now_ms,
                 actual_time_utc="2026-11-11T15:00:00.000Z",
-            )
+            ),
+            self.now_ms,
         )
 
     def call_heat_pump(self) -> None:
@@ -136,7 +137,7 @@ def open_bench(
 
 
 def test_every_channel_of_the_house_reads_an_fmu_output() -> None:
-    variables = variable_by_channel(layout().hydronic)
+    variables = variable_by_channel(layout())
     assert variables["hp-lwt"] == "hpLwt"
     assert variables["sieg-flow"] == "siegFlow"
     assert variables["sieg-flow-hz"] == "siegFlow"

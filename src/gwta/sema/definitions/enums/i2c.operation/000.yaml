@@ -1,5 +1,5 @@
 $schema: "https://json-schema.org/draft/2020-12/schema"
-$id: "https://schemas.electricity.works/enums/i2c.operation/001"
+$id: "https://schemas.electricity.works/enums/i2c.operation/000"
 
 title: "i2c.operation"
 type: "string"
@@ -11,14 +11,12 @@ enum:
   - "WriteBit"
   - "ReadReg"
   - "WriteReg"
-  - "WriteByte"
-  - "ReadBytes"
 
 default: "ReadBit"
 
 x-gridworks:
   owner: "gridworks-energy"
-  version: "001"
+  version: "000"
   value_descriptions:
     "ReadBit": >
       Read a single bit from a device register.
@@ -28,9 +26,3 @@ x-gridworks:
       Read a 1- or 2-byte register.
     "WriteReg": >
       Write a 1- or 2-byte register.
-    "WriteByte": >
-      Write a single byte to a device with no register addressing (e.g. a
-      bus-multiplexer channel select).
-    "ReadBytes": >
-      Receive a run of bytes from a device with no register addressing
-      (e.g. a device whose read protocol is a bare sequential read).

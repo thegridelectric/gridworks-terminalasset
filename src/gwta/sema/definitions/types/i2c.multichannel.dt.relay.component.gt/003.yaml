@@ -1,5 +1,5 @@
 $schema: "https://json-schema.org/draft/2020-12/schema"
-$id: "https://schemas.electricity.works/types/i2c.multichannel.dt.relay.component.gt/004"
+$id: "https://schemas.electricity.works/types/i2c.multichannel.dt.relay.component.gt/003"
 
 title: "i2c.multichannel.dt.relay.component.gt"
 type: object
@@ -13,16 +13,13 @@ properties:
   ComponentId:
     $ref: "https://schemas.electricity.works/formats/uuid4.str"
 
-  DeviceType:
-    $ref: "https://schemas.electricity.works/formats/pascal.case"
-    description: >
-      The device category this component is built on, an open
-      pascal-case string.
+  ComponentAttributeClassId:
+    $ref: "https://schemas.electricity.works/formats/uuid4.str"
 
   ConfigList:
     type: array
     items:
-      $ref: "https://schemas.electricity.works/types/relay.actor.config/003"
+      $ref: "https://schemas.electricity.works/types/relay.actor.config/002"
 
   DisplayName:
     type: string
@@ -46,11 +43,11 @@ properties:
     const: "i2c.multichannel.dt.relay.component.gt"
 
   Version:
-    const: "004"
+    const: "003"
 
 required:
   - ComponentId
-  - DeviceType
+  - ComponentAttributeClassId
   - ConfigList
   - I2cBus
   - I2cAddressList
@@ -62,48 +59,46 @@ additionalProperties: true
 examples:
   - |
     {
-      "ComponentId": "af037880-2e9c-41a8-890b-ff9e63ac8d90",
-      "DeviceType": "KridaDoubleRelayBoard16",
+      "ComponentId": "25f344ee-39ea-4904-bff9-54f2022337af",
+      "ComponentAttributeClassId": "29eab8b1-100f-4230-bb44-3a2fcba33cc3",
       "ConfigList": [
         {
-          "ChannelName": "scada",
+          "ActorName": "relay1",
+          "AsyncCapture": true,
+          "CapturePeriodS": 300,
+          "ChannelName": "vdc-relay1",
+          "DeEnergizedState": "RelayClosed",
+          "DeEnergizingEvent": "CloseRelay",
+          "EnergizedState": "RelayOpen",
+          "EnergizingEvent": "OpenRelay",
+          "EventType": "change.relay.state",
+          "Exponent": 0,
+          "PollPeriodMs": 200,
           "RelayIdx": 1,
-          "ActorName": "scada",
-          "WiringConfig": "NormallyClosed",
-          "EventType": "beech.1",
-          "DeEnergizingEvent": "a",
-          "EnergizingEvent": "a",
-          "StateType": "beech.1",
-          "DeEnergizedState": "a",
-          "EnergizedState": "a",
+          "StateType": "relay.closed.or.open",
           "TypeName": "relay.actor.config",
-          "Version": "003"
+          "Unit": "Unitless",
+          "Version": "002",
+          "WiringConfig": "NormallyClosed"
         }
       ],
-      "I2cBus": "scada",
+      "DisplayName": "I2C Relay Board",
+      "HwUid": "i2c.krida.double.emr16.v1.29eab8",
       "I2cAddressList": [
-        0
+        32,
+        33
       ],
+      "I2cBus": "primary-scada",
       "TypeName": "i2c.multichannel.dt.relay.component.gt",
-      "Version": "004"
+      "Version": "003"
     }
+
 x-gridworks:
   owner: "gridworks-energy"
 
   axioms:
     - number: 1
-      name: "ChannelNameUniqueness"
-      statement: >
-        Channel names SHALL be unique across the ConfigList.
-    - number: 2
       name: "ActorAndRelayIndexUniqueness"
       statement: >
         ConfigList SHALL NOT contain duplicate ActorName values or duplicate
         RelayIdx values.
-  extended_description: >
-    The `.gt` suffix declares that this type is coupled bijectively with a table in
-    a canonical seed database (here, the terminalasset registry): the table's rows are
-    instances of this type. Sema is the authority over what a row means; the seed
-    table is the authority over which instances are currently asserted.
-
-    DeviceType values come from the `gw1.device.type` vocabulary; the hardware layout enforces membership.

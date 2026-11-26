@@ -1,4 +1,5 @@
 import json
+import logging
 import time
 from pathlib import Path
 
@@ -149,6 +150,19 @@ def test_an_actuation_reaches_the_model(
     [heard] = drift(plant).actuations
     assert isinstance(heard, SimPlantActuation)
     assert (heard.relay_name, heard.action) == ("store-pump-relay", action)
+
+
+def test_an_actuations_skew_from_the_plants_clock_is_logged(
+    plant: SimulatedPlant, caplog: pytest.LogCaptureFixture
+) -> None:
+    with caplog.at_level(logging.INFO, logger="gwta.plant"):
+        deliver(plant, actuation_payload(ActuationTimeUnixMs=NOW_MS + 1_500))
+        deliver(plant, actuation_payload(ActuationTimeUnixMs=NOW_MS - 2_500))
+    warnings = [r for r in caplog.records if r.levelno == logging.WARNING]
+    assert "stamped +1500 ms from now" in caplog.text
+    assert [r.getMessage() for r in warnings] == [
+        f"[{PLANT_ALIAS}] actuation clock skew -2500 ms"
+    ]
 
 
 @pytest.mark.parametrize(

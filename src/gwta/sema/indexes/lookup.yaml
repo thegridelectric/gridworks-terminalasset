@@ -90,10 +90,10 @@ types:
     versions:
       '000': definitions/types/gpio.sensor.component.gt/000.yaml
   gw.boiler.backup:
-    latest_version: '000'
+    latest_version: '001'
     versioning_strategy: literal
     versions:
-      '000': definitions/types/gw.boiler.backup/000.yaml
+      '001': definitions/types/gw.boiler.backup/001.yaml
   gw.circulator:
     latest_version: '000'
     versioning_strategy: literal
@@ -250,10 +250,10 @@ types:
     versions:
       '000': definitions/types/i2c.expander/000.yaml
   i2c.multichannel.dt.relay.component.gt:
-    latest_version: '004'
+    latest_version: '003'
     versioning_strategy: literal
     versions:
-      '004': definitions/types/i2c.multichannel.dt.relay.component.gt/004.yaml
+      '003': definitions/types/i2c.multichannel.dt.relay.component.gt/003.yaml
   i2c.mux:
     latest_version: '000'
     versioning_strategy: literal
@@ -290,10 +290,10 @@ types:
     versions:
       '000': definitions/types/i2c.relay.config/000.yaml
   i2c.result:
-    latest_version: '001'
+    latest_version: '000'
     versioning_strategy: literal
     versions:
-      '001': definitions/types/i2c.result/001.yaml
+      '000': definitions/types/i2c.result/000.yaml
   i2c.thermistor.channel.config:
     latest_version: '000'
     versioning_strategy: literal
@@ -344,6 +344,7 @@ types:
     versioning_strategy: literal
     versions:
       '003': definitions/types/relay.actor.config/003.yaml
+      '002': definitions/types/relay.actor.config/002.yaml
   relay.control.config:
     latest_version: '000'
     versioning_strategy: literal
@@ -400,6 +401,9 @@ types:
     versions:
       '001': definitions/types/web.server.component.gt/001.yaml
 enums:
+  aquastat.control.state:
+    enum_type: literal
+    schema: definitions/enums/aquastat.control.state/000.yaml
   base.g.node.class:
     enum_type: versioned
     latest_version: '000'
@@ -461,6 +465,11 @@ enums:
     latest_version: '000'
     versions:
       '000': definitions/enums/gw1.emission.method/000.yaml
+  gw1.heat.call.interpretation:
+    enum_type: versioned
+    latest_version: '000'
+    versions:
+      '000': definitions/enums/gw1.heat.call.interpretation/000.yaml
   gw1.quantity:
     enum_type: versioned
     latest_version: '003'
@@ -516,9 +525,9 @@ enums:
       '000': definitions/enums/i2c.mux.type/000.yaml
   i2c.operation:
     enum_type: versioned
-    latest_version: '001'
+    latest_version: '000'
     versions:
-      '001': definitions/enums/i2c.operation/001.yaml
+      '000': definitions/enums/i2c.operation/000.yaml
   pico.board.variant:
     enum_type: versioned
     latest_version: '000'
@@ -557,6 +566,9 @@ enums:
     latest_version: '000'
     versions:
       '000': definitions/enums/thermostat.kind/000.yaml
+  valve.open.or.closed:
+    enum_type: literal
+    schema: definitions/enums/valve.open.or.closed/000.yaml
   zone.setpoint.source:
     enum_type: versioned
     latest_version: '000'

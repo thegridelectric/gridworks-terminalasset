@@ -1,24 +1,17 @@
 #!/usr/bin/env bash
 #
 # regen_sema_snapshot.sh — regenerate gwta's vendored Sema snapshot
-# (src/gwta/sema) from the canonical sema repo. Instance of sema's
-# template_regen_snapshot.sh; the seed it consumes is
-# src/gwta/sema_seed_request.yaml (local class names come from the seed's
-# `local_names` rule — `prepare` materializes them, no post-hoc editing).
+# (src/gwta/sema) from the canonical sema repo, with `sema snapshot regen`
+# on the seed src/gwta/sema_seed_request.yaml. The seed states the staging
+# policy (`staging.allow`), the package name, the vendor dir and the local
+# class names; there is no flag to pass.
 #
-# The vendored tree is GENERATED — never hand-edit it; edit the seed (or the
+# The vendored tree is GENERATED: never hand-edit it; edit the seed (or the
 # sema definitions) and re-run.
 #
-# --allow-staged: the layout + sim-plant vocabulary is staging until it
-# promotes; the resulting snapshot is dev-only and carries the staging
-# marker + README banner. Once the closure is fully published the flag is
-# a no-op.
-#
-# The build mechanics are the sema CLI's (`sema snapshot --help` is the
-# source of truth). The CLI refuses to run from a dirty sema checkout and
-# writes only under <sema>/output, so the snapshot is reproducible from
-# the sema commit the checkout sits on — check out the ref you intend to
-# ship from before running.
+# The CLI refuses to run from a dirty sema checkout, so the snapshot is
+# reproducible from the sema commit the checkout sits on; the snapshot's
+# README records it.
 #
 # Usage:
 #   scripts/regen_sema_snapshot.sh                 # sibling ../sema checkout
@@ -27,10 +20,7 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SEMA_REPO="${SEMA_REPO:-$(cd "${REPO_ROOT}/../sema" 2>/dev/null && pwd || true)}"
-
-PACKAGE_NAME="gwta"
 SEED="${REPO_ROOT}/src/gwta/sema_seed_request.yaml"
-VENDOR_DIR="${REPO_ROOT}/src/gwta/sema"
 
 if [[ -z "${SEMA_REPO}" || ! -d "${SEMA_REPO}" ]]; then
   echo "error: sema repo not found." >&2
@@ -40,17 +30,6 @@ if [[ -z "${SEMA_REPO}" || ! -d "${SEMA_REPO}" ]]; then
 fi
 
 echo "==> sema repo: ${SEMA_REPO} @ $(git -C "${SEMA_REPO}" rev-parse --short HEAD)"
-echo "==> seed:      ${SEED}"
-echo "==> package:   ${PACKAGE_NAME}"
-
 cd "${SEMA_REPO}"
-echo "==> sema snapshot prepare --allow-staged"
-uv run sema snapshot prepare --allow-staged "${SEED}"
-echo "==> sema snapshot build --package-name ${PACKAGE_NAME}"
-uv run sema snapshot build --package-name "${PACKAGE_NAME}"
-
-echo "==> mirror ${SEMA_REPO}/output/sema -> ${VENDOR_DIR}"
-rsync -a --delete --exclude='__pycache__' \
-  "${SEMA_REPO}/output/sema/" "${VENDOR_DIR}/"
-
-echo "==> done. review the diff (git status) and run your repo's tests."
+uv run sema snapshot regen "${SEED}"
+echo "==> done. review the diff (git status) and run ./ci.sh."

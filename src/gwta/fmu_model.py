@@ -15,8 +15,9 @@ from typing import NamedTuple
 from fmpy import extract, read_model_description
 from fmpy.fmi2 import FMU2Slave
 
+from gwta.plant_layout import PlantLayout
 from gwta.plant_model import PlantModel
-from gwta.sema.enums import ChangeRelayPin, TelemetryName
+from gwta.sema.enums import ChangeRelayPin, RelayClosedOrOpen, TelemetryName
 from gwta.sema.property_format import SpaceheatName, UTCMilliseconds
 from gwta.sema.types import SimPlantActuation
 
@@ -58,6 +59,46 @@ class RelayEffect(NamedTuple):
     variable: str
     energized: float
     de_energized: float
+
+
+class StateEffect(NamedTuple):
+    """What one relay does to the plant: the FMU input it drives and the
+    value that input takes in each of the relay's two states, by the
+    state's name in the relay's relay.control.config."""
+
+    variable: str
+    value_by_state: Mapping[str, float]
+
+
+CONTACT = {
+    RelayClosedOrOpen.RelayClosed.value: 1.0,
+    RelayClosedOrOpen.RelayOpen.value: 0.0,
+}
+
+
+def relay_effects(
+    layout: PlantLayout, state_effects: Mapping[SpaceheatName, StateEffect]
+) -> dict[SpaceheatName, RelayEffect]:
+    """What each relay in `state_effects` drives. Which of a relay's two
+    states it is in when energized is the layout's to say, and a layout that
+    does not say it for a relay the model needs is refused."""
+    effects: dict[SpaceheatName, RelayEffect] = {}
+    for relay, effect in state_effects.items():
+        config = layout.config_by_relay.get(relay)
+        if config is None or {
+            config.energized_state,
+            config.de_energized_state,
+        } != set(effect.value_by_state):
+            raise ValueError(
+                f"the layout does not say which of {relay}'s positions is "
+                f"{' and which '.join(effect.value_by_state)}"
+            )
+        effects[relay] = RelayEffect(
+            effect.variable,
+            energized=effect.value_by_state[config.energized_state],
+            de_energized=effect.value_by_state[config.de_energized_state],
+        )
+    return effects
 
 
 class FmuPlantModel(PlantModel):
@@ -187,11 +228,14 @@ class FmuPlantModel(PlantModel):
             for channel, value in zip(self.reference_by_channel, values, strict=True)
         }
 
-    def actuate(self, actuation: SimPlantActuation) -> None:
+    def actuate(self, actuation: SimPlantActuation, now_ms: UTCMilliseconds) -> None:
+        """Run the model to the actuation's instant, or to now_ms when the
+        actuation is stamped ahead of the plant's clock, then set the relay's
+        input."""
         effect = self.effect_by_relay.get(actuation.relay_name)
         if effect is None:
             return
-        self.advance_to(actuation.actuation_time_unix_ms)
+        self.advance_to(min(actuation.actuation_time_unix_ms, now_ms))
         energized = actuation.action == ChangeRelayPin.Energize
         self.set_values(
             {effect.variable: effect.energized if energized else effect.de_energized}

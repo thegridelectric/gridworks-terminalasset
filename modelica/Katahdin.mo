@@ -63,7 +63,6 @@ package Katahdin
     input Real secondaryPumpSpeed(start = 1) "Pump 2 speed as a fraction of full";
     input Real distPumpSpeed(start = 1) "Distribution circulator speed as a fraction of full";
     input Real hpEnable(start = 0) "The scada's call for the heat pump: 0 no call, 1 call";
-    input Real hpScadaControl(start = 1) "Who holds the heat pump's call: 0 its aquastat, which makes none here, 1 the scada";
     input Real TOutdoor(unit = "K", start = 268.15) "Outdoor air temperature";
 
     parameter Real rhoWater(unit = "kg/m3") = 990;
@@ -151,6 +150,7 @@ package Katahdin
     output Real secondaryPumpPower(unit = "W");
     output Real zoneTemperature[nZones](each unit = "K");
     output Real zoneCallPower[nZones](each unit = "W") "Power on each zone's thermostat wire";
+    output Real zoneCall[nZones](each unit = "1") "1 while a zone's thermostat circuit is closed, else 0";
     output Real heatPumpHeat(unit = "W") "Heat the heat pump is putting into the glycol";
     output Real storeCharge(unit = "m3/s") "Store flow signed: positive into a tank top";
     output Real thermalEnergy(unit = "J") "Heat held by every volume and zone, above 0 degC";
@@ -184,7 +184,7 @@ package Katahdin
     Real v5 = min(max(v5Position, 0), 1);
     Real speedSecondary = min(max(secondaryPumpOn, 0), 1) * min(max(secondaryPumpSpeed, 0), 1);
     Real speedDist = min(max(distPumpSpeed, 0), 1);
-    Real enable = min(max(hpEnable, 0), 1) * min(max(hpScadaControl, 0), 1);
+    Real enable = min(max(hpEnable, 0), 1);
 
     Real pSupply(unit = "Pa") "Supply header, above the return header";
     Real pJunction(unit = "Pa") "Middle tank bottom and cold tank top";
@@ -391,6 +391,7 @@ package Katahdin
     secondaryPumpPower = PPumpNominal * speedSecondary ^ 3;
     zoneTemperature = TZone;
     zoneCallPower = PZoneValve * zonePosition;
+    zoneCall = zonePosition;
     heatPumpHeat = QHeatPump;
     storeCharge = qCold;
     thermalEnergy = CHeatPump * (THeatPump - T0) + CExchangerSide * (TExchangerGlycol + TExchangerWater - 2 * T0)

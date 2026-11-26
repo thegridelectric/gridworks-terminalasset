@@ -1,6 +1,6 @@
 {
   "TypeName": "i2c.result",
-  "Version": "001",
+  "Version": "000",
   "Bus": "scada",
   "Operation": "ReadReg",
   "Value": 7,

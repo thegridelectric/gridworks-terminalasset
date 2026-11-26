@@ -9,18 +9,17 @@ from gwta.sema.property_format import UUID4Str
 
 
 class I2cResult(SemaType):
-    """Sema: https://schemas.electricity.works/types/i2c.result/001"""
+    """Sema: https://schemas.electricity.works/types/i2c.result/000"""
 
     bus: SpaceheatName
     operation: I2cOperation
     value: NonNegativeInt | None = None
-    bytes: list[NonNegativeInt] | None = None
     success: bool
     error: str | None = None
     unix_time_ms: UTCMilliseconds
     trigger_id: UUID4Str
     type_name: Literal["i2c.result"] = "i2c.result"
-    version: Literal["001"] = "001"
+    version: Literal["000"] = "000"
 
     @model_validator(mode="after")
     def check_axiom_1(self) -> "I2cResult":

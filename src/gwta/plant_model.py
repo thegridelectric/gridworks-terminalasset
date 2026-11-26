@@ -19,8 +19,10 @@ class PlantModel(ABC):
         channel's own encoding."""
 
     @abstractmethod
-    def actuate(self, actuation: SimPlantActuation) -> None:
-        """Take one relay actuation."""
+    def actuate(self, actuation: SimPlantActuation, now_ms: UTCMilliseconds) -> None:
+        """Take one relay actuation, at the plant's clock now_ms. A model
+        that runs forward runs no further than now_ms, whatever the
+        actuation is stamped."""
 
     def close(self) -> None:
         """Release what the model holds outside Python: nothing, unless a
@@ -88,5 +90,9 @@ class DriftModel(PlantModel):
             self.values[name] = min(drift.high, max(drift.low, moved))
         return dict(self.values)
 
-    def actuate(self, actuation: SimPlantActuation) -> None:
+    def actuate(
+        self,
+        actuation: SimPlantActuation,
+        now_ms: UTCMilliseconds,  # noqa: ARG002 -- the drift has nothing to run forward
+    ) -> None:
         self.actuations.append(actuation)

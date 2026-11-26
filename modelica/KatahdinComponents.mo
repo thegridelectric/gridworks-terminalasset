@@ -26,8 +26,6 @@ package KatahdinComponents
       annotation(Placement(transformation(origin = {318, 20}, extent = {{-5, -5}, {5, 5}})));
     Hydronic.RealInput hpEnable(start = 0) "The scada's call for the heat pump: 0 no call, 1 call"
       annotation(Placement(transformation(origin = {-362, 20}, extent = {{-5, -5}, {5, 5}})));
-    Hydronic.RealInput hpScadaControl(start = 1) "Who holds the heat pump's call: 0 its aquastat, which makes none here, 1 the scada"
-      annotation(Placement(transformation(origin = {-362, -20}, extent = {{-5, -5}, {5, 5}})));
     Hydronic.RealInput TOutdoor(unit = "K", start = 268.15) "Outdoor air temperature"
       annotation(Placement(transformation(origin = {-362, 170}, extent = {{-5, -5}, {5, 5}})));
 
@@ -135,6 +133,8 @@ package KatahdinComponents
       annotation(Placement(transformation(origin = {540, -70}, extent = {{-5, -5}, {5, 5}})));
     Hydronic.RealOutput zoneCallPower[nZones](each unit = "W") "Power on each zone's thermostat wire"
       annotation(Placement(transformation(origin = {540, -84}, extent = {{-5, -5}, {5, 5}})));
+    Hydronic.RealOutput zoneCall[nZones](each unit = "1") "1 while a zone's thermostat circuit is closed, else 0"
+      annotation(Placement(transformation(origin = {540, -91}, extent = {{-5, -5}, {5, 5}})));
     Hydronic.RealOutput heatPumpHeat(unit = "W") "Heat the heat pump is putting into the glycol"
       annotation(Placement(transformation(origin = {540, -98}, extent = {{-5, -5}, {5, 5}})));
     Hydronic.RealOutput storeCharge(unit = "m3/s") "Store flow signed: positive into a tank top"
@@ -336,8 +336,7 @@ package KatahdinComponents
       annotation(Line(points = {{318, 20}, {350, 20}}, color = {0, 0, 127}));
     connect(hpEnable, heatPump.call)
       annotation(Line(points = {{-362, 20}, {-330, 20}}, color = {0, 0, 127}));
-    connect(hpScadaControl, heatPump.scadaControl)
-      annotation(Line(points = {{-362, -20}, {-330, -20}}, color = {0, 0, 127}));
+    heatPump.scadaControl = 1 "The scada holds the heat pump's call: a Katahdin house has no relay that hands it to an aquastat";
     connect(TOutdoor, heatPump.TOutdoor)
       annotation(Line(points = {{-362, 170}, {-300, 170}, {-300, 40}}, color = {0, 0, 127}));
     connect(TOutdoor, zones.TOutdoor)
@@ -364,6 +363,7 @@ package KatahdinComponents
     secondaryPumpPower = secondaryPump.power;
     zoneTemperature = zones.TZone;
     zoneCallPower = zones.callPower;
+    zoneCall = zones.position;
     heatPumpHeat = heatPump.Q;
     storeCharge = storeReturn.q;
 

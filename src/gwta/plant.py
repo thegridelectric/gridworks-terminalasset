@@ -64,6 +64,11 @@ LOGGER = logging.getLogger(__name__)
 DEFAULT_FLUX_SECONDS = 5.0
 DEFAULT_SEED = 0
 
+# An actuation stamped further than this from the plant's clock is logged as
+# a warning: the scada's clock and the plant's disagree by more than the
+# physics can show inside one flux period.
+SKEW_WARN_MS = 2_000
+
 OVERRIDES = TypeAdapter(dict[str, float])
 
 FLUX_TYPE_NAME = "sim.plant.flux"
@@ -166,11 +171,19 @@ class SimulatedPlant(GridworksActor):
                 actuation.relay_name,
             )
             return
+        now_ms = self.now_ms()
+        skew_ms = actuation.actuation_time_unix_ms - now_ms
         LOGGER.info(
-            "[%s] heard %s %s", self.alias, actuation.relay_name, actuation.action.value
+            "[%s] heard %s %s, stamped %+d ms from now",
+            self.alias,
+            actuation.relay_name,
+            actuation.action.value,
+            skew_ms,
         )
+        if abs(skew_ms) > SKEW_WARN_MS:
+            LOGGER.warning("[%s] actuation clock skew %+d ms", self.alias, skew_ms)
         with self.model_lock:
-            self.model.actuate(actuation)
+            self.model.actuate(actuation, now_ms)
 
     def next_flux(self) -> SimPlantFlux:
         now_ms = self.now_ms()

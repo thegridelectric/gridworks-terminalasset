@@ -1,5 +1,5 @@
 $schema: "https://json-schema.org/draft/2020-12/schema"
-$id: "https://schemas.electricity.works/types/i2c.result/001"
+$id: "https://schemas.electricity.works/types/i2c.result/000"
 
 title: "i2c.result"
 type: object
@@ -14,7 +14,7 @@ properties:
       The name of the I²C bus actor that ran the operation.
 
   Operation:
-    $ref: "https://schemas.electricity.works/enums/i2c.operation/001"
+    $ref: "https://schemas.electricity.works/enums/i2c.operation/000"
     description: >
       The kind of operation this result reports.
 
@@ -22,16 +22,7 @@ properties:
     $ref: "https://schemas.electricity.works/formats/non.negative.int"
     description: >
       The value read (a bit 0/1 for a bit read, a 1- or 2-byte register value
-      for a register read); absent for a write, a multi-byte read, or a
-      failed operation.
-
-  Bytes:
-    type: array
-    items:
-      $ref: "https://schemas.electricity.works/formats/non.negative.int"
-    description: >
-      The bytes received, in wire order, for a ReadBytes operation; absent
-      otherwise.
+      for a register read); absent for a write or a failed operation.
 
   Success:
     type: boolean
@@ -57,7 +48,7 @@ properties:
     const: "i2c.result"
 
   Version:
-    const: "001"
+    const: "000"
 
 required:
   - Bus
@@ -80,18 +71,7 @@ examples:
       "UnixTimeMs": 1700000000000,
       "TriggerId": "6f74e8b9-4fc9-4b95-bd6f-2c150662b40e",
       "TypeName": "i2c.result",
-      "Version": "001"
-    }
-  - |
-    {
-      "Bus": "scada",
-      "Operation": "ReadBytes",
-      "Bytes": [64, 128, 0],
-      "Success": true,
-      "UnixTimeMs": 1700000000000,
-      "TriggerId": "0d3a5c2e-9a41-4a67-8f2e-5b1c9e7d4a10",
-      "TypeName": "i2c.result",
-      "Version": "001"
+      "Version": "000"
     }
 
 x-gridworks:
