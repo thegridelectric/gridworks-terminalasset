@@ -139,7 +139,8 @@ input takes in each of the relay's two states. The layout's
 `relay.control.config` names those states and says which one the relay is
 in when energised, so where a valve rests is the layout's to say. The
 boiler's intercept relay drives nothing in the model: the model's boiler
-fires on its own aquastat.
+has no burner. In a real house that relay stops the boiler firing on its
+own aquastat.
 
 Every coefficient is a parameter of the model with a placeholder value:
 pipe resistances, pump curves, tank and exchanger conductances, the heat

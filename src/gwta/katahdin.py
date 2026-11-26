@@ -91,7 +91,7 @@ def state_effects(hydronic: Hydronic) -> dict[SpaceheatName, StateEffect]:
     """What each relay of a Katahdin house that switches something the
     model has does in each of its states. The boiler's valve is in a house
     with a boiler. The boiler's intercept relay switches nothing the model
-    has: the model's boiler fires on its own aquastat."""
+    has: the model's boiler has no burner."""
     effects = {
         "v1-hx-house-relay": StateEffect("v1Position", VALVE),
         "v2-store-hot-relay": StateEffect("v2Position", VALVE),
