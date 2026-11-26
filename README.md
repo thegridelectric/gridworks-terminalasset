@@ -287,6 +287,8 @@ uv sync
 `ci.sh` is the gate: ruff, ruff format, pyright, the FMU build and the
 test suite, including the `live` tests, which need the dev RabbitMQ on
 `localhost:5672` (start it with gridworks-base's `arm.sh` or `x86.sh`), and
-the `fmu` tests, which need docker to generate the FMU. The GitHub workflow
-runs the same script against the same broker image, so a local pass is a CI
-pass. `uv run pytest` alone runs the offline tests.
+the `fmu` tests, which need docker: `scripts/build_fmu.sh` generates the
+FMUs and `scripts/test_fmu.sh` runs those tests in a Linux container, since
+an FMU's binary loads on Linux only. The GitHub workflow runs the same
+script against the same broker image, so a local pass is a CI pass.
+`uv run pytest` alone runs the offline tests.

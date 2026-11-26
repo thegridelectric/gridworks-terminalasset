@@ -228,11 +228,14 @@ class FmuPlantModel(PlantModel):
             for channel, value in zip(self.reference_by_channel, values, strict=True)
         }
 
-    def actuate(self, actuation: SimPlantActuation) -> None:
+    def actuate(self, actuation: SimPlantActuation, now_ms: UTCMilliseconds) -> None:
+        """Run the model to the actuation's instant, or to now_ms when the
+        actuation is stamped ahead of the plant's clock, then set the relay's
+        input."""
         effect = self.effect_by_relay.get(actuation.relay_name)
         if effect is None:
             return
-        self.advance_to(actuation.actuation_time_unix_ms)
+        self.advance_to(min(actuation.actuation_time_unix_ms, now_ms))
         energized = actuation.action == ChangeRelayPin.Energize
         self.set_values(
             {effect.variable: effect.energized if energized else effect.de_energized}

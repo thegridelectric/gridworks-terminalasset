@@ -6,7 +6,8 @@
 # The live tests need the dev broker on localhost:5672 (gridworks-base
 # arm.sh / x86.sh; CI runs the same baked image as a service container).
 # The fmu tests need the plants' FMUs, which this script generates with
-# docker.
+# docker, and the FMUs load on Linux only, so those tests run in a Linux
+# container (scripts/test_fmu.sh) and the host runs the rest.
 #
 # Usage: ./ci.sh
 set -euo pipefail
@@ -28,7 +29,8 @@ if ! nc -z localhost 5672 2>/dev/null; then
 fi
 step "generate the FMUs" scripts/build_fmu.sh
 # -o addopts="" lifts pyproject's default `-m 'not live and not fmu'` so the
-# live and the fmu tests run too.
-step "tests (offline + live + fmu)" uv run pytest -q -o addopts=""
+# live tests run too; the fmu tests run in the container.
+step "tests (offline + live)" uv run pytest -q -o addopts="" -m "not fmu"
+step "tests (fmu, in a Linux container)" scripts/test_fmu.sh
 
 printf '\nAll checks passed.\n'

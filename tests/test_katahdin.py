@@ -159,14 +159,19 @@ class Bench:
         self.tick_s = tick_s
         self.history: list[dict[str, int]] = []
 
-    def actuate(self, relay: str, action: ChangeRelayPin) -> None:
+    def actuate(
+        self, relay: str, action: ChangeRelayPin, stamped_ms: int | None = None
+    ) -> None:
         self.model.actuate(
             SimPlantActuation(
                 relay_name=relay,
                 action=action,
-                actuation_time_unix_ms=self.now_ms,
+                actuation_time_unix_ms=self.now_ms
+                if stamped_ms is None
+                else stamped_ms,
                 actual_time_utc="2026-11-11T15:00:00.000Z",
-            )
+            ),
+            self.now_ms,
         )
 
     def energize(self, *relays: str) -> None:
@@ -664,6 +669,16 @@ def test_an_actuation_takes_effect_at_the_instant_it_is_stamped(
     stamped.charge()
     assert stamped.model.step(START_MS + 60_000) == at_the_minute
     assert at_the_minute["secondary-flow"] > 0
+
+
+@pytest.mark.fmu
+def test_an_actuation_stamped_ahead_of_the_plants_clock_runs_the_model_no_further_than_now(
+    bench: list[Bench],
+) -> None:
+    ahead = open_bench(bench, WARM_ZONES)
+    ahead.actuate("hp-scada-ops-relay", ChangeRelayPin.Energize, START_MS + 3_600_000)
+    assert ahead.model.time_s == 0.0
+    assert ahead.model.read("hpEnable") == 1.0
 
 
 @pytest.mark.fmu

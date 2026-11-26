@@ -86,7 +86,8 @@ class Bench:
                 action=action,
                 actuation_time_unix_ms=self.now_ms,
                 actual_time_utc="2026-11-11T15:00:00.000Z",
-            )
+            ),
+            self.now_ms,
         )
 
     def call_heat_pump(self) -> None:

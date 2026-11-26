@@ -64,9 +64,9 @@ def test_actuations_are_kept_and_change_nothing() -> None:
     quiet = DriftModel(CHANNELS, seed=11)
     told = DriftModel(CHANNELS, seed=11)
     first, second = actuation("store-pump-relay"), actuation("hp-scada-ops-relay")
-    told.actuate(first)
+    told.actuate(first, first.actuation_time_unix_ms)
     before = walk(told, 10)
-    told.actuate(second)
+    told.actuate(second, second.actuation_time_unix_ms)
     after = walk(told, 10)
     assert before + after == walk(quiet, 20)
     assert told.actuations == [first, second]
