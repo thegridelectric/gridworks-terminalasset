@@ -5,34 +5,34 @@
     {
       "TypeName": "g.node.gt",
       "Version": "006",
-      "GNodeId": "c934a1c0-352a-493e-b111-4e79ba56f38b",
+      "GNodeId": "d6621892-47c5-4cef-be64-ee3d3a8c7748",
       "Alias": "d1.isone.me.versant.keene.larch",
       "BaseClass": "LeafTransactiveNode",
       "GNodeClass": "LeafTransactiveNode",
       "Status": "Active",
-      "PositionPointId": "ed669da0-cb02-4935-9e40-a557e8e3691f",
-      "DisplayName": "Dev Keene Larch LeafTransactiveNode"
+      "PositionPointId": "e2b91abd-9ad2-464e-a0e6-8f03e19eea12",
+      "DisplayName": "Larch LTN"
     },
     {
       "TypeName": "g.node.gt",
       "Version": "006",
-      "GNodeId": "51eb1298-3d58-4238-8301-cb70c2fa6971",
+      "GNodeId": "26ecf777-5bcf-4e93-a82a-e190d3085a9f",
       "Alias": "d1.isone.me.versant.keene.larch.ta",
       "BaseClass": "TerminalAsset",
       "GNodeClass": "TerminalAsset",
       "Status": "Active",
-      "PositionPointId": "ed669da0-cb02-4935-9e40-a557e8e3691f",
-      "DisplayName": "Dev Keene Larch TerminalAsset"
+      "PositionPointId": "75da66b6-121b-4d55-b078-bd35e1d87ebe",
+      "DisplayName": "Larch"
     },
     {
       "TypeName": "g.node.gt",
       "Version": "006",
-      "GNodeId": "6fca810b-aeb9-4762-a73d-1e1238237c8f",
+      "GNodeId": "840e046a-e215-49c9-b33c-5aa43f081363",
       "Alias": "d1.isone.me.versant.keene.larch.scada",
       "BaseClass": "Logical",
       "GNodeClass": "Scada",
       "Status": "Active",
-      "DisplayName": "Dev Keene Larch Scada"
+      "DisplayName": "Larch Scada"
     }
   ],
   "ShNodes": [

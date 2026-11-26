@@ -41,7 +41,7 @@
       "Version": "303",
       "Name": "s",
       "ActorClass": "PrimaryScada",
-      "DisplayName": "Dev Keene Beech Scada",
+      "DisplayName": "Sim Keene Beech Scada",
       "ShNodeId": "da9a0427-d6c0-44c0-b51c-492c1e580dc5"
     },
     {
@@ -2138,14 +2138,14 @@
       "Version": "000",
       "ComponentId": "6f9443ae-9cd3-45c6-bec1-eeea10c86cb8",
       "DeviceType": "SimHpOdu",
-      "DisplayName": "Sim Beech heat-pump outdoor unit"
+      "DisplayName": "Sim heat-pump outdoor unit"
     },
     {
       "TypeName": "device.component.gt",
       "Version": "000",
       "ComponentId": "fde636e2-686b-4bd4-bd19-7319f8c22c69",
       "DeviceType": "SimHpIdu",
-      "DisplayName": "Sim Beech heat-pump indoor unit"
+      "DisplayName": "Sim heat-pump indoor unit"
     },
     {
       "TypeName": "web.server.component.gt",
